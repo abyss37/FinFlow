@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}?v=2">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm;
+        }
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .no-print, .no-print * {
+                display: none !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-size: 10pt !important;
+                font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            }
+            .printable-card {
+                border: none !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .main-grid { display: block !important; }
+            .print-hide { display: none !important; }
+            .print-show {
+                display: block !important;
+                color: #000000 !important;
+                white-space: pre-wrap !important;
+                word-break: break-word !important;
+            }
+            .header-print-row {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: flex-start !important;
+                width: 100% !important;
+                padding-bottom: 12px !important;
+                border-bottom: 2px solid #0f172a !important;
+            }
+            .header-print-left { width: 62% !important; }
+            .header-print-right { width: 35% !important; text-align: right !important; }
+            .bill-print-row {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                gap: 20px !important;
+                width: 100% !important;
+                margin-top: 16px !important;
+                margin-bottom: 20px !important;
+            }
+            .bill-print-left { width: 50% !important; }
+            .bill-print-right { width: 46% !important; }
+            .meta-print-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 10px !important;
+            }
+            table {
+                width: 100% !important;
+                table-layout: fixed !important;
+                border-collapse: collapse !important;
+                margin-top: 12px !important;
+                margin-bottom: 16px !important;
+            }
+            th, td {
+                border-bottom: 1px solid #cbd5e1 !important;
+                padding: 8px 6px !important;
+                vertical-align: middle !important;
+            }
+            th {
+                background-color: #0f172a !important;
+                color: #ffffff !important;
+                font-weight: 700 !important;
+                font-size: 8.5pt !important;
+                text-transform: uppercase !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            td { color: #000000 !important; }
+            .col-desc { width: 55% !important; text-align: left !important; }
+            .col-qty { width: 12% !important; text-align: center !important; }
+            .col-rate { width: 16% !important; text-align: right !important; }
+            .col-amount { width: 17% !important; text-align: right !important; }
+            td.col-amount { color: #000000 !important; }
+            th.col-amount { color: #ffffff !important; background-color: #0f172a !important; }
+            .print-label {
+                font-size: 8pt !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                color: #64748b !important;
+                margin-bottom: 2px !important;
+            }
+            .stamp-print-row {
+                display: flex !important;
+                justify-content: flex-end !important;
+                align-items: flex-end !important;
+                margin-top: 20px !important;
+            }
+            .stamp-img {
+                max-width: 260px !important;
+                height: auto !important;
+            }
+        }
+
+        th, .item-header-row {
+            color: #ffffff !important;
+            opacity: 1 !important;
+            font-weight: 700 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-100 font-sans min-h-screen antialiased p-3 sm:p-6">
+
+    <!-- Top Action Toolbar -->
+    <div class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 no-print">
+        <a href="/" class="inline-flex items-center gap-2 text-slate-100 hover:text-emerald-400 font-medium text-sm transition-colors">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Dashboard</span>
+        </a>
+
+        <div class="flex items-center gap-3">
+            <button onclick="handleSaveClick()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 border border-slate-700 cursor-pointer">
+                <i class="bi bi-floppy text-emerald-400"></i>
+                <span>Save to Registry</span>
+            </button>
+            <button onclick="prepareAndPrintPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-emerald-900/30 flex items-center gap-2 cursor-pointer">
+                <i class="bi bi-printer"></i>
+                <span>Download / Print PDF</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Layout Grid -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start main-grid">
+
+        <!-- MAIN FORM: Invoice Card -->
+        <div class="lg:col-span-9 bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-10 shadow-2xl printable-card">
+            
+            <!-- Editing Banner -->
+            <div id="editingBanner" class="hidden mb-6 p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center justify-between text-xs text-emerald-400 no-print">
+                <span class="flex items-center gap-2">
+                    <i class="bi bi-pencil-square"></i>
+                    <span>Редактируется шаблон из архива: <strong id="editingInvLabel">№ 1001</strong></span>
+                </span>
+                <button onclick="resetFormToBlank()" class="text-slate-100 hover:text-slate-200 text-xs font-bold px-2 py-0.5 rounded hover:bg-slate-800 transition-colors cursor-pointer">
+                    Сбросить
+                </button>
+            </div>
+
+            <!-- Header: Logo & ACMETECH Details -->
+            <div class="flex flex-col sm:flex-row justify-between items-start gap-6 pb-8 border-b border-slate-800 header-print-row">
+                <div class="w-full sm:w-2/3 header-print-left space-y-3">
+                    
+                    <!-- Default ACMETECH Logo -->
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white px-3 py-1.5 rounded-lg inline-block print:p-0">
+                            <svg height="32" viewBox="0 0 190 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <text x="0" y="27" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" fill="#000000" letter-spacing="-0.5">ACME<tspan fill="#2563eb">TECH</tspan></text>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- ACMETECH Company Details Header -->
+                    <div class="text-xs text-slate-300 print:text-slate-900 leading-relaxed">
+                        <div class="font-extrabold text-sm sm:text-base text-slate-100 print:text-slate-900 tracking-wide uppercase">ACME SOFTWARE SOLUTIONS LTD</div>
+                        <div>Registration number - <strong>HE 123456</strong></div>
+                        <div>T.I.C.- <strong>12345678X</strong>, VAT <strong>CY 12345678X</strong></div>
+                        <div>123 Business Street, Suite 100, Limassol, Cyprus</div>
+                        <div>Email: <a href="mailto:info@example.com" class="text-emerald-400 print:text-slate-900 underline">info@example.com</a></div>
+                    </div>
+
+                    <!-- Bank Accounts Selection Dropdown / Checkboxes -->
+                    <div class="pt-2">
+                        <div class="no-print mb-2">
+                            <button type="button" onclick="toggleBankDropdown()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-emerald-400 border border-slate-700 transition-colors cursor-pointer">
+                                <i class="bi bi-bank"></i>
+                                <span>Выбор банковских счетов</span>
+                                <i class="bi bi-chevron-down text-[10px]"></i>
+                            </button>
+
+                            <!-- Collapsible Checkbox Box -->
+                            <div id="bankDropdownMenu" class="hidden mt-2 p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2 max-w-md shadow-xl">
+                                <div class="text-[11px] font-bold text-slate-100 uppercase tracking-wider mb-1">Отображать банки в инвойсе:</div>
+                                <label class="flex items-center gap-2 text-xs text-slate-200 cursor-pointer">
+                                    <input type="checkbox" id="chkBank1" checked onchange="updateBankDisplay()" class="accent-emerald-500 rounded">
+                                    <span>Eurobank (CY47...45884)</span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-slate-200 cursor-pointer">
+                                    <input type="checkbox" id="chkBank2" onchange="updateBankDisplay()" class="accent-emerald-500 rounded">
+                                    <span>Bank Of Cyprus (CY60...83602)</span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-slate-200 cursor-pointer">
+                                    <input type="checkbox" id="chkBank3" onchange="updateBankDisplay()" class="accent-emerald-500 rounded">
+                                    <span>Eurobank Alt (CY47...45884)</span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-slate-200 cursor-pointer">
+                                    <input type="checkbox" id="chkBank4" onchange="updateBankDisplay()" class="accent-emerald-500 rounded">
+                                    <span>Revolut Bank (LT92...39677)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Rendered Bank Details in Invoice / PDF -->
+                        <div id="renderedBankDetails" class="text-[11px] text-slate-300 print:text-slate-900 bg-slate-800/40 print:bg-transparent p-2.5 print:p-0 rounded-xl border border-slate-800 print:border-none space-y-1.5 font-mono">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="text-right w-full sm:w-1/3 header-print-right">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-wider text-slate-100 print:text-slate-900 uppercase">INVOICE</h1>
+                    <div class="flex items-center justify-end gap-2 mt-2">
+                        <span class="text-xs font-semibold text-slate-100 print:text-slate-700 uppercase">#</span>
+                        <input type="text" id="invoiceNumber" placeholder="1001" value="1001" oninput="updateDocumentTitle()"
+                            class="print-hide w-32 bg-slate-800/60 border border-slate-700/80 rounded-xl px-3 py-1.5 text-sm text-right font-bold text-emerald-400 outline-none focus:border-emerald-500">
+                        <span id="invoiceNumberPrint" class="print-show hidden text-base font-extrabold text-slate-900">1001</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bill To & Dates Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 bill-print-row">
+                <div class="space-y-3 bill-print-left">
+                    <label class="block text-xs font-bold text-slate-100 print-label uppercase tracking-wider">Bill To</label>
+                    <input list="companiesList" id="billToCompany" placeholder="Client / Company Name" required oninput="updateDocumentTitle()"
+                        class="print-hide w-full bg-slate-800/60 border border-slate-700/80 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 outline-none focus:border-emerald-500 font-semibold">
+                    <div id="billToCompanyPrint" class="print-show hidden text-sm font-bold text-slate-900"></div>
+
+                    <datalist id="companiesList">
+                        {% for c in companies %}
+                        <option value="{{ c.name }}">
+                        {% endfor %}
+                    </datalist>
+
+                    <textarea id="billToDetails" rows="2" placeholder="Client Address, Email, Details (optional)"
+                        class="print-hide w-full bg-slate-800/60 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-slate-300 placeholder-slate-500 outline-none focus:border-emerald-500 resize-none"></textarea>
+                    <div id="billToDetailsPrint" class="print-show hidden text-xs text-slate-700 mt-1"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 text-xs bill-print-right meta-print-grid">
+                    <div class="space-y-1">
+                        <label class="block font-bold text-slate-100 print-label uppercase">Date</label>
+                        <input type="date" id="invoiceDate" class="print-hide w-full bg-slate-800/60 border border-slate-700/80 rounded-xl px-3 py-2 text-slate-100 outline-none focus:border-emerald-500">
+                        <div id="invoiceDatePrint" class="print-show hidden font-semibold text-slate-900"></div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block font-bold text-slate-100 print-label uppercase">Payment Terms</label>
+                        <input type="text" id="paymentTerms" value="15 days" placeholder="e.g. 15 days" class="print-hide w-full bg-slate-800/60 border border-slate-700/80 rounded-xl px-3 py-2 text-slate-100 outline-none focus:border-emerald-500">
+                        <div id="paymentTermsPrint" class="print-show hidden font-semibold text-slate-900"></div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block font-bold text-slate-100 print-label uppercase">PO Number</label>
+                        <input type="text" id="poNumber" placeholder="PO-9912" oninput="updatePoInDesc()" class="print-hide w-full bg-slate-800/60 border border-slate-700/80 rounded-xl px-3 py-2 text-slate-100 outline-none focus:border-emerald-500">
+                        <div id="poNumberPrint" class="print-show hidden font-semibold text-slate-900"></div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block font-bold text-slate-100 print-label uppercase">Software Product</label>
+                        <select id="softwareSelect" class="print-hide w-full bg-slate-800/60 border border-slate-700/80 rounded-xl px-3 py-2 text-slate-100 outline-none focus:border-emerald-500 cursor-pointer">
+                            <option value="Product Alpha">Software "Product Alpha"</option>
+                            <option value="Product Beta" selected>Software "Product Beta"</option>
+                        </select>
+                        <div id="softwareSelectPrint" class="print-show hidden font-semibold text-slate-900"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <div class="my-8 overflow-x-auto">
+                <table class="w-full text-left text-xs sm:text-sm" id="itemsTable">
+                    <thead class="bg-slate-950 text-slate-100 uppercase text-[10px] sm:text-xs tracking-wider border-b border-slate-800">
+                        <tr>
+                            <th class="py-3 px-3 font-semibold col-desc">Item / Description</th>
+                            <th class="py-3 px-3 font-semibold col-qty text-center">Quantity</th>
+                            <th class="py-3 px-3 font-semibold col-rate text-right">Rate (€)</th>
+                            <th class="py-3 px-3 font-semibold col-amount text-right">Amount (€)</th>
+                            <th class="py-3 px-2 text-center w-10 no-print"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-slate-200" id="itemsTbody">
+                        <tr>
+                            <td class="py-2.5 px-3 col-desc">
+                                <textarea rows="1" oninput="autoExpandTextarea(this)" placeholder="Description of service or product..." 
+                                    class="item-desc print-hide w-full bg-transparent outline-none border-b border-transparent focus:border-emerald-500 py-1 text-slate-100 text-xs sm:text-sm resize-none overflow-hidden leading-relaxed">Software License Agreement</textarea>
+                                <div class="item-desc-print print-show hidden font-normal text-slate-900 leading-snug"></div>
+                            </td>
+                            <td class="py-2.5 px-3 col-qty text-center">
+                                <input type="number" min="1" value="1" oninput="calculateTotals()" 
+                                    class="item-qty print-hide w-full bg-slate-800/40 border border-slate-700/60 rounded-lg px-2 py-1 text-center outline-none focus:border-emerald-500">
+                                <span class="item-qty-print print-show hidden font-semibold text-slate-900">1</span>
+                            </td>
+                            <td class="py-2.5 px-3 col-rate text-right">
+                                <input type="number" step="0.01" value="0.00" oninput="calculateTotals()" 
+                                    class="item-rate print-hide w-full bg-slate-800/40 border border-slate-700/60 rounded-lg px-2 py-1 text-right outline-none focus:border-emerald-500 font-semibold">
+                                <span class="item-rate-print print-show hidden font-semibold text-slate-900">0.00 €</span>
+                            </td>
+                            <td class="py-2.5 px-3 col-amount text-right font-bold text-slate-100 print:text-slate-900 item-amount">0.00 €</td>
+                            <td class="py-2.5 px-2 text-center no-print">
+                                <button onclick="removeRow(this)" class="text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button onclick="addRow()" class="mt-4 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl font-semibold transition-colors inline-flex items-center gap-1.5 no-print cursor-pointer">
+                    <i class="bi bi-plus-lg text-emerald-400"></i>
+                    <span>Add Line Item</span>
+                </button>
+            </div>
+
+            <!-- Totals & Notes Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-slate-800 bill-print-row">
+                <div class="space-y-4 bill-print-left">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-100 print-label uppercase tracking-wider mb-1">Notes</label>
+                        <textarea id="notes" rows="2" placeholder="Notes - any relevant information not already covered"
+                            class="print-hide w-full bg-slate-800/60 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-slate-300 placeholder-slate-500 outline-none focus:border-emerald-500 resize-none"></textarea>
+                        <div id="notesPrint" class="print-show hidden text-xs text-slate-800"></div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-100 print-label uppercase tracking-wider mb-1">Terms</label>
+                        <textarea id="terms" rows="2" placeholder="Terms - late fees, payment methods, delivery schedules"
+                            class="print-hide w-full bg-slate-800/60 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-slate-300 placeholder-slate-500 outline-none focus:border-emerald-500 resize-none"></textarea>
+                        <div id="termsPrint" class="print-show hidden text-xs text-slate-800"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 text-xs sm:text-sm bill-print-right">
+                    <div class="flex justify-between items-center text-slate-100 print:text-slate-700">
+                        <span class="font-semibold">Subtotal</span>
+                        <span class="font-bold text-slate-200 print:text-slate-900" id="subtotalDisplay">0.00 €</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-100 print:text-slate-700 gap-4">
+                        <span class="font-semibold">Tax (%)</span>
+                        <input type="number" id="taxPercent" value="0" min="0" max="100" oninput="calculateTotals()" 
+                            class="print-hide w-20 bg-slate-800/60 border border-slate-700/80 rounded-lg px-2 py-1 text-right text-slate-100 outline-none focus:border-emerald-500">
+                        <span id="taxPrint" class="print-show hidden font-bold text-slate-900">0%</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-100 print:text-slate-700 gap-4">
+                        <span class="font-semibold">Discount (€)</span>
+                        <input type="number" id="discountAmount" value="0" min="0" oninput="calculateTotals()" 
+                            class="print-hide w-24 bg-slate-800/60 border border-slate-700/80 rounded-lg px-2 py-1 text-right text-slate-100 outline-none focus:border-emerald-500">
+                        <span id="discountPrint" class="print-show hidden font-bold text-slate-900">0.00 €</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-3 border-t border-slate-800 print:border-slate-900 text-base sm:text-lg font-bold">
+                        <span class="text-slate-100 print:text-slate-900">Total</span>
+                        <span class="text-emerald-400 print:text-slate-900" id="totalDisplay">0.00 €</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Original Stamp & Signature Overlay Image -->
+            <div class="mt-8 pt-4 flex justify-end items-end stamp-print-row">
+                <img src="data:image/png;base64,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" alt="DEMO Stamp & Signature" class="stamp-img w-64 sm:w-72 object-contain filter drop-shadow-sm">
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDEBAR: Archive -->
+        <div class="lg:col-span-3 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl no-print space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2 text-slate-100 font-bold text-sm">
+                    <i class="bi bi-archive text-emerald-400"></i>
+                    <span>Архив инвойсов</span>
+                </div>
+                <button onclick="resetFormToBlank()" class="text-[11px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 px-2 py-1 rounded-lg font-semibold transition-all cursor-pointer" title="Создать пустой">
+                    + Новый
+                </button>
+            </div>
+
+            <div class="relative">
+                <i class="bi bi-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-200 text-xs"></i>
+                <input type="text" id="archiveSearch" placeholder="Поиск в архиве..." 
+                    class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-emerald-500 transition-colors">
+            </div>
+
+            <div class="space-y-2 max-h-[650px] overflow-y-auto pr-1" id="archiveList">
+                {% for inv in archived_invoices %}
+                <div class="archive-item bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-emerald-500/50 rounded-xl p-3 cursor-pointer transition-all space-y-1"
+                     data-inv-id="{{ inv.id }}"
+                     data-inv-number="{{ inv.invoice_number }}"
+                     data-inv-company="{{ inv.company_name }}"
+                     data-inv-date="{{ inv.invoice_date }}"
+                     data-inv-sw="{{ inv.software }}"
+                     data-inv-amount="{{ inv.amount_eur }}"
+                     data-inv-details="{{ inv.contract_details | e }}"
+                     onclick="loadInvoiceFromArchive({{ inv.id }})">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-emerald-400">№ {{ inv.invoice_number }}</span>
+                        <span class="text-[10px] text-slate-100">{{ inv.invoice_date }}</span>
+                    </div>
+                    <div class="text-xs font-semibold text-slate-200 truncate">{{ inv.company_name }}</div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-100 pt-0.5">
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold border {{ 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' if inv.software == 'Product Alpha' else 'bg-teal-500/10 text-teal-400 border-teal-500/20' }}">
+                            {{ inv.software }}
+                        </span>
+                        <span class="font-bold text-slate-100">{{ "%.2f"|format(inv.amount_eur) }} €</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-6 text-xs text-slate-200">Архив пуст</div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL CHOICE DIALOG -->
+    <div id="saveChoiceModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5">
+            <div class="flex items-center space-x-3 text-emerald-400">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-lg shrink-0">
+                    <i class="bi bi-floppy"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-100">Сохранение инвойса</h3>
+                    <p class="text-xs text-slate-100">Вы редактируете ранее сохраненный инвойс</p>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Выберите нужное действие: обновить имеющийся инвойс в архиве или сохранить текущую версию как новый инвойс.
+            </p>
+
+            <div class="space-y-2.5 pt-2">
+                <button onclick="executeSave('update')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-900/30">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Сохранить (обновить этот инвойс)</span>
+                </button>
+                <button onclick="executeSave('new')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-2.5 px-4 rounded-xl text-xs sm:text-sm border border-slate-700 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Сохранить как новый</span>
+                </button>
+            </div>
+
+            <div class="pt-2 text-center">
+                <button onclick="closeChoiceModal()" class="text-xs text-slate-100 hover:text-slate-200 transition-colors">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        let currentEditingInvoiceId = null;
+        document.getElementById('invoiceDate').valueAsDate = new Date();
+
+        function toggleBankDropdown() {
+            const menu = document.getElementById('bankDropdownMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function updateBankDisplay() {
+            const container = document.getElementById('renderedBankDetails');
+            const chk1 = document.getElementById('chkBank1').checked;
+            const chk2 = document.getElementById('chkBank2').checked;
+            const chk3 = document.getElementById('chkBank3').checked;
+            const chk4 = document.getElementById('chkBank4').checked;
+
+            let html = '';
+
+            if (chk1) {
+                html += `
+                    <div>
+                        <strong>Beneficiary Bank:</strong> Eurobank Limited<br>
+                        <strong>IBAN No:</strong> CY00000000000000000000000000 | <strong>SWIFT:</strong> BANKCY2N
+                    </div>
+                `;
+            }
+            if (chk2) {
+                html += `
+                    <div class="${chk1 ? 'pt-1.5 border-t border-slate-700/50 print:border-slate-300' : ''}">
+                        <strong>Beneficiary Bank:</strong> Bank Of Cyprus<br>
+                        <strong>IBAN No:</strong> CY00000000000000000000000000 | <strong>SWIFT BIC:</strong> BANKCY2N
+                    </div>
+                `;
+            }
+            if (chk3) {
+                html += `
+                    <div class="${(chk1 || chk2) ? 'pt-1.5 border-t border-slate-700/50 print:border-slate-300' : ''}">
+                        <strong>Beneficiary Bank:</strong> Eurobank<br>
+                        <strong>IBAN No:</strong> CY00000000000000000000000000 | <strong>SWIFT Code:</strong> BANKCY2N
+                    </div>
+                `;
+            }
+            if (chk4) {
+                html += `
+                    <div class="${(chk1 || chk2 || chk3) ? 'pt-1.5 border-t border-slate-700/50 print:border-slate-300' : ''}">
+                        <strong>Beneficiary Bank:</strong> Revolut Bank<br>
+                        <strong>IBAN No:</strong> LT00 0000 0000 0000 0000 | <strong>BIC:</strong> BANKCY2N
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html || '<div class="text-slate-200 italic">No bank selected</div>';
+        }
+
+        function updatePoInDesc() {
+            const poVal = document.getElementById('poNumber').value.trim();
+            const firstDesc = document.querySelector('#itemsTbody tr:first-child .item-desc');
+            if (firstDesc) {
+                firstDesc.value = poVal ? `Software License Agreement № ${poVal}` : 'Software License Agreement';
+                autoExpandTextarea(firstDesc);
+                syncPrintValues();
+            }
+        }
+
+        function autoExpandTextarea(el) {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        }
+
+        function syncPrintValues() {
+            updateDocumentTitle();
+
+            const syncField = (inputId, printId, defaultVal = '') => {
+                const input = document.getElementById(inputId);
+                const printElem = document.getElementById(printId);
+                if (input && printElem) {
+                    printElem.textContent = input.value.trim() || defaultVal;
+                }
+            };
+
+            syncField('invoiceNumber', 'invoiceNumberPrint', '1001');
+            syncField('billToCompany', 'billToCompanyPrint');
+            syncField('billToDetails', 'billToDetailsPrint');
+            syncField('invoiceDate', 'invoiceDatePrint');
+            syncField('paymentTerms', 'paymentTermsPrint', '15 days');
+            syncField('poNumber', 'poNumberPrint');
+
+            const swSelect = document.getElementById('softwareSelect');
+            const swPrint = document.getElementById('softwareSelectPrint');
+            if (swSelect && swPrint) {
+                swPrint.textContent = swSelect.options[swSelect.selectedIndex]?.text || swSelect.value;
+            }
+
+            syncField('notes', 'notesPrint');
+            syncField('terms', 'termsPrint');
+
+            const taxVal = parseFloat(document.getElementById('taxPercent').value) || 0;
+            const taxPrint = document.getElementById('taxPrint');
+            if (taxPrint) taxPrint.textContent = taxVal > 0 ? `${taxVal}%` : '0%';
+
+            const discountVal = parseFloat(document.getElementById('discountAmount').value) || 0;
+            const discountPrint = document.getElementById('discountPrint');
+            if (discountPrint) discountPrint.textContent = discountVal > 0 ? `${discountVal.toFixed(2)} €` : '0.00 €';
+
+            const rows = document.querySelectorAll('#itemsTbody tr');
+            rows.forEach(row => {
+                const descInput = row.querySelector('.item-desc');
+                const descPrint = row.querySelector('.item-desc-print');
+                if (descInput && descPrint) descPrint.textContent = descInput.value.trim();
+
+                const qtyInput = row.querySelector('.item-qty');
+                const qtyPrint = row.querySelector('.item-qty-print');
+                if (qtyInput && qtyPrint) qtyPrint.textContent = qtyInput.value;
+
+                const rateInput = row.querySelector('.item-rate');
+                const ratePrint = row.querySelector('.item-rate-print');
+                if (rateInput && ratePrint) ratePrint.textContent = (parseFloat(rateInput.value) || 0).toFixed(2) + ' €';
+            });
+        }
+
+        function updateDocumentTitle() {
+            const invNum = document.getElementById('invoiceNumber').value.trim() || '1000';
+            const company = document.getElementById('billToCompany').value.trim() || 'Draft';
+            const cleanCompany = company.replace(/[^a-zA-Z0-9_\-\s]/g, '').trim().replace(/\s+/g, '_');
+            document.title = `Invoice_${invNum}_${cleanCompany}`;
+        }
+
+        function prepareAndPrintPDF() {
+            syncPrintValues();
+            window.print();
+        }
+
+        window.addEventListener('beforeprint', syncPrintValues);
+
+        function addRow() {
+            const tbody = document.getElementById('itemsTbody');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="py-2.5 px-3 col-desc">
+                    <textarea rows="1" oninput="autoExpandTextarea(this)" placeholder="Description of service or product..." 
+                        class="item-desc print-hide w-full bg-transparent outline-none border-b border-transparent focus:border-emerald-500 py-1 text-slate-100 text-xs sm:text-sm resize-none overflow-hidden leading-relaxed"></textarea>
+                    <div class="item-desc-print print-show hidden font-normal text-slate-900 leading-snug"></div>
+                </td>
+                <td class="py-2.5 px-3 col-qty text-center">
+                    <input type="number" min="1" value="1" oninput="calculateTotals()" 
+                        class="item-qty print-hide w-full bg-slate-800/40 border border-slate-700/60 rounded-lg px-2 py-1 text-center outline-none focus:border-emerald-500">
+                    <span class="item-qty-print print-show hidden font-semibold text-slate-900">1</span>
+                </td>
+                <td class="py-2.5 px-3 col-rate text-right">
+                    <input type="number" step="0.01" value="0.00" oninput="calculateTotals()" 
+                        class="item-rate print-hide w-full bg-slate-800/40 border border-slate-700/60 rounded-lg px-2 py-1 text-right outline-none focus:border-emerald-500 font-semibold">
+                    <span class="item-rate-print print-show hidden font-semibold text-slate-900">0.00 €</span>
+                </td>
+                <td class="py-2.5 px-3 col-amount text-right font-bold text-slate-100 print:text-slate-900 item-amount">0.00 €</td>
+                <td class="py-2.5 px-2 text-center no-print">
+                    <button onclick="removeRow(this)" class="text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"><i class="bi bi-trash"></i></button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            calculateTotals();
+        }
+
+        function removeRow(btn) {
+            const row = btn.closest('tr');
+            const tbody = document.getElementById('itemsTbody');
+            if (tbody.querySelectorAll('tr').length > 1) {
+                row.remove();
+                calculateTotals();
+            }
+        }
+
+        function calculateTotals() {
+            let subtotal = 0;
+            const rows = document.querySelectorAll('#itemsTbody tr');
+
+            rows.forEach(row => {
+                const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+                const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
+                const amount = qty * rate;
+                row.querySelector('.item-amount').textContent = amount.toFixed(2) + ' €';
+                subtotal += amount;
+            });
+
+            const taxPercent = parseFloat(document.getElementById('taxPercent').value) || 0;
+            const discountAmount = parseFloat(document.getElementById('discountAmount').value) || 0;
+
+            const taxVal = subtotal * (taxPercent / 100);
+            const total = Math.max(0, subtotal + taxVal - discountAmount);
+
+            document.getElementById('subtotalDisplay').textContent = subtotal.toFixed(2) + ' €';
+            document.getElementById('totalDisplay').textContent = total.toFixed(2) + ' €';
+            return total;
+        }
+
+        function loadInvoiceFromArchive(invId) {
+            const item = document.querySelector(`.archive-item[data-inv-id="${invId}"]`);
+            if (!item) return;
+
+            currentEditingInvoiceId = invId;
+
+            const invNum = item.getAttribute('data-inv-number');
+            const company = item.getAttribute('data-inv-company');
+            const date = item.getAttribute('data-inv-date');
+            const sw = item.getAttribute('data-inv-sw');
+            const amount = parseFloat(item.getAttribute('data-inv-amount')) || 0;
+            const detailsRaw = item.getAttribute('data-inv-details') || '';
+
+            document.getElementById('invoiceNumber').value = invNum !== '—' ? invNum : '';
+            document.getElementById('billToCompany').value = company;
+            if (date) document.getElementById('invoiceDate').value = date;
+            document.getElementById('softwareSelect').value = sw;
+
+            let poNumber = '';
+            let billToDetails = '';
+            let paymentTerms = '15 days';
+            let notes = '';
+            let terms = '';
+            let items = [];
+
+            try {
+                const parsed = JSON.parse(detailsRaw);
+                if (typeof parsed === 'object' && parsed !== null) {
+                    poNumber = parsed.po_number || '';
+                    billToDetails = parsed.bill_to_details || '';
+                    paymentTerms = parsed.payment_terms || '15 days';
+                    notes = parsed.notes || '';
+                    terms = parsed.terms || '';
+                    items = Array.isArray(parsed.items) ? parsed.items : [];
+                } else {
+                    items = detailsRaw ? detailsRaw.split('; ') : ['Software License Agreement'];
+                }
+            } catch (e) {
+                items = detailsRaw ? detailsRaw.split('; ') : ['Software License Agreement'];
+            }
+
+            document.getElementById('poNumber').value = poNumber;
+            document.getElementById('billToDetails').value = billToDetails;
+            document.getElementById('paymentTerms').value = paymentTerms;
+            document.getElementById('notes').value = notes;
+            document.getElementById('terms').value = terms;
+
+            const tbody = document.getElementById('itemsTbody');
+            tbody.innerHTML = '';
+
+            if (items.length === 0) {
+                items = ['Software License Agreement'];
+            }
+
+            const ratePerItem = (amount / items.length);
+
+            items.forEach(desc => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 col-desc">
+                        <textarea rows="1" oninput="autoExpandTextarea(this)" placeholder="Description of service or product..." 
+                            class="item-desc print-hide w-full bg-transparent outline-none border-b border-transparent focus:border-emerald-500 py-1 text-slate-100 text-xs sm:text-sm resize-none overflow-hidden leading-relaxed">${desc}</textarea>
+                        <div class="item-desc-print print-show hidden font-normal text-slate-900 leading-snug"></div>
+                    </td>
+                    <td class="py-2.5 px-3 col-qty text-center">
+                        <input type="number" min="1" value="1" oninput="calculateTotals()" 
+                            class="item-qty print-hide w-full bg-slate-800/40 border border-slate-700/60 rounded-lg px-2 py-1 text-center outline-none focus:border-emerald-500">
+                        <span class="item-qty-print print-show hidden font-semibold text-slate-900">1</span>
+                    </td>
+                    <td class="py-2.5 px-3 col-rate text-right">
+                        <input type="number" step="0.01" value="${ratePerItem.toFixed(2)}" oninput="calculateTotals()" 
+                            class="item-rate print-hide w-full bg-slate-800/40 border border-slate-700/60 rounded-lg px-2 py-1 text-right outline-none focus:border-emerald-500 font-semibold">
+                        <span class="item-rate-print print-show hidden font-semibold text-slate-900">${ratePerItem.toFixed(2)} €</span>
+                    </td>
+                    <td class="py-2.5 px-3 col-amount text-right font-bold text-slate-100 print:text-slate-900 item-amount">${ratePerItem.toFixed(2)} €</td>
+                    <td class="py-2.5 px-2 text-center no-print">
+                        <button onclick="removeRow(this)" class="text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"><i class="bi bi-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                const createdTa = tr.querySelector('.item-desc');
+                if (createdTa) autoExpandTextarea(createdTa);
+            });
+
+            calculateTotals();
+            syncPrintValues();
+
+            document.getElementById('editingInvLabel').textContent = `№ ${invNum} (${company})`;
+            document.getElementById('editingBanner').classList.remove('hidden');
+        }
+
+        function resetFormToBlank() {
+            currentEditingInvoiceId = null;
+            document.getElementById('editingBanner').classList.add('hidden');
+            document.getElementById('invoiceNumber').value = '1001';
+            document.getElementById('billToCompany').value = '';
+            document.getElementById('billToDetails').value = '';
+            document.getElementById('invoiceDate').valueAsDate = new Date();
+            document.getElementById('paymentTerms').value = '15 days';
+            document.getElementById('poNumber').value = '';
+            document.getElementById('notes').value = '';
+            document.getElementById('terms').value = '';
+
+            const tbody = document.getElementById('itemsTbody');
+            tbody.innerHTML = `
+                <tr>
+                    <td class="py-2.5 px-3 col-desc">
+                        <textarea rows="1" oninput="autoExpandTextarea(this)" placeholder="Description of service or product..." 
+                            class="item-desc print-hide w-full bg-transparent outline-none border-b border-transparent focus:border-emerald-500 py-1 text-slate-100 text-xs sm:text-sm resize-none overflow-hidden leading-relaxed">Software License Agreement</textarea>
+                        <div class="item-desc-print print-show hidden font-normal text-slate-900 leading-snug"></div>
+                    </td>
+                    <td class="py-2.5 px-3 col-qty text-center">
+                        <input type="number" min="1" value="1" oninput="calculateTotals()" 
+                            class="item-qty print-hide w-full bg-slate-800/40 border border-slate-700/60 rounded-lg px-2 py-1 text-center outline-none focus:border-emerald-500">
+                        <span class="item-qty-print print-show hidden font-semibold text-slate-900">1</span>
+                    </td>
+                    <td class="py-2.5 px-3 col-rate text-right">
+                        <input type="number" step="0.01" value="0.00" oninput="calculateTotals()" 
+                            class="item-rate print-hide w-full bg-slate-800/40 border border-slate-700/60 rounded-lg px-2 py-1 text-right outline-none focus:border-emerald-500 font-semibold">
+                        <span class="item-rate-print print-show hidden font-semibold text-slate-900">0.00 €</span>
+                    </td>
+                    <td class="py-2.5 px-3 col-amount text-right font-bold text-slate-100 print:text-slate-900 item-amount">0.00 €</td>
+                    <td class="py-2.5 px-2 text-center no-print">
+                        <button onclick="removeRow(this)" class="text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+            const initTa = tbody.querySelector('.item-desc');
+            if (initTa) autoExpandTextarea(initTa);
+
+            calculateTotals();
+            syncPrintValues();
+        }
+
+        function handleSaveClick() {
+            const companyName = document.getElementById('billToCompany').value.trim();
+            const total = calculateTotals();
+
+            if (!companyName) {
+                alert('Please enter a Client / Company Name in "Bill To"');
+                return;
+            }
+
+            if (total <= 0) {
+                alert('Total amount must be greater than 0');
+                return;
+            }
+
+            if (currentEditingInvoiceId) {
+                document.getElementById('saveChoiceModal').classList.remove('hidden');
+            } else {
+                executeSave('new');
+            }
+        }
+
+        function closeChoiceModal() {
+            document.getElementById('saveChoiceModal').classList.add('hidden');
+        }
+
+        function updateArchiveSidebar(id, num, company, date, sw, amount, details) {
+            let archiveList = document.getElementById('archiveList');
+            let existingItem = archiveList.querySelector(`.archive-item[data-inv-id="${id}"]`);
+            
+            const swClass = sw === 'Product Alpha' 
+                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                : 'bg-teal-500/10 text-teal-400 border-teal-500/20';
+
+            const itemHtml = `
+                <div class="flex items-center justify-between text-xs">
+                    <span class="font-bold text-emerald-400">№ ${num || '—'}</span>
+                    <span class="text-[10px] text-slate-100">${date}</span>
+                </div>
+                <div class="text-xs font-semibold text-slate-200 truncate">${company}</div>
+                <div class="flex items-center justify-between text-[11px] text-slate-100 pt-0.5">
+                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold border ${swClass}">
+                        ${sw}
+                    </span>
+                    <span class="font-bold text-slate-100">${parseFloat(amount).toFixed(2)} €</span>
+                </div>
+            `;
+
+            if (existingItem) {
+                existingItem.setAttribute('data-inv-number', num);
+                existingItem.setAttribute('data-inv-company', company);
+                existingItem.setAttribute('data-inv-date', date);
+                existingItem.setAttribute('data-inv-sw', sw);
+                existingItem.setAttribute('data-inv-amount', amount);
+                existingItem.setAttribute('data-inv-details', details);
+                existingItem.innerHTML = itemHtml;
+            } else {
+                const emptyMsg = archiveList.querySelector('.text-center');
+                if (emptyMsg) emptyMsg.remove();
+
+                const newItem = document.createElement('div');
+                newItem.className = 'archive-item bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-emerald-500/50 rounded-xl p-3 cursor-pointer transition-all space-y-1';
+                newItem.setAttribute('data-inv-id', id);
+                newItem.setAttribute('data-inv-number', num);
+                newItem.setAttribute('data-inv-company', company);
+                newItem.setAttribute('data-inv-date', date);
+                newItem.setAttribute('data-inv-sw', sw);
+                newItem.setAttribute('data-inv-amount', amount);
+                newItem.setAttribute('data-inv-details', details);
+                newItem.setAttribute('onclick', `loadInvoiceFromArchive(${id})`);
+                newItem.innerHTML = itemHtml;
+
+                archiveList.insertBefore(newItem, archiveList.firstChild);
+            }
+        }
+
+        async function executeSave(mode) {
+            closeChoiceModal();
+
+            const companyName = document.getElementById('billToCompany').value.trim();
+            const invNum = document.getElementById('invoiceNumber').value.trim();
+            const invDate = document.getElementById('invoiceDate').value;
+            const software = document.getElementById('softwareSelect').value;
+            const total = calculateTotals();
+
+            let descList = [];
+            document.querySelectorAll('.item-desc').forEach(el => {
+                if (el.value.trim()) descList.push(el.value.trim());
+            });
+
+            const contractObj = {
+                po_number: document.getElementById('poNumber').value.trim(),
+                bill_to_details: document.getElementById('billToDetails').value.trim(),
+                payment_terms: document.getElementById('paymentTerms').value.trim(),
+                notes: document.getElementById('notes').value.trim(),
+                terms: document.getElementById('terms').value.trim(),
+                items: descList
+            };
+
+            const payload = {
+                company_name: companyName,
+                invoice_number: invNum,
+                invoice_date: invDate,
+                software: software,
+                amount_eur: total,
+                contract_details: JSON.stringify(contractObj)
+            };
+
+            const endpoint = (mode === 'update' && currentEditingInvoiceId) 
+                ? `/update_generated_invoice/${currentEditingInvoiceId}` 
+                : '/save_generated_invoice';
+
+            try {
+                const resp = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const res = await resp.json();
+                if (res.status === 'ok') {
+                    currentEditingInvoiceId = res.invoice_id;
+                    document.getElementById('editingInvLabel').textContent = `№ ${invNum} (${companyName})`;
+                    document.getElementById('editingBanner').classList.remove('hidden');
+
+                    updateArchiveSidebar(res.invoice_id, invNum, companyName, invDate, software, total, payload.contract_details);
+
+                    alert(mode === 'update' ? 'Инвойс успешно обновлен!' : 'Новый инвойс успешно сохранен в реестр!');
+                } else {
+                    alert('Ошибка сохранения инвойса: ' + (res.message || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Не удалось подключиться к серверу');
+            }
+        }
+
+        document.getElementById('archiveSearch').addEventListener('keyup', function() {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('#archiveList .archive-item').forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(query) ? '' : 'none';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDocumentTitle();
+            updateBankDisplay();
+            document.querySelectorAll('.item-desc').forEach(el => autoExpandTextarea(el));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Учет Контрактов и Инвойсов</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}?v=2">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2canvas for PNG export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        input[type="date"], input[type="text"], input[type="number"], select {
+            color-scheme: dark;
+            -webkit-appearance: none;
+        }
+        .form-field {
+            height: 42px !important;
+        }
+        .table-date-field {
+            height: 32px !important;
+        }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-100 font-sans min-h-screen overflow-x-hidden antialiased">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-0 sm:h-16 flex items-center justify-between gap-3">
+            
+            <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" 
+               class="flex items-center space-x-3 min-w-0 group cursor-pointer select-none">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover:bg-emerald-500/20 group-hover:border-emerald-400 transition-all">
+                    <i class="bi bi-wallet2 text-lg sm:text-xl"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h1 class="text-sm sm:text-lg font-bold text-slate-100 group-hover:text-emerald-400 transition-colors leading-tight truncate">Учет Контрактов и Инвойсов</h1>
+                    <p class="text-[11px] sm:text-xs text-slate-400 truncate">Мониторинг договоров и бюджетов компаний</p>
+                </div>
+            </a>
+
+            <div class="flex flex-col items-end shrink-0">
+                <span class="inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 me-1 sm:me-1.5 animate-pulse"></span>
+                    Активен
+                </span>
+                <span class="text-[9px] sm:text-[10px] font-mono text-slate-500 tracking-wider mt-0.5">v2.0.0</span>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
+
+        <!-- БЛОК 1: Ручной ввод нового инвойса + Кнопка генератора -->
+        <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 sm:p-6 shadow-xl backdrop-blur-sm space-y-4">
+            <div class="flex items-center space-x-3 pb-3 border-b border-slate-700/50">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <h3 class="text-sm sm:text-base font-bold text-slate-100">Добавить новый инвойс вручную</h3>
+            </div>
+
+            <form action="/add_invoice" method="POST">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 items-end">
+                    <div class="sm:col-span-2 lg:col-span-3 space-y-1.5">
+                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Компания</label>
+                        <input list="companiesList" name="company_name" placeholder="Начните вводить..." required autocomplete="off"
+                            class="form-field w-full min-w-0 max-w-full bg-slate-900 border border-slate-700 rounded-xl px-3 sm:px-4 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors text-sm">
+                        <datalist id="companiesList">
+                            {% for c in companies %}
+                            <option value="{{ c.name }}">
+                            {% endfor %}
+                        </datalist>
+                    </div>
+
+                    <div class="sm:col-span-1 lg:col-span-1 space-y-1.5">
+                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">№ Інвойса</label>
+                        <input type="text" name="invoice_number" placeholder="№ 123"
+                            class="form-field w-full min-w-0 max-w-full bg-slate-900 border border-slate-700 rounded-xl px-3 sm:px-4 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors text-sm">
+                    </div>
+
+                    <div class="sm:col-span-1 lg:col-span-2 space-y-1.5">
+                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Дата Інвойса</label>
+                        <input type="date" name="invoice_date"
+                            class="form-field w-full min-w-0 max-w-full bg-slate-900 border border-slate-700 rounded-xl px-3 sm:px-4 py-2 text-slate-100 focus:outline-none focus:border-emerald-500 transition-colors text-sm">
+                    </div>
+
+                    <div class="sm:col-span-1 lg:col-span-2 space-y-1.5">
+                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">ПО</label>
+                        <select name="software" required
+                            class="form-field w-full min-w-0 max-w-full bg-slate-900 border border-slate-700 rounded-xl px-3 sm:px-4 py-2 text-slate-100 focus:outline-none focus:border-emerald-500 transition-colors text-sm cursor-pointer">
+                            <option value="ALPHA">ПО "ALPHA"</option>
+                            <option value="BETA">ПО "BETA"</option>
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-1 lg:col-span-2 space-y-1.5">
+                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">Сумма (€)</label>
+                        <input type="number" step="0.01" name="amount_eur" placeholder="0.00" required
+                            class="form-field w-full min-w-0 max-w-full bg-slate-900 border border-slate-700 rounded-xl px-3 sm:px-4 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors text-sm">
+                    </div>
+
+                    <div class="sm:col-span-2 lg:col-span-2">
+                        <button type="submit" 
+                            class="h-[42px] w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="bi bi-plus-lg text-base"></i>
+                            <span>Добавить инвойс</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="pt-2 border-t border-slate-700/40 flex justify-end">
+                <a href="/generator" 
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-emerald-500 rounded-xl text-xs sm:text-sm font-semibold transition-all">
+                    <i class="bi bi-file-earmark-pdf text-emerald-400 text-base"></i>
+                    <span>Сгенерировать инвойс</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Сводка остатков по продуктам -->
+        <div class="space-y-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                    <i class="bi bi-pie-chart text-base"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm sm:text-base font-bold text-slate-100 leading-snug">Сводка остатков по продуктам</h3>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Нажмите на карточку для сохранения отчета в PNG</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <!-- Кликабельная Карточка ALPHA -->
+                <div onclick="openProductSummaryModal('ALPHA')" 
+                     class="bg-slate-800/80 border border-slate-700/60 hover:border-emerald-500/60 rounded-2xl p-4 sm:p-5 shadow-xl backdrop-blur-sm space-y-3 cursor-pointer transition-all group/alpha">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-700/50">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover/alpha:bg-emerald-500/20 transition-all">
+                                ALPHA
+                            </span>
+                            <span class="text-xs font-bold text-slate-300 group-hover/alpha:text-emerald-400 transition-colors">ПО "ALPHA"</span>
+                            <i class="bi bi-download text-xs text-slate-500 group-hover/alpha:text-emerald-400 transition-colors ml-1"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[10px] text-slate-400 uppercase font-semibold">Общий остаток</div>
+                            <div class="text-sm sm:text-base font-extrabold text-emerald-400" id="summaryAlphaTotal">0.00 €</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 max-h-[180px] overflow-y-auto pr-1" id="summaryAlphaList">
+                        <!-- Заполняется динамически -->
+                    </div>
+                </div>
+
+                <!-- Кликабельная Карточка BETA -->
+                <div onclick="openProductSummaryModal('BETA')" 
+                     class="bg-slate-800/80 border border-slate-700/60 hover:border-teal-500/60 rounded-2xl p-4 sm:p-5 shadow-xl backdrop-blur-sm space-y-3 cursor-pointer transition-all group/merc">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-700/50">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-teal-500/10 text-teal-400 border border-teal-500/20 group-hover/merc:bg-teal-500/20 transition-all">
+                                BETA
+                            </span>
+                            <span class="text-xs font-bold text-slate-300 group-hover/merc:text-teal-400 transition-colors">ПО "BETA"</span>
+                            <i class="bi bi-download text-xs text-slate-500 group-hover/merc:text-teal-400 transition-colors ml-1"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[10px] text-slate-400 uppercase font-semibold">Общий остаток</div>
+                            <div class="text-sm sm:text-base font-extrabold text-teal-400" id="summaryBetaTotal">0.00 €</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 max-h-[180px] overflow-y-auto pr-1" id="summaryBetaList">
+                        <!-- Заполняется динамически -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- БЛОК 2: Сводные итоги по компаниям -->
+        <div class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                <div class="flex items-start sm:items-center space-x-3 min-w-0">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+                        <i class="bi bi-buildings text-base"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h3 class="text-sm sm:text-base font-bold text-slate-100 leading-snug">Сводные итоги по компаниям</h3>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                                Всего: {{ company_cards|length }}
+                            </span>
+                        </div>
+                        <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Нажмите на компанию для просмотра списка инвойсов</p>
+                    </div>
+                </div>
+                <div class="relative w-full sm:w-72">
+                    <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="companyCardSearch" placeholder="Поиск по компании..."
+                        class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
+            </div>
+
+            <!-- Сетка карточек компаний -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6" id="companyCardsGrid">
+                {% for c in company_cards %}
+                <div class="company-card bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden backdrop-blur-sm"
+                     data-company-name="{{ c.name|lower }}"
+                     data-company-title="{{ c.name }}"
+                     data-company-id="{{ c.id }}"
+                     data-has-alpha="{{ '1' if c.has_alpha else '0' }}"
+                     data-has-beta="{{ '1' if c.has_beta else '0' }}"
+                     data-alpha-budget="{{ c.alpha_budget }}"
+                     data-alpha-spent="{{ c.alpha_spent }}"
+                     data-alpha-date="{{ c.alpha_date }}"
+                     data-beta-budget="{{ c.beta_budget }}"
+                     data-beta-spent="{{ c.beta_spent }}"
+                     data-beta-date="{{ c.beta_date }}"
+                     id="card-{{ c.id }}">
+
+                    <div class="flex items-center justify-between pb-3.5 border-b border-slate-700/50 gap-2">
+                        <div onclick="openCompanyInvoicesModal({{ c.id }})" 
+                             class="flex items-center space-x-2.5 min-w-0 cursor-pointer group/title flex-1">
+                            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover/title:bg-emerald-500/20 group-hover/title:border-emerald-400 transition-all">
+                                <i class="bi bi-building text-base sm:text-lg"></i>
+                            </div>
+                            <h2 class="text-sm sm:text-base font-bold text-slate-100 group-hover/title:text-emerald-400 transition-colors truncate" title="{{ c.name }}">{{ c.name }}</h2>
+                        </div>
+
+                        <select onchange="switchSoftware({{ c.id }}, this.value)" 
+                            class="sw-select bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500 shrink-0 cursor-pointer">
+                            {% if c.has_alpha %}<option value="ALPHA" {{ 'selected' if c.default_sw == 'ALPHA' }}>ALPHA</option>{% endif %}
+                            {% if c.has_beta %}<option value="BETA" {{ 'selected' if c.default_sw == 'BETA' }}>BETA</option>{% endif %}
+                        </select>
+                    </div>
+
+                    <div class="mt-4 space-y-3.5">
+                        <form action="/update_company_budget" onsubmit="saveCompanyBudget(event, this)" method="POST" class="budget-form space-y-1">
+                            <input type="hidden" name="company_id" value="{{ c.id }}">
+                            <input type="hidden" name="software" class="sw-hidden-input" value="{{ c.default_sw }}">
+                            <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Сумма договора (€)</label>
+                            <div class="flex gap-2">
+                                <input type="number" step="0.01" name="total_amount" class="budget-input w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 transition-colors text-sm" value="0.0">
+                                <button type="submit" 
+                                    class="save-btn bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl font-medium text-xs sm:text-sm transition-all flex items-center gap-1.5 shrink-0 shadow-lg shadow-emerald-900/30 cursor-pointer">
+                                    <i class="bi bi-check2"></i>
+                                    <span>Сохранить</span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="pt-1 space-y-2.5">
+                            <button type="button" onclick="openCompanyInvoicesModal({{ c.id }})" 
+                                class="w-full flex justify-between items-center text-xs sm:text-sm text-slate-400 hover:text-emerald-300 p-1 rounded-lg hover:bg-slate-700/40 transition-all text-left group cursor-pointer">
+                                <span class="flex items-center gap-1.5">
+                                    <span>Внесено по инвойсам:</span>
+                                    <i class="bi bi-list-ul text-xs text-slate-500 group-hover:text-emerald-400 transition-colors"></i>
+                                </span>
+                                <span class="font-semibold text-slate-200 group-hover:text-emerald-300 spent-display">0.00 €</span>
+                            </button>
+
+                            <div class="flex justify-between items-baseline px-1">
+                                <span class="text-xs sm:text-sm text-slate-400">Остаток по договору:</span>
+                                <span class="text-lg sm:text-xl font-bold remainder-display">0.00 €</span>
+                            </div>
+
+                            <div class="flex justify-between items-center pt-1 px-1 border-t border-slate-700/40">
+                                <span class="text-xs sm:text-sm text-slate-400">Срок действия договора:</span>
+                                <input type="date" 
+                                       onchange="saveCompanyCompletionDate({{ c.id }}, this.value, this)"
+                                       class="card-date-input table-date-field bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-2.5 py-1 outline-none focus:border-emerald-500 hover:border-slate-600 transition-all w-[135px] cursor-pointer">
+                            </div>
+
+                            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden mt-1.5 border border-slate-700/50">
+                                <div class="progress-bar-fill h-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- БЛОК 3: Полный реестр всех инвойсов -->
+        <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm">
+            <div class="p-4 sm:p-6 pb-3 sm:pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-slate-700/50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                        <i class="bi bi-journal-text text-base"></i>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-sm sm:text-base font-bold text-slate-100">Детальный реестр инвойсов</h3>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0" id="mainInvoiceCount">
+                            Всего: {{ invoices|length }}
+                        </span>
+                    </div>
+                </div>
+                <div class="relative w-full sm:w-72">
+                    <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="tableSearch" placeholder="Быстрый поиск..."
+                        class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
+                <table class="w-full text-left text-xs sm:text-sm" id="invoicesTable">
+                    <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] sm:text-xs tracking-wider sticky top-0 backdrop-blur z-10 border-b border-slate-700/60">
+                        <tr>
+                            <th class="py-3 px-3 sm:px-4 font-semibold whitespace-nowrap">№ Інвойса</th>
+                            <th class="py-3 px-3 sm:px-4 font-semibold whitespace-nowrap">Дата</th>
+                            <th class="py-3 px-4 sm:px-6 font-semibold">Компания</th>
+                            <th class="py-3 px-4 sm:px-6 font-semibold hidden md:table-cell">Детали договора</th>
+                            <th class="py-3 px-3 sm:px-4 font-semibold">ПО</th>
+                            <th class="py-3 px-4 sm:px-6 font-semibold text-right whitespace-nowrap">Сумма (€)</th>
+                            <th class="py-3 px-2 sm:px-4 font-semibold text-center w-10"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-700/40 text-slate-200" id="mainInvoicesTbody">
+                        {% for inv in invoices %}
+                        <tr class="hover:bg-slate-700/30 transition-colors" id="main-row-{{ inv.id }}">
+                            <td class="py-3 px-3 sm:px-4 font-bold text-emerald-400 whitespace-nowrap">№ {{ inv.invoice_number or '—' }}</td>
+                            <td class="py-3 px-3 sm:px-4 text-slate-400 text-xs whitespace-nowrap">{{ inv.invoice_date or '—' }}</td>
+                            <td class="py-3 px-4 sm:px-6 font-semibold text-slate-100">{{ inv.company.name }}</td>
+                            <td class="py-3 px-4 sm:px-6 text-slate-300 text-xs hidden md:table-cell">{{ (inv.contract_details|parse_details|parse_details) or '—' }}</td>
+                            <td class="py-3 px-3 sm:px-4">
+                                {% if inv.software == 'ALPHA' %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                        ALPHA
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                                        BETA
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4 sm:px-6 text-right font-bold text-slate-100 whitespace-nowrap">{{ "%.2f"|format(inv.amount_eur) }} €</td>
+                            <td class="py-3 px-2 sm:px-4 text-center">
+                                <button type="button" onclick="deleteInvoice({{ inv.id }}, 'main')" class="text-rose-400 hover:text-rose-300 transition-colors p-1 cursor-pointer" title="Удалить инвойс">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="py-8 text-center text-slate-400">Записи отсутствуют</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО 1: Список инвойсов компании -->
+    <div id="companyInvoicesModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-4 sm:px-6 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+                <div class="min-w-0 pr-2 flex-1">
+                    <h3 class="text-sm sm:text-base font-bold text-slate-100 truncate" id="modalCompanyName">Компания</h3>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5" id="modalSubTitle">Реестр инвойсов по выбранному ПО</p>
+                </div>
+                <button onclick="closeCompanyInvoicesModal()" class="text-slate-400 hover:text-slate-200 text-lg font-bold p-1 transition-colors shrink-0 cursor-pointer">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="p-3 sm:p-6 overflow-y-auto flex-1">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] sm:text-xs tracking-wider border-b border-slate-800 sticky top-0">
+                            <tr>
+                                <th class="py-2.5 px-3 whitespace-nowrap">№ Інвойса</th>
+                                <th class="py-2.5 px-3 whitespace-nowrap">Дата</th>
+                                <th class="py-2.5 px-3">Детали договора</th>
+                                <th class="py-2.5 px-3">ПО</th>
+                                <th class="py-2.5 px-3 text-right whitespace-nowrap">Сумма (€)</th>
+                                <th class="py-2.5 px-2 text-center w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800 text-slate-200" id="modalInvoicesTbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="px-4 sm:px-6 py-3 border-t border-slate-800 bg-slate-950 flex justify-between items-center text-xs text-slate-400">
+                <span>Итого: <strong class="text-emerald-400 text-sm ml-1" id="modalTotalSum">0.00 €</strong></span>
+                <button onclick="closeCompanyInvoicesModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer">
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО 2: Сводка остатков с возможностью сохранения в PNG -->
+    <div id="productSummaryModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-700/90 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            
+            <!-- Шапка Модального окна (Фиксированная) -->
+            <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                        <i class="bi bi-file-earmark-text text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-100" id="prodModalTitle">Остатки бюджетов</h3>
+                        <p class="text-xs text-slate-400">Сводка только по остаткам без лишней информации</p>
+                    </div>
+                </div>
+                <button onclick="closeProductSummaryModal()" class="text-slate-400 hover:text-slate-100 text-xl font-bold p-1 transition-colors cursor-pointer">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Область прокрутки и захвата в PNG -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-900" id="prodModalCaptureArea">
+                <div id="prodModalCaptureCard" class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                    <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider" id="prodModalCardHeader">СВОДКА ОСТАТКОВ БЮДЖЕТА</div>
+                        <div class="text-xs font-mono text-slate-500" id="prodModalDateStamp">2026-08-21</div>
+                    </div>
+
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="border-b-2 border-slate-800 text-slate-400 text-xs uppercase tracking-wider">
+                                <th class="py-2.5 px-3 font-bold">Компания</th>
+                                <th class="py-2.5 px-3 text-right font-bold">Остаток по договору</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/80 text-slate-100" id="prodModalTableBody">
+                        </tbody>
+                    </table>
+
+                    <div class="pt-3 border-t-2 border-slate-800 flex items-center justify-between">
+                        <span class="text-xs sm:text-sm font-extrabold text-slate-300 uppercase tracking-wider">Общая сумма остатка:</span>
+                        <span class="text-xl sm:text-2xl font-black text-emerald-400" id="prodModalTotalAmount">0.00 €</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Подвал с кнопкой сохранения в PNG (Фиксированный) -->
+            <div class="px-5 py-3.5 border-t border-slate-800 bg-slate-950 flex items-center justify-between shrink-0">
+                <button onclick="downloadSummaryPNG(event)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/30 cursor-pointer">
+                    <i class="bi bi-download"></i>
+                    <span>Скачать отчет (PNG)</span>
+                </button>
+                <button onclick="closeProductSummaryModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer">
+                    Закрыть
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        let currentModalSoftware = 'ALPHA';
+
+        let allInvoices = [
+            {% for inv in invoices %}
+            {
+                id: {{ inv.id }},
+                company_id: {{ inv.company_id }},
+                invoice_number: {{ (inv.invoice_number or '—')|tojson }},
+                invoice_date: {{ (inv.invoice_date or '—')|tojson }},
+                software: {{ inv.software|tojson }},
+                amount: {{ inv.amount_eur }},
+                contract_details: {{ ((inv.contract_details|parse_details|parse_details) or '—')|tojson }}
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        function updateSummaryCards() {
+            let alphaTotal = 0;
+            let betaTotal = 0;
+
+            const alphaContainer = document.getElementById('summaryAlphaList');
+            const betaContainer = document.getElementById('summaryBetaList');
+            if (!alphaContainer || !betaContainer) return;
+
+            let alphaHtml = '';
+            let betaHtml = '';
+
+            document.querySelectorAll('.company-card').forEach(card => {
+                const title = card.getAttribute('data-company-title') || card.querySelector('h2').textContent.trim();
+                const hasAlpha = card.getAttribute('data-has-alpha') === '1';
+                const hasMerc = card.getAttribute('data-has-beta') === '1';
+
+                const alphaBudget = parseFloat(card.getAttribute('data-alpha-budget')) || 0;
+                const alphaSpent = parseFloat(card.getAttribute('data-alpha-spent')) || 0;
+                const alphaRem = alphaBudget - alphaSpent;
+
+                const mercBudget = parseFloat(card.getAttribute('data-beta-budget')) || 0;
+                const mercSpent = parseFloat(card.getAttribute('data-beta-spent')) || 0;
+                const mercRem = mercBudget - mercSpent;
+
+                if (hasAlpha || alphaBudget > 0 || alphaSpent > 0) {
+                    alphaTotal += alphaRem;
+                    const colorClass = alphaRem < 0 ? 'text-rose-400' : (alphaBudget > 0 && alphaRem < alphaBudget * 0.2 ? 'text-amber-400' : 'text-emerald-400');
+                    alphaHtml += `
+                        <div class="flex justify-between items-center py-1.5 px-2.5 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                            <span class="font-medium text-slate-200 truncate pr-2">${title}</span>
+                            <span class="font-bold shrink-0 ${colorClass}">${alphaRem.toFixed(2)} €</span>
+                        </div>
+                    `;
+                }
+
+                if (hasMerc || mercBudget > 0 || mercSpent > 0) {
+                    betaTotal += mercRem;
+                    const colorClass = mercRem < 0 ? 'text-rose-400' : (mercBudget > 0 && mercRem < mercBudget * 0.2 ? 'text-amber-400' : 'text-teal-400');
+                    betaHtml += `
+                        <div class="flex justify-between items-center py-1.5 px-2.5 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                            <span class="font-medium text-slate-200 truncate pr-2">${title}</span>
+                            <span class="font-bold shrink-0 ${colorClass}">${mercRem.toFixed(2)} €</span>
+                        </div>
+                    `;
+                }
+            });
+
+            alphaContainer.innerHTML = alphaHtml || '<div class="text-xs text-slate-500 italic p-2 text-center">Нет данных по ALPHA</div>';
+            betaContainer.innerHTML = betaHtml || '<div class="text-xs text-slate-500 italic p-2 text-center">Нет данных по BETA</div>';
+
+            document.getElementById('summaryAlphaTotal').textContent = alphaTotal.toFixed(2) + ' €';
+            document.getElementById('summaryBetaTotal').textContent = betaTotal.toFixed(2) + ' €';
+        }
+
+        function openProductSummaryModal(software) {
+            currentModalSoftware = software;
+            const isAlpha = (software === 'ALPHA');
+            const titleElem = document.getElementById('prodModalTitle');
+            const cardHeader = document.getElementById('prodModalCardHeader');
+            const dateStamp = document.getElementById('prodModalDateStamp');
+            const tableBody = document.getElementById('prodModalTableBody');
+            const totalElem = document.getElementById('prodModalTotalAmount');
+
+            titleElem.textContent = `Сводка остатков по ПО "${software}"`;
+            cardHeader.textContent = `СВОДКА ОСТАТКОВ БЮДЖЕТА ПО "${software}"`;
+            
+            const today = new Date().toISOString().slice(0, 10);
+            dateStamp.textContent = today;
+
+            let totalRem = 0;
+            let rowsHtml = '';
+
+            document.querySelectorAll('.company-card').forEach(card => {
+                const title = card.getAttribute('data-company-title') || card.querySelector('h2').textContent.trim();
+                const hasAlpha = card.getAttribute('data-has-alpha') === '1';
+                const hasMerc = card.getAttribute('data-has-beta') === '1';
+
+                const budget = parseFloat(card.getAttribute(isAlpha ? 'data-alpha-budget' : 'data-beta-budget')) || 0;
+                const spent = parseFloat(card.getAttribute(isAlpha ? 'data-alpha-spent' : 'data-beta-spent')) || 0;
+                const rem = budget - spent;
+
+                const hasSw = isAlpha ? (hasAlpha || budget > 0 || spent > 0) : (hasMerc || budget > 0 || spent > 0);
+
+                if (hasSw) {
+                    totalRem += rem;
+                    const colorClass = rem < 0 ? 'text-rose-400' : (budget > 0 && rem < budget * 0.2 ? 'text-amber-400' : (isAlpha ? 'text-emerald-400' : 'text-teal-400'));
+                    
+                    rowsHtml += `
+                        <tr class="hover:bg-slate-800/50 transition-colors border-b border-slate-800/60">
+                            <td class="py-2.5 px-3 font-semibold text-slate-100 text-xs sm:text-sm">${title}</td>
+                            <td class="py-2.5 px-3 text-right font-extrabold text-xs sm:text-sm ${colorClass}">${rem.toFixed(2)} €</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            tableBody.innerHTML = rowsHtml || '<tr><td colspan="2" class="py-6 text-center text-slate-500">Записи отсутствуют</td></tr>';
+            totalElem.textContent = totalRem.toFixed(2) + ' €';
+            totalElem.className = isAlpha ? 'text-xl sm:text-2xl font-black text-emerald-400' : 'text-xl sm:text-2xl font-black text-teal-400';
+
+            document.getElementById('productSummaryModal').classList.remove('hidden');
+        }
+
+        function closeProductSummaryModal() {
+            document.getElementById('productSummaryModal').classList.add('hidden');
+        }
+
+        function downloadSummaryPNG(evt) {
+            const captureElem = document.getElementById('prodModalCaptureCard');
+            const btn = evt ? evt.currentTarget : null;
+            const origHtml = btn ? btn.innerHTML : '';
+
+            if (btn) {
+                btn.innerHTML = '<i class="bi bi-hourglass-split animate-spin"></i> <span>Генерация...</span>';
+            }
+
+            html2canvas(captureElem, {
+                backgroundColor: '#0f172a',
+                scale: 2
+            }).then(canvas => {
+                const link = document.createElement('a');
+                const today = new Date().toISOString().slice(0, 10);
+                link.download = `Summary_${currentModalSoftware}_${today}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                if (btn) {
+                    btn.innerHTML = '<i class="bi bi-check-lg"></i> <span>Сохранено!</span>';
+                    setTimeout(() => { btn.innerHTML = origHtml; }, 2000);
+                }
+            }).catch(err => {
+                console.error('Ошибка создания изображения:', err);
+                alert('Не удалось сформировать изображение PNG');
+                if (btn) btn.innerHTML = origHtml;
+            });
+        }
+
+        function switchSoftware(companyId, software) {
+            const card = document.getElementById(`card-${companyId}`);
+            if (!card) return;
+
+            const isAlpha = (software === 'ALPHA');
+            const budget = parseFloat(card.getAttribute(isAlpha ? 'data-alpha-budget' : 'data-beta-budget')) || 0;
+            const spent = parseFloat(card.getAttribute(isAlpha ? 'data-alpha-spent' : 'data-beta-spent')) || 0;
+            const compDate = card.getAttribute(isAlpha ? 'data-alpha-date' : 'data-beta-date') || '';
+            const remainder = budget - spent;
+
+            card.querySelector('.sw-hidden-input').value = software;
+            card.querySelector('.budget-input').value = budget;
+            card.querySelector('.spent-display').textContent = spent.toFixed(2) + ' €';
+
+            const cardDateInput = card.querySelector('.card-date-input');
+            if (cardDateInput) {
+                cardDateInput.value = compDate;
+            }
+
+            const remDisplay = card.querySelector('.remainder-display');
+            remDisplay.textContent = remainder.toFixed(2) + ' €';
+            
+            if (remainder < 0) {
+                remDisplay.className = 'text-lg sm:text-xl font-bold remainder-display text-rose-400';
+            } else {
+                remDisplay.className = 'text-lg sm:text-xl font-bold remainder-display text-emerald-400';
+            }
+
+            const pct = budget > 0 ? (spent / budget * 100) : 0;
+            const barFill = card.querySelector('.progress-bar-fill');
+            barFill.style.width = Math.min(pct, 100) + '%';
+            
+            if (pct > 100) {
+                barFill.className = 'progress-bar-fill h-full transition-all duration-500 bg-rose-500';
+            } else if (pct > 85) {
+                barFill.className = 'progress-bar-fill h-full transition-all duration-500 bg-amber-500';
+            } else {
+                barFill.className = 'progress-bar-fill h-full transition-all duration-500 bg-emerald-500';
+            }
+        }
+
+        async function saveCompanyBudget(event, form) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const btn = form.querySelector('button[type="submit"]');
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                const res = await response.json();
+
+                if (res.status === 'ok') {
+                    const companyId = formData.get('company_id');
+                    const software = formData.get('software');
+                    const newAmount = parseFloat(formData.get('total_amount')) || 0;
+
+                    const card = document.getElementById(`card-${companyId}`);
+                    if (card) {
+                        if (software === 'ALPHA') {
+                            card.setAttribute('data-alpha-budget', newAmount);
+                        } else {
+                            card.setAttribute('data-beta-budget', newAmount);
+                        }
+                        switchSoftware(companyId, software);
+                        updateSummaryCards();
+                    }
+
+                    if (btn) {
+                        const originalHtml = btn.innerHTML;
+                        btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+                        btn.classList.add('bg-emerald-600');
+                        setTimeout(() => {
+                            btn.innerHTML = originalHtml;
+                            btn.classList.remove('bg-emerald-600');
+                        }, 1500);
+                    }
+                } else {
+                    alert('Ошибка сохранения: ' + (res.message || 'Error'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Не удалось сохранить изменения');
+            }
+        }
+
+        async function saveCompanyCompletionDate(companyId, newDate, inputElem) {
+            const card = document.getElementById(`card-${companyId}`);
+            if (!card) return;
+
+            const currentSw = card.querySelector('.sw-select').value;
+            inputElem.classList.remove('border-emerald-500', 'border-slate-700');
+            inputElem.classList.add('border-amber-500');
+
+            try {
+                const formData = new FormData();
+                formData.append('company_id', companyId);
+                formData.append('software', currentSw);
+                formData.append('completion_date', newDate);
+
+                const resp = await fetch('/update_company_completion_date', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                });
+
+                const data = await resp.json();
+                if (data.status === 'ok') {
+                    if (currentSw === 'ALPHA') {
+                        card.setAttribute('data-alpha-date', data.completion_date);
+                    } else {
+                        card.setAttribute('data-beta-date', data.completion_date);
+                    }
+
+                    inputElem.classList.remove('border-amber-500');
+                    inputElem.classList.add('border-emerald-500', 'bg-emerald-950/40');
+                    setTimeout(() => {
+                        inputElem.classList.remove('border-emerald-500', 'bg-emerald-950/40');
+                        inputElem.classList.add('border-slate-700');
+                    }, 1200);
+                }
+            } catch (err) {
+                console.error('Ошибка сохранения даты договора:', err);
+                inputElem.classList.remove('border-amber-500');
+                inputElem.classList.add('border-rose-500');
+            }
+        }
+
+        async function deleteInvoice(invId, source) {
+            if (!confirm('Вы уверены, что хотите удалить этот инвойс?')) return;
+
+            try {
+                const resp = await fetch(`/delete_invoice/${invId}`, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+
+                const data = await resp.json();
+                if (data.status === 'ok') {
+                    allInvoices = allInvoices.filter(i => i.id !== invId);
+
+                    const mainRow = document.getElementById(`main-row-${invId}`);
+                    if (mainRow) mainRow.remove();
+
+                    const counterElem = document.getElementById('mainInvoiceCount');
+                    if (counterElem) counterElem.textContent = `Всего: ${allInvoices.length}`;
+
+                    const card = document.getElementById(`card-${data.company_id}`);
+                    if (card) {
+                        card.setAttribute('data-alpha-spent', data.alpha_spent);
+                        card.setAttribute('data-beta-spent', data.beta_spent);
+                        const currentSw = card.querySelector('.sw-select').value;
+                        switchSoftware(data.company_id, currentSw);
+                        updateSummaryCards();
+                    }
+
+                    if (source === 'modal') {
+                        openCompanyInvoicesModal(data.company_id);
+                    }
+                } else {
+                    alert('Ошибка удаления инвойса');
+                }
+            } catch (err) {
+                console.error('Ошибка при удалении инвойса:', err);
+                alert('Произошла ошибка при отправке запроса на удаление.');
+            }
+        }
+
+        function openCompanyInvoicesModal(companyId) {
+            const card = document.getElementById(`card-${companyId}`);
+            if (!card) return;
+
+            const companyName = card.querySelector('h2').title || card.querySelector('h2').textContent.trim();
+            const software = card.querySelector('.sw-select').value;
+            const filteredInvoices = allInvoices.filter(inv => inv.company_id === companyId && inv.software === software);
+
+            document.getElementById('modalCompanyName').textContent = companyName;
+            document.getElementById('modalSubTitle').textContent = `Инвойсы по ПО "${software}"`;
+
+            const tbody = document.getElementById('modalInvoicesTbody');
+            tbody.innerHTML = '';
+
+            let totalSum = 0;
+
+            if (filteredInvoices.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-500">Инвойсы по ПО "${software}" отсутствуют</td></tr>`;
+            } else {
+                filteredInvoices.forEach(inv => {
+                    totalSum += inv.amount;
+                    const badgeClass = inv.software === 'ALPHA' 
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                        : 'bg-teal-500/10 text-teal-400 border-teal-500/20';
+
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-slate-800/50 transition-colors';
+                    row.innerHTML = `
+                        <td class="py-2.5 px-3 font-bold text-emerald-400 whitespace-nowrap">№ ${inv.invoice_number}</td>
+                        <td class="py-2.5 px-3 text-xs text-slate-400 whitespace-nowrap">${inv.invoice_date}</td>
+                        <td class="py-2.5 px-3 text-xs text-slate-300">${inv.contract_details|parse_details}</td>
+                        <td class="py-2.5 px-3">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${badgeClass}">
+                                ${inv.software}
+                            </span>
+                        </td>
+                        <td class="py-2.5 px-3 text-right font-bold text-slate-100 whitespace-nowrap">${inv.amount.toFixed(2)} €</td>
+                        <td class="py-2.5 px-2 text-center">
+                            <button type="button" onclick="deleteInvoice(${inv.id}, 'modal')" class="text-rose-400 hover:text-rose-300 transition-colors p-1 cursor-pointer" title="Удалить инвойс">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            document.getElementById('modalTotalSum').textContent = totalSum.toFixed(2) + ' €';
+            document.getElementById('companyInvoicesModal').classList.remove('hidden');
+        }
+
+        function closeCompanyInvoicesModal() {
+            document.getElementById('companyInvoicesModal').classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCompanyInvoicesModal();
+                closeProductSummaryModal();
+            }
+        });
+
+        document.getElementById('companyInvoicesModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCompanyInvoicesModal();
+        });
+        document.getElementById('productSummaryModal').addEventListener('click', function(e) {
+            if (e.target === this) closeProductSummaryModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.budget-input').forEach(input => {
+                input.addEventListener('focus', function() {
+                    if (this.value === '0' || this.value === '0.0' || this.value === '0.00' || parseFloat(this.value) === 0) {
+                        this.value = '';
+                    } else {
+                        this.select();
+                    }
+                });
+                input.addEventListener('blur', function() {
+                    if (this.value.trim() === '') {
+                        this.value = '0.0';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.company-card').forEach(card => {
+                const select = card.querySelector('.sw-select');
+                if (select) {
+                    const companyId = parseInt(card.id.replace('card-', ''));
+                    switchSoftware(companyId, select.value);
+                }
+            });
+
+            updateSummaryCards();
+        });
+
+        document.getElementById('companyCardSearch').addEventListener('keyup', function() {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('#companyCardsGrid .company-card').forEach(card => {
+                const name = card.getAttribute('data-company-name');
+                card.style.display = name.includes(query) ? '' : 'none';
+            });
+        });
+
+        document.getElementById('tableSearch').addEventListener('keyup', function() {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('#invoicesTable tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
