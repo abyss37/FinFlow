@@ -35,8 +35,68 @@
    ```bash
    git clone git@github.com:abyss37/FinFlow.git
    cd FinFlow
+   ```
 
+2. **Создайте и активируйте виртуальное окружение:**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
+3. **Установите зависимости:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-📄 Лицензия
+4. **Инициализируйте базу данных и сгенерируйте тестовые данные:**
+   ```bash
+   python3 -c 'from app import app, db; app.app_context().push(); db.create_all()'
+   python3 make_demo_stamp.py
+   ```
+
+5. **Запустите приложение:**
+   ```bash
+   python3 app.py
+   ```
+   Приложение будет доступно по адресу: `http://localhost:5000`
+
+## 🐧 Развертывание в Production (Gunicorn + Nginx)
+
+1. **Настройка systemd службы (`/etc/systemd/system/accounting-app.service`):**
+   ```ini
+   [Unit]
+   Description=FinFlow Accounting App
+   After=network.target
+
+   [Service]
+   User=root
+   WorkingDirectory=/opt/accounting-app
+   ExecStart=/opt/accounting-app/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:5000 app:app
+   Restart=always
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+2. **Быстрое обновление через деплой-скрипт:**
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+## 📁 Структура проекта
+
+```text
+FinFlow/
+├── app.py                  # Главное Flask-приложение и ORM-модели
+├── make_demo_stamp.py      # Генератор синтетической печати и подписи
+├── deploy.sh               # Скрипт автоматического обновления из Git
+├── static/                 # CSS, JS, изображения и штампы
+├── templates/              # HTML-шаблоны (dashboard, generator)
+├── requirements.txt        # Зависимости Python
+└── README.md
+```
+
+## 📄 Лицензия
+
 MIT License
