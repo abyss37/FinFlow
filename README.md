@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
 [![Framework](https://img.shields.io/badge/Framework-Flask-green.svg)](https://flask.palletsprojects.com/)
 [![Database](https://img.shields.io/badge/Database-SQLite-lightgrey.svg)](https://sqlite.org/)
-[![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/abyss37/FinFlow/blob/main/LICENSE)
 
 **FinFlow** — это система для централизованного учета контрактов, инвойсов и мониторинга бюджетов компаний в разрезе разных продуктов (например, ПО "ALPHA", ПО "BETA").
 
@@ -99,4 +99,4 @@ FinFlow/
 
 ## 📄 Лицензия
 
-MIT License
+[MIT License](https://github.com/abyss37/FinFlow/blob/main/LICENSE)
