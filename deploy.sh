@@ -12,5 +12,5 @@ fi
 source venv/bin/activate
 pip install -r requirements.txt 2>/dev/null || true
 
-systemctl restart accounting
+systemctl restart accounting-app
 echo "Приложение успешно обновлено и перезапущено!"

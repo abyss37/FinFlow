@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Generator</title>
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}?v=2">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='finflow-logo.png') }}?v=1">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
@@ -142,6 +142,7 @@
         </a>
 
         <div class="flex items-center gap-3">
+            <div id="finflow-language-switcher-slot" class="flex items-center"></div>
             <button onclick="handleSaveClick()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 border border-slate-700 cursor-pointer">
                 <i class="bi bi-floppy text-emerald-400"></i>
                 <span>Save to Registry</span>
@@ -174,12 +175,14 @@
             <div class="flex flex-col sm:flex-row justify-between items-start gap-6 pb-8 border-b border-slate-800 header-print-row">
                 <div class="w-full sm:w-2/3 header-print-left space-y-3">
                     
-                    <!-- Default ACMETECH Logo -->
+                    <!-- FinFlow Logo -->
                     <div class="flex items-center gap-3">
-                        <div class="bg-white px-3 py-1.5 rounded-lg inline-block print:p-0">
-                            <svg height="32" viewBox="0 0 190 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <text x="0" y="27" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" fill="#000000" letter-spacing="-0.5">ACME<tspan fill="#2563eb">TECH</tspan></text>
-                            </svg>
+                        <div class="inline-flex items-center">
+                            <img
+                                src="{{ url_for('static', filename='finflow-logo.png') }}"
+                                alt="FinFlow"
+                                class="h-14 w-14 object-contain rounded-xl"
+                            >
                         </div>
                     </div>
 
@@ -280,8 +283,8 @@
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-100 print-label uppercase">Software Product</label>
                         <select id="softwareSelect" class="print-hide w-full bg-slate-800/60 border border-slate-700/80 rounded-xl px-3 py-2 text-slate-100 outline-none focus:border-emerald-500 cursor-pointer">
-                            <option value="Product Alpha">Software "Product Alpha"</option>
-                            <option value="Product Beta" selected>Software "Product Beta"</option>
+                            <option value="ALPHA">Software "Product Alpha"</option>
+                            <option value="BETA" selected>Software "Product Beta"</option>
                         </select>
                         <div id="softwareSelectPrint" class="print-show hidden font-semibold text-slate-900"></div>
                     </div>
@@ -407,17 +410,28 @@
                      data-inv-sw="{{ inv.software }}"
                      data-inv-amount="{{ inv.amount_eur }}"
                      data-inv-details="{{ inv.contract_details | e }}"
+                     data-inv-status="{{ inv.status }}"
+                     data-inv-cancelled-at="{{ inv.cancelled_at }}"
+                     data-inv-cancellation-reason="{{ inv.cancellation_reason | e }}"
                      onclick="loadInvoiceFromArchive({{ inv.id }})">
                     <div class="flex items-center justify-between text-xs">
-                        <span class="font-bold text-emerald-400">№ {{ inv.invoice_number }}</span>
+                        <span class="font-bold {{ 'text-slate-500 line-through' if inv.status == 'CANCELLED' else 'text-emerald-400' }}">№ {{ inv.invoice_number }}</span>
                         <span class="text-[10px] text-slate-100">{{ inv.invoice_date }}</span>
                     </div>
                     <div class="text-xs font-semibold text-slate-200 truncate">{{ inv.company_name }}</div>
                     <div class="flex items-center justify-between text-[11px] text-slate-100 pt-0.5">
-                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold border {{ 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' if inv.software == 'Product Alpha' else 'bg-teal-500/10 text-teal-400 border-teal-500/20' }}">
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold border {{ 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' if inv.software == 'ALPHA' else 'bg-teal-500/10 text-teal-400 border-teal-500/20' }}">
                             {{ inv.software }}
                         </span>
-                        <span class="font-bold text-slate-100">{{ "%.2f"|format(inv.amount_eur) }} €</span>
+                        <span class="font-bold {{ 'text-slate-500 line-through' if inv.status == 'CANCELLED' else 'text-slate-100' }}">{{ "%.2f"|format(inv.amount_eur) }} €</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-1">
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-black {{ 'bg-rose-400/10 text-rose-300 border border-rose-400/20' if inv.status == 'CANCELLED' else 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20' }}">
+                            {{ inv.status }}
+                        </span>
+                        {% if inv.status == 'CANCELLED' and inv.cancellation_reason %}
+                        <span class="text-[9px] text-rose-300/70 truncate max-w-[150px]" title="{{ inv.cancellation_reason }}">{{ inv.cancellation_reason }}</span>
+                        {% endif %}
                     </div>
                 </div>
                 {% else %}
@@ -467,6 +481,10 @@
     <!-- JavaScript -->
     <script>
         let currentEditingInvoiceId = null;
+        let currentInvoiceStatus = 'NEW';
+        let currentCancellationReason = '';
+        const initialInvoiceId = {{ initial_invoice_id|tojson }};
+
         document.getElementById('invoiceDate').valueAsDate = new Date();
 
         function toggleBankDropdown() {
@@ -664,6 +682,8 @@
             if (!item) return;
 
             currentEditingInvoiceId = invId;
+            currentInvoiceStatus = item.getAttribute('data-inv-status') || 'ISSUED';
+            currentCancellationReason = item.getAttribute('data-inv-cancellation-reason') || '';
 
             const invNum = item.getAttribute('data-inv-number');
             const company = item.getAttribute('data-inv-company');
@@ -675,7 +695,7 @@
             document.getElementById('invoiceNumber').value = invNum !== '—' ? invNum : '';
             document.getElementById('billToCompany').value = company;
             if (date) document.getElementById('invoiceDate').value = date;
-            document.getElementById('softwareSelect').value = sw;
+            document.getElementById('softwareSelect').value = (sw === 'Product Alpha' ? 'ALPHA' : (sw === 'Product Beta' ? 'BETA' : sw));
 
             let poNumber = '';
             let billToDetails = '';
@@ -747,13 +767,97 @@
             calculateTotals();
             syncPrintValues();
 
-            document.getElementById('editingInvLabel').textContent = `№ ${invNum} (${company})`;
-            document.getElementById('editingBanner').classList.remove('hidden');
+            const editingLabel = document.getElementById('editingInvLabel');
+            const editingBanner = document.getElementById('editingBanner');
+
+            if (currentInvoiceStatus === 'CANCELLED') {
+                editingLabel.textContent = `№ ${invNum} (${company}) · CANCELLED`;
+                editingBanner.classList.remove('hidden');
+                editingBanner.classList.remove('border-emerald-500/30');
+                editingBanner.classList.add('border-rose-500/30');
+            } else {
+                editingLabel.textContent = `№ ${invNum} (${company}) · ISSUED`;
+                editingBanner.classList.remove('hidden');
+                editingBanner.classList.remove('border-rose-500/30');
+                editingBanner.classList.add('border-emerald-500/30');
+            }
+
+            applyInvoiceEditability();
+        }
+
+        function escapeHtml(value) {
+            const div = document.createElement('div');
+            div.textContent = value == null ? '' : String(value);
+            return div.innerHTML;
+        }
+
+        function applyInvoiceEditability() {
+            const locked = currentInvoiceStatus === 'CANCELLED';
+
+            document.querySelectorAll(
+                '#invoiceNumber, #billToCompany, #billToDetails, #invoiceDate, #paymentTerms, #poNumber, #notes, #terms, #taxPercent, #discountAmount, #softwareSelect'
+            ).forEach(el => {
+                el.disabled = locked;
+                el.classList.toggle('opacity-60', locked);
+                el.classList.toggle('cursor-not-allowed', locked);
+            });
+
+            document.querySelectorAll('#itemsTbody input, #itemsTbody textarea').forEach(el => {
+                el.disabled = locked;
+                el.classList.toggle('opacity-60', locked);
+                el.classList.toggle('cursor-not-allowed', locked);
+            });
+
+            document.querySelectorAll('#itemsTbody button').forEach(btn => {
+                btn.disabled = locked;
+                btn.classList.toggle('opacity-30', locked);
+                btn.classList.toggle('cursor-not-allowed', locked);
+            });
+
+            const saveButtons = document.querySelectorAll(
+                'button[onclick="handleSaveClick()"]'
+            );
+            saveButtons.forEach(btn => {
+                btn.disabled = locked;
+                btn.classList.toggle('opacity-30', locked);
+                btn.classList.toggle('cursor-not-allowed', locked);
+                btn.title = locked ? 'Cancelled invoices cannot be edited' : '';
+            });
+
+            let notice = document.getElementById('cancelledInvoiceNotice');
+
+            if (locked) {
+                if (!notice) {
+                    notice = document.createElement('div');
+                    notice.id = 'cancelledInvoiceNotice';
+                    notice.className = 'mb-3 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-xs text-rose-200';
+                    const banner = document.getElementById('editingBanner');
+                    banner.parentNode.insertBefore(notice, banner.nextSibling);
+                }
+
+                notice.innerHTML =
+                    '<div class="font-black">INVOICE CANCELLED</div>' +
+                    '<div class="mt-1 text-rose-200/80">' +
+                    (currentCancellationReason
+                        ? 'Reason: ' + escapeHtml(currentCancellationReason)
+                        : 'This invoice is cancelled and cannot be edited.') +
+                    '</div>';
+            } else if (notice) {
+                notice.remove();
+            }
         }
 
         function resetFormToBlank() {
             currentEditingInvoiceId = null;
+            currentInvoiceStatus = 'NEW';
+            currentCancellationReason = '';
+
+            const notice = document.getElementById('cancelledInvoiceNotice');
+            if (notice) notice.remove();
+
             document.getElementById('editingBanner').classList.add('hidden');
+            document.getElementById('editingBanner').classList.remove('border-rose-500/30');
+            document.getElementById('editingBanner').classList.add('border-emerald-500/30');
             document.getElementById('invoiceNumber').value = '1001';
             document.getElementById('billToCompany').value = '';
             document.getElementById('billToDetails').value = '';
@@ -792,9 +896,15 @@
 
             calculateTotals();
             syncPrintValues();
+            applyInvoiceEditability();
         }
 
         function handleSaveClick() {
+            if (currentInvoiceStatus === 'CANCELLED') {
+                alert('Cancelled invoices cannot be edited.');
+                return;
+            }
+
             const companyName = document.getElementById('billToCompany').value.trim();
             const total = calculateTotals();
 
@@ -823,7 +933,7 @@
             let archiveList = document.getElementById('archiveList');
             let existingItem = archiveList.querySelector(`.archive-item[data-inv-id="${id}"]`);
             
-            const swClass = sw === 'Product Alpha' 
+            const swClass = sw === 'ALPHA' 
                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
                 : 'bg-teal-500/10 text-teal-400 border-teal-500/20';
 
@@ -839,6 +949,9 @@
                     </span>
                     <span class="font-bold text-slate-100">${parseFloat(amount).toFixed(2)} €</span>
                 </div>
+                <div class="pt-1">
+                    <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-400/10 text-emerald-300 border border-emerald-400/20">ISSUED</span>
+                </div>
             `;
 
             if (existingItem) {
@@ -848,6 +961,9 @@
                 existingItem.setAttribute('data-inv-sw', sw);
                 existingItem.setAttribute('data-inv-amount', amount);
                 existingItem.setAttribute('data-inv-details', details);
+                existingItem.setAttribute('data-inv-status', 'ISSUED');
+                existingItem.setAttribute('data-inv-cancelled-at', '');
+                existingItem.setAttribute('data-inv-cancellation-reason', '');
                 existingItem.innerHTML = itemHtml;
             } else {
                 const emptyMsg = archiveList.querySelector('.text-center');
@@ -862,6 +978,9 @@
                 newItem.setAttribute('data-inv-sw', sw);
                 newItem.setAttribute('data-inv-amount', amount);
                 newItem.setAttribute('data-inv-details', details);
+                newItem.setAttribute('data-inv-status', 'ISSUED');
+                newItem.setAttribute('data-inv-cancelled-at', '');
+                newItem.setAttribute('data-inv-cancellation-reason', '');
                 newItem.setAttribute('onclick', `loadInvoiceFromArchive(${id})`);
                 newItem.innerHTML = itemHtml;
 
@@ -871,6 +990,11 @@
 
         async function executeSave(mode) {
             closeChoiceModal();
+
+            if (currentInvoiceStatus === 'CANCELLED') {
+                alert('Cancelled invoices cannot be edited.');
+                return;
+            }
 
             const companyName = document.getElementById('billToCompany').value.trim();
             const invNum = document.getElementById('invoiceNumber').value.trim();
@@ -930,6 +1054,12 @@
             }
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            if (initialInvoiceId) {
+                loadInvoiceFromArchive(initialInvoiceId);
+            }
+        });
+
         document.getElementById('archiveSearch').addEventListener('keyup', function() {
             const query = this.value.toLowerCase();
             document.querySelectorAll('#archiveList .archive-item').forEach(item => {
@@ -943,5 +1073,318 @@
             document.querySelectorAll('.item-desc').forEach(el => autoExpandTextarea(el));
         });
     </script>
+
+<script>
+(function () {
+    const translations = {
+        ru: {
+            "Financial control for contracts, invoices & budgets": "Финансовый контроль договоров, счетов и бюджетов",
+            "New invoice": "Новый счёт",
+            "Know where your budget stands.": "Контролируйте состояние бюджета.",
+            "Track contract budgets, invoices and remaining spend in one place — with early warnings before a budget becomes a problem.": "Контролируйте бюджеты договоров, счета и остаток средств в одном месте — с ранними предупреждениями о рисках.",
+            "Create invoice": "Создать счёт",
+            "Total budget": "Общий бюджет",
+            "All active products": "Все активные продукты",
+            "Invoiced": "Выставлено счетов",
+            "Recorded spend": "Учтённые расходы",
+            "Remaining": "Остаток",
+            "Available budget": "Доступный бюджет",
+            "Utilization": "Использование",
+            "Budget consumed": "Использовано бюджета",
+            "Attention needed": "Требуется внимание",
+            "Issues that may affect contract or budget control.": "Проблемы, которые могут повлиять на контроль договоров или бюджета.",
+            "alerts": "предупреждений",
+            "Everything looks healthy": "Всё в порядке",
+            "No budgets above 85% and no contracts ending within 30 days.": "Нет бюджетов выше 85% и договоров, заканчивающихся в ближайшие 30 дней.",
+            "Budget health": "Состояние бюджета",
+            "Remaining budget by company": "Остаток бюджета по компаниям",
+            "Workspace": "Рабочая область",
+            "Companies & contracts": "Компании и договоры",
+            "Set budgets, review spend and spot risk at a glance.": "Устанавливайте бюджеты, контролируйте расходы и сразу замечайте риски.",
+            "Search companies...": "Поиск компаний...",
+            "Click to view invoices": "Нажмите, чтобы посмотреть счета",
+            "Contract budget (€)": "Бюджет договора (€)",
+            "Save": "Сохранить",
+            "Contract end": "Окончание договора",
+            "No companies yet. Create your first invoice to get started.": "Компаний пока нет. Создайте первый счёт, чтобы начать.",
+            "Invoice registry": "Реестр счетов",
+            "Recent invoices": "Последние счета",
+            "Search invoices...": "Поиск счетов...",
+            "Invoice": "Счёт",
+            "Date": "Дата",
+            "Company": "Компания",
+            "Product": "Продукт",
+            "Amount": "Сумма",
+            "Edit invoice": "Редактировать счёт",
+            "Cancel invoice": "Аннулировать счёт",
+            "No invoices yet.": "Счетов пока нет.",
+            "Cancelled": "Аннулирован",
+            "CANCELLED": "АННУЛИРОВАН",
+            "ISSUED": "ВЫСТАВЛЕН",
+            "Issued": "Выставлен",
+            "Invoices": "Счета",
+            "No invoices": "Счетов нет",
+            "Total:": "Итого:",
+            "% used": "% использовано",
+            "No data yet": "Данных пока нет",
+
+            "Invoice Generator": "Генератор счетов",
+            "Save to Registry": "Сохранить в реестр",
+            "Редактируется шаблон из архива:": "Редактируется счёт из архива:",
+            "Client / Company Name": "Название клиента / компании",
+            "Payment Terms": "Условия оплаты",
+            "Software Product": "Программный продукт",
+            "Notes": "Примечания",
+            "Terms": "Условия",
+            "Notes - any relevant information not already covered": "Примечания — дополнительная информация",
+            "Terms - late fees, payment methods, delivery schedules": "Условия — штрафы, способы оплаты, сроки поставки",
+            "Amount (€)": "Сумма (€)",
+            "Search in archive...": "Поиск в архиве...",
+            "Поиск в архиве...": "Поиск в архиве...",
+            "Cancel this invoice? It will remain in the registry as CANCELLED.": "Аннулировать этот счёт? Он останется в реестре со статусом «АННУЛИРОВАН».",
+            "Cancellation reason:": "Причина аннулирования:",
+            "Cancellation reason is required.": "Необходимо указать причину аннулирования.",
+            "Cancelled invoices cannot be edited": "Аннулированные счета нельзя редактировать",
+            "Cancelled invoices cannot be edited.": "Аннулированные счета нельзя редактировать.",
+            "Cancellation failed": "Не удалось аннулировать счёт",
+            "Save failed": "Не удалось сохранить",
+            "Close": "Закрыть",
+            "Edit": "Редактировать",
+            "Cancel": "Аннулировать",
+            "Generate": "Создать",
+            "Draft": "Черновик"
+        }
+    };
+
+    const originalToRussian = translations.ru;
+    const russianToEnglish = {};
+
+    Object.keys(originalToRussian).forEach(function (english) {
+        russianToEnglish[originalToRussian[english]] = english;
+    });
+
+    function getLang() {
+        return localStorage.getItem("finflow-language") || "ru";
+    }
+
+    function setLang(lang) {
+        localStorage.setItem("finflow-language", lang);
+        applyLanguage(lang);
+    }
+
+    const originalTextNodes = new WeakMap();
+
+    function sourceText(node) {
+        if (!originalTextNodes.has(node)) {
+            originalTextNodes.set(node, node.nodeValue);
+        }
+        return originalTextNodes.get(node);
+    }
+
+    function translate(value, lang) {
+        if (!value) return value;
+
+        const ru = originalToRussian[value];
+        if (lang === "ru" && ru) return ru;
+
+        if (lang === "en") {
+            if (russianToEnglish[value]) return russianToEnglish[value];
+            return value;
+        }
+
+        return value;
+    }
+
+    function translateSmart(value, lang) {
+        let result = translate(value, lang);
+
+        if (lang === "ru") {
+            result = result.replace(/\bISSUED\b/g, "ВЫСТАВЛЕН");
+            result = result.replace(/\bCANCELLED\b/g, "АННУЛИРОВАН");
+            result = result.replace(/\bused\b/g, "использовано");
+            result = result.replace(/\balerts\b/g, "предупреждений");
+        } else {
+            result = result.replace(/\bВЫСТАВЛЕН\b/g, "ISSUED");
+            result = result.replace(/\bАННУЛИРОВАН\b/g, "CANCELLED");
+            result = result.replace(/\bиспользовано\b/g, "used");
+            result = result.replace(/\bпредупреждений\b/g, "alerts");
+        }
+
+        return result;
+    }
+
+    function isProtected(node) {
+        return !!(
+            node.closest &&
+            node.closest(
+                '[data-finflow-no-i18n], .invoice-document, #invoiceDocument, .print-invoice'
+            )
+        );
+    }
+
+    function translateDom(root, lang) {
+        if (!root) return;
+
+        const walker = document.createTreeWalker(
+            root,
+            NodeFilter.SHOW_TEXT
+        );
+
+        const nodes = [];
+        let node;
+
+        while ((node = walker.nextNode())) {
+            nodes.push(node);
+        }
+
+        nodes.forEach(function (textNode) {
+            if (isProtected(textNode.parentElement)) return;
+
+            const original = sourceText(textNode);
+            const trimmed = original.trim();
+
+            if (!trimmed) return;
+
+            const translated = translateSmart(trimmed, lang);
+
+            if (translated !== trimmed) {
+                textNode.nodeValue =
+                    original.replace(trimmed, translated);
+            } else {
+                textNode.nodeValue = original;
+            }
+        });
+
+        root.querySelectorAll &&
+        root.querySelectorAll(
+            "input, textarea, select, button, [title], [aria-label]"
+        ).forEach(function (el) {
+            if (el.closest &&
+                el.closest('[data-finflow-no-i18n], .invoice-document, #invoiceDocument, .print-invoice')) {
+                return;
+            }
+
+            ["placeholder", "title", "aria-label"].forEach(function (attr) {
+                if (!el.hasAttribute(attr)) return;
+
+                const marker = "data-finflow-original-" + attr;
+
+                if (!el.hasAttribute(marker)) {
+                    el.setAttribute(marker, el.getAttribute(attr));
+                }
+
+                const original = el.getAttribute(marker);
+                el.setAttribute(attr, translateSmart(original, lang));
+            });
+        });
+    }
+
+    function updateSwitcher(lang) {
+        const ru = document.getElementById("finflow-lang-ru");
+        const en = document.getElementById("finflow-lang-en");
+
+        if (!ru || !en) return;
+
+        ru.classList.toggle("bg-emerald-500", lang === "ru");
+        ru.classList.toggle("text-slate-950", lang === "ru");
+        ru.classList.toggle("text-slate-400", lang !== "ru");
+
+        en.classList.toggle("bg-emerald-500", lang === "en");
+        en.classList.toggle("text-slate-950", lang === "en");
+        en.classList.toggle("text-slate-400", lang !== "en");
+    }
+
+    function applyLanguage(lang) {
+        document.documentElement.lang = lang;
+        translateDom(document.body, lang);
+        updateSwitcher(lang);
+    }
+
+    function addLanguageSwitcher() {
+        if (document.getElementById("finflow-language-switcher")) return;
+
+        const wrapper = document.createElement("div");
+        wrapper.id = "finflow-language-switcher";
+        wrapper.className =
+            "inline-flex items-center gap-1 p-1 rounded-xl bg-slate-900/95 border border-slate-700 shadow-xl backdrop-blur";
+
+        wrapper.innerHTML = `
+            <button id="finflow-lang-ru"
+                    type="button"
+                    class="px-2.5 py-1.5 rounded-lg text-[11px] font-black transition">
+                RU
+            </button>
+            <button id="finflow-lang-en"
+                    type="button"
+                    class="px-2.5 py-1.5 rounded-lg text-[11px] font-black transition">
+                EN
+            </button>
+        `;
+
+        const slot = document.getElementById("finflow-language-switcher-slot");
+        if (slot) {
+            slot.appendChild(wrapper);
+        } else {
+            document.body.appendChild(wrapper);
+        }
+
+        document.getElementById("finflow-lang-ru")
+            .addEventListener("click", function () {
+                setLang("ru");
+            });
+
+        document.getElementById("finflow-lang-en")
+            .addEventListener("click", function () {
+                setLang("en");
+            });
+    }
+
+    const originalAlert = window.alert;
+    const originalConfirm = window.confirm;
+    const originalPrompt = window.prompt;
+
+    window.alert = function (message) {
+        return originalAlert(
+            translateSmart(String(message), getLang())
+        );
+    };
+
+    window.confirm = function (message) {
+        return originalConfirm(
+            translateSmart(String(message), getLang())
+        );
+    };
+
+    window.prompt = function (message, defaultValue) {
+        return originalPrompt(
+            translateSmart(String(message), getLang()),
+            defaultValue
+        );
+    };
+
+    const observer = new MutationObserver(function (mutations) {
+        const lang = getLang();
+
+        mutations.forEach(function (mutation) {
+            mutation.addedNodes.forEach(function (node) {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    translateDom(node, lang);
+                }
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        addLanguageSwitcher();
+        applyLanguage(getLang());
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+})();
+</script>
+
 </body>
 </html>
