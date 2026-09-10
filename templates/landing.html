@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>FinFlow — Financial Operations Platform</title>
+
+    <meta name="description"
+          content="Self-hosted financial management platform for budgets, invoices, payments, analytics and financial operations.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="FinFlow — Financial Operations Platform">
+    <meta property="og:description"
+          content="Self-hosted platform for budgets, invoices, payments, analytics and financial operations.">
+    <meta property="og:url" content="https://finflow.lexxkato.win/">
+    <meta property="og:image" content="https://finflow.lexxkato.win/static/finflow-preview.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="FinFlow Dashboard">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FinFlow — Financial Operations Platform">
+    <meta name="twitter:description"
+          content="Self-hosted platform for budgets, invoices, payments, analytics and financial operations.">
+    <meta name="twitter:image"
+          content="https://finflow.lexxkato.win/static/finflow-preview.png">
+
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #070b12;
+            --panel: rgba(18, 24, 36, 0.72);
+            --panel-strong: rgba(20, 27, 41, 0.9);
+            --border: rgba(255, 255, 255, 0.09);
+            --text: #f4f7fb;
+            --muted: #8d98aa;
+            --accent: #7c8cff;
+            --accent-hover: #8d9bff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(
+                    circle at 50% -10%,
+                    rgba(124, 140, 255, 0.18),
+                    transparent 38%
+                ),
+                radial-gradient(
+                    circle at 85% 30%,
+                    rgba(95, 110, 255, 0.08),
+                    transparent 28%
+                ),
+                var(--bg);
+        }
+
+        .page {
+            width: min(1120px, calc(100% - 36px));
+            margin: 0 auto;
+        }
+
+        header {
+            padding: 34px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .brand img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: 750;
+            letter-spacing: -0.5px;
+        }
+
+        .login-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 0 18px;
+            border: 1px solid rgba(124, 140, 255, 0.3);
+            border-radius: 11px;
+            color: white;
+            background: rgba(124, 140, 255, 0.13);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease,
+                transform 0.15s ease;
+        }
+
+        .login-link:hover {
+            background: rgba(124, 140, 255, 0.22);
+            border-color: rgba(124, 140, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 82px 0 54px;
+        }
+
+        .hero-logo {
+            width: 112px;
+            height: 112px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 18px 45px rgba(124, 140, 255, 0.18));
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(42px, 7vw, 72px);
+            line-height: 0.98;
+            letter-spacing: -3px;
+            font-weight: 800;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+        }
+
+        .hero-subtitle {
+            max-width: 700px;
+            margin: 22px auto 0;
+            color: #c1c8d4;
+            font-size: clamp(18px, 2.5vw, 23px);
+            line-height: 1.45;
+            letter-spacing: -0.3px;
+        }
+
+        .hero-description {
+            max-width: 670px;
+            margin: 15px auto 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+
+        .primary-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 22px;
+            border-radius: 12px;
+            color: white;
+            background: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 750;
+            box-shadow: 0 12px 32px rgba(124, 140, 255, 0.18);
+            transition:
+                background 0.15s ease,
+                transform 0.15s ease;
+        }
+
+        .primary-button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .preview-wrap {
+            margin: 18px auto 0;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.025);
+            box-shadow:
+                0 30px 90px rgba(0, 0, 0, 0.42),
+                inset 0 1px 0 rgba(255, 255, 255, 0.035);
+            backdrop-filter: blur(18px);
+        }
+
+        .preview-wrap img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 13px;
+        }
+
+        .features {
+            padding: 74px 0 80px;
+        }
+
+        .section-title {
+            margin: 0;
+            text-align: center;
+            font-size: 28px;
+            letter-spacing: -1px;
+        }
+
+        .section-description {
+            max-width: 650px;
+            margin: 11px auto 30px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .feature {
+            padding: 22px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--panel);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+        }
+
+        .feature-icon {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .feature h3 {
+            margin: 0 0 8px;
+            font-size: 15px;
+            letter-spacing: -0.2px;
+        }
+
+        .feature p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .security {
+            margin-bottom: 80px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: linear-gradient(
+                135deg,
+                rgba(124, 140, 255, 0.09),
+                rgba(18, 24, 36, 0.72)
+            );
+        }
+
+        .security h2 {
+            margin: 0 0 9px;
+            font-size: 22px;
+            letter-spacing: -0.6px;
+        }
+
+        .security p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .security-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .security-item {
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: #cbd2de;
+            background: rgba(255, 255, 255, 0.035);
+            font-size: 12px;
+        }
+
+        footer {
+            padding: 0 0 35px;
+            text-align: center;
+            color: #687386;
+            font-size: 12px;
+        }
+
+        @media (max-width: 760px) {
+            header {
+                padding-top: 22px;
+            }
+
+            .hero {
+                padding-top: 58px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                letter-spacing: -2px;
+            }
+
+            .preview-wrap {
+                padding: 6px;
+                border-radius: 15px;
+            }
+
+            .security {
+                padding: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+
+        <header>
+            <a class="brand" href="/">
+                <img src="{{ url_for('static', filename='finflow-logo.png') }}" alt="FinFlow">
+                <span class="brand-name">FinFlow</span>
+            </a>
+
+            <a class="login-link" href="{{ url_for('login') }}">Sign in</a>
+        </header>
+
+        <main>
+            <section class="hero">
+                <img
+                    class="hero-logo"
+                    src="{{ url_for('static', filename='finflow-logo.png') }}"
+                    alt="FinFlow"
+                >
+
+                <h1>Fin<span>Flow</span></h1>
+
+                <div class="hero-subtitle">
+                    Financial Operations Platform
+                </div>
+
+                <p class="hero-description">
+                    A modern self-hosted platform for managing budgets, invoices,
+                    payments, contracts, analytics, notifications and financial operations
+                    in one controlled environment.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="primary-button" href="{{ url_for('login') }}">
+                        Sign in to FinFlow
+                    </a>
+                </div>
+            </section>
+
+            <section class="preview-wrap">
+                <img
+                    src="{{ url_for('static', filename='finflow-preview.png') }}"
+                    alt="FinFlow Dashboard Preview"
+                >
+            </section>
+
+            <section class="features">
+                <h2 class="section-title">Everything in one financial workspace</h2>
+
+                <p class="section-description">
+                    FinFlow combines financial control, operational workflows,
+                    analytics and governance without requiring an external SaaS platform.
+                </p>
+
+                <div class="feature-grid">
+                    <article class="feature">
+                        <div class="feature-icon">💰</div>
+                        <h3>Financial Management</h3>
+                        <p>
+                            Budgets, spending, remaining funds, financial exposure
+                            and company-specific financial views.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">📄</div>
+                        <h3>Invoices & Documents</h3>
+                        <p>
+                            Invoice lifecycle, payment tracking, cancellation,
+                            document generation and PDF / HTML output.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">📊</div>
+                        <h3>Analytics</h3>
+                        <p>
+                            Clear management metrics for budgets, spending,
+                            payments, outstanding amounts and financial exposure.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">👥</div>
+                        <h3>Role-Based Access</h3>
+                        <p>
+                            Administrator, Manager and Viewer roles with
+                            server-side authorization.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">📝</div>
+                        <h3>Audit Log</h3>
+                        <p>
+                            Important financial and administrative actions are
+                            recorded and attributed to authenticated users.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <div class="feature-icon">🔔</div>
+                        <h3>Notifications</h3>
+                        <p>
+                            Persistent read / unread notifications with protected
+                            API endpoints and convenient management.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="security">
+                <h2>Built with security and operational control in mind</h2>
+
+                <p>
+                    FinFlow v1.0.0 establishes a strong production baseline with
+                    authentication, role-based access control, CSRF protection,
+                    secure session settings, audit logging, PostgreSQL persistence,
+                    migrations and automated backups.
+                </p>
+
+                <div class="security-list">
+                    <span class="security-item">Authentication</span>
+                    <span class="security-item">RBAC</span>
+                    <span class="security-item">CSRF Protection</span>
+                    <span class="security-item">Secure Sessions</span>
+                    <span class="security-item">Audit Log</span>
+                    <span class="security-item">PostgreSQL 17</span>
+                    <span class="security-item">Alembic</span>
+                    <span class="security-item">Automated Backups</span>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            FinFlow v1.0.0 · Production Baseline
+        </footer>
+
+    </div>
+</body>
+</html>

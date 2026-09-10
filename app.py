@@ -989,8 +989,12 @@ def finflow_preview():
 
 
 @app.route("/")
-@login_required
 def index():
+    current_user = get_current_user()
+
+    if current_user is None:
+        return render_template("landing.html")
+
     companies = Company.query.order_by(Company.name).all()
     invoices = Invoice.query.order_by(Invoice.id.desc()).all()
 
