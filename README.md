@@ -1,8 +1,22 @@
+<div align="center">
+
+<img src="static/finflow-logo.png" alt="FinFlow" width="180">
+
 # FinFlow
 
-**FinFlow** is a lightweight financial and accounting management application for tracking company budgets, invoices, payments, financial exposure, notifications, audit activity, and user access.
+**Lightweight Flask-based financial management platform for invoices, contracts, budgets, analytics, and document generation.**
 
-The project is designed as a practical self-hosted financial operations dashboard with a modern web interface, role-based access control, PostgreSQL persistence, database migrations, audit logging, and bilingual RU/EN interface support.
+[![Release](https://img.shields.io/github/v/release/abyss37/FinFlow?style=flat-square)](https://github.com/abyss37/FinFlow/releases)
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.x-000000?style=flat-square&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License](https://img.shields.io/github/license/abyss37/FinFlow?style=flat-square)](https://github.com/abyss37/FinFlow/blob/main/LICENSE)
+
+</div>
+
+<p align="center">
+  <img src="static/finflow-preview.png" alt="FinFlow Dashboard Preview">
+</p>
 
 ---
 
