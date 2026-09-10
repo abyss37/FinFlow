@@ -1,718 +1,863 @@
-# FinFlow 💼
+# FinFlow
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Framework](https://img.shields.io/badge/Framework-Flask-green.svg)](https://flask.palletsprojects.com/)
-[![Database](https://img.shields.io/badge/Database-PostgreSQL%2017-blue.svg)](https://www.postgresql.org/)
-[![Migrations](https://img.shields.io/badge/Migrations-Alembic-orange.svg)](https://alembic.sqlalchemy.org/)
-[![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
+**FinFlow** is a lightweight financial and accounting management application for tracking company budgets, invoices, payments, financial exposure, notifications, audit activity, and user access.
 
-**FinFlow** is a lightweight financial control platform for contracts, invoices, product budgets and financial exposure.
-
-It provides a centralized dashboard for tracking:
-
-- budgets
-- issued invoices
-- remaining limits
-- contract dates
-- financial alerts
-- analytics
-- companies and products
-
-🌐 **Live application:** https://finflow.lexxkato.win/
-
-![FinFlow Preview](https://finflow.lexxkato.win/finflow-preview.png)
+The project is designed as a practical self-hosted financial operations dashboard with a modern web interface, role-based access control, PostgreSQL persistence, database migrations, audit logging, and bilingual RU/EN interface support.
 
 ---
 
-## ✨ What FinFlow Does
+## Features
 
-FinFlow is designed around a simple operational question:
+### Dashboard
 
-> **How much has been invoiced, how much budget remains, and where do we need to pay attention?**
+The main dashboard provides an overview of the current financial state of the managed companies.
 
-The system combines company information, product budgets, contracts and invoices into a single financial control dashboard.
+It includes:
 
-### Core capabilities
+- company budget cards
+- budget utilization
+- invoiced amounts
+- remaining budget
+- contract/completion dates
+- product-specific metrics
+- financial health indicators
+- recent financial activity
+- notifications
+- quick invoice operations
+- company-specific statistics
 
-- Company management
-- Product budget management
-- Invoice management
-- Invoice lifecycle control
-- Budget utilization monitoring
-- Financial alerts
-- Financial analytics
-- Contract date monitoring
-- Russian / English localization
-- PostgreSQL production database
-- Alembic database migrations
-- Automated PostgreSQL backups
-- Health monitoring
-- Open Graph / social preview support
+Company cards are isolated from each other.
 
----
+For example:
 
-## 🧾 Invoice Management
-
-FinFlow provides a centralized interface for managing issued invoices.
-
-Supported operations include:
-
-- Creating invoices
-- Editing active invoices
-- Invoice numbers
-- Invoice dates
-- Completion dates
-- Software / product association
-- Contract details
-- Invoice amounts in EUR
-- Duplicate invoice protection
-- Invoice cancellation
-- Invoice document generation
-
-Invoices are associated with companies and products and participate in the corresponding budget calculations.
-
-### Invoice terminology
-
-FinFlow deliberately uses **"invoiced" / "issued invoices"** rather than "revenue" or "spending".
-
-An issued invoice does not necessarily represent:
-
-- recognized revenue
-- received payment
-- actual cash expenditure
-
-This distinction is important for accurate financial reporting.
+- the **ALPHA** card displays only ALPHA financial data
+- the **BETA** card displays only BETA financial data
 
 ---
 
-## 🚨 Financial Alerts
+## Financial Analytics
 
-FinFlow automatically highlights potentially problematic financial situations.
+The Analytics page provides a more detailed view of financial performance.
 
-### Budget utilization thresholds
+Available filters include:
 
-| Utilization | Status |
-|---|---|
-| `< 80%` | Healthy |
-| `80–89.9%` | Warning |
-| `90–99.9%` | Critical |
-| `≥ 100%` | Budget exceeded |
+- date range
+- company
+- product
 
-The dashboard also warns about contracts ending within the next **30 days**.
+Current analytics include:
 
-Financial alerts are designed to make important exceptions visible without requiring manual inspection of every company or invoice.
+- total budget
+- invoiced amount
+- remaining budget
+- budget utilization
+- outstanding unpaid exposure
+- company comparison
+- product comparison
+- monthly spending
 
----
+### Financial exposure
 
-## 📈 Financial Analytics
+Exposure represents the actual outstanding invoice amount rather than simply duplicating the invoiced amount.
 
-The dashboard includes visual analytics for:
+For each invoice:
 
-- Budget utilization
-- Invoice amounts by company
-- Invoice amounts by product
-- Monthly invoiced amounts
-- Invoice activity by date
+```text
+Outstanding = Invoice Amount - Paid Amount
+```
 
-Analytics are based on active issued invoices.
-
-Cancelled invoices are excluded from financial totals and analytics.
-
-### Current terminology
-
-The Russian interface uses terminology such as:
-
-- **Обзор выставленных счетов**
-- **Использование бюджета и динамика выставленных счетов**
-- **Сумма счетов по компаниям**
-- **Сумма счетов по продуктам**
-- **Выставленные счета по месяцам**
-- **Динамика выставленных счетов**
-- **Выставлено счетов**
-
-This avoids incorrectly describing invoices as revenue or expenses.
+The paid amount is constrained to the invoice amount and cannot produce a negative outstanding balance.
 
 ---
 
-## 🌍 Localization
+## Invoice Management
 
-The user interface supports:
+FinFlow supports the complete invoice lifecycle.
+
+Available operations include:
+
+- creating invoices
+- editing invoices
+- generating invoices
+- updating generated invoices
+- tracking payment status
+- cancelling invoices
+
+Invoice data includes:
+
+- invoice number
+- company
+- product
+- amount
+- payment amount
+- invoice status
+- invoice dates
+- payment information
+- related financial metadata
+
+Financial modification operations are restricted by user role.
+
+---
+
+## Budget Management
+
+Authorized users can update company budgets directly from the application.
+
+Budget changes are protected by role-based authorization and recorded in the Audit Log.
+
+The dashboard and Analytics page use the company-specific budget when calculating financial metrics.
+
+---
+
+## Contract / Completion Dates
+
+Authorized users can update company contract or completion dates.
+
+Changes are recorded in the Audit Log.
+
+---
+
+## Notifications
+
+FinFlow includes an integrated notification center.
+
+Notifications can be associated with:
+
+- companies
+- invoices
+- financial events
+- system events
+
+The notification center provides:
+
+- unread notification count
+- unread-first ordering
+- notification details
+- mark as read
+- mark all as read
+- navigation to related company or invoice
+- periodic refresh
+
+Notification deduplication is supported through a unique deduplication key.
+
+---
+
+## Audit Log
+
+FinFlow provides a complete Audit Log for important financial and administrative operations.
+
+The Audit Log records events such as:
+
+- company creation
+- invoice creation
+- invoice updates
+- payment status changes
+- budget changes
+- contract date changes
+- invoice cancellation
+- user creation
+
+Each new audit event can contain:
+
+- timestamp
+- action
+- entity type
+- entity ID
+- company
+- user
+- software
+- description
+- details
+
+### User attribution
+
+Audit events created during an authenticated session are automatically associated with the current user.
+
+Historical records created before user attribution was introduced may have an empty user field. This is intentional and preserves the original historical data.
+
+### Audit filters
+
+The Audit Log supports filtering by:
+
+- user
+- action
+- company
+- product/software
+
+---
+
+## Authentication
+
+FinFlow uses session-based authentication.
+
+The application supports:
+
+- login
+- logout
+- persistent user accounts
+- active/inactive users
+- last login tracking
+- role-based authorization
+
+Passwords are stored as secure password hashes and are never stored in plaintext.
+
+---
+
+## Roles and Permissions
+
+FinFlow currently supports three roles:
+
+- `admin`
+- `manager`
+- `viewer`
+
+### Permission matrix
+
+| Action | Admin | Manager | Viewer |
+|---|:---:|:---:|:---:|
+| Dashboard | Yes | Yes | Yes |
+| Analytics | Yes | Yes | Yes |
+| Audit Log | Yes | Yes | Yes |
+| View notifications | Yes | Yes | Yes |
+| Create invoice | Yes | Yes | No |
+| Edit invoice | Yes | Yes | No |
+| Cancel invoice | Yes | Yes | No |
+| Change budget | Yes | Yes | No |
+| Change contract date | Yes | Yes | No |
+| Change payment status | Yes | Yes | No |
+| Manage users and roles | Yes | No | No |
+
+The first administrator is created during the initial database/bootstrap process.
+
+---
+
+## CSRF Protection
+
+All POST requests are protected by CSRF validation.
+
+FinFlow uses a per-session CSRF token.
+
+The token can be supplied through:
+
+- a hidden `csrf_token` form field
+- the `X-CSRF-Token` request header
+
+Invalid or missing CSRF tokens are rejected with HTTP `403`.
+
+This protection applies to both normal form submissions and JSON/API POST requests.
+
+---
+
+## Security
+
+The application includes several security protections.
+
+### Session security
+
+Session cookies are configured with:
+
+```text
+HttpOnly
+SameSite=Lax
+Secure
+```
+
+### Secret key
+
+The Flask session secret is supplied through the server environment and is not stored in the application source code.
+
+FinFlow refuses to start if an explicit `SECRET_KEY` is not configured.
+
+### Open redirect protection
+
+Login redirection is restricted to local application paths.
+
+External redirect targets are rejected.
+
+### Authentication protection
+
+Protected pages require an authenticated user.
+
+Protected API endpoints return authentication errors instead of exposing application pages.
+
+### Role protection
+
+Financial modification endpoints require either:
+
+- `admin`
+- `manager`
+
+User management requires:
+
+- `admin`
+
+---
+
+## Internationalization
+
+FinFlow currently supports:
 
 - 🇷🇺 Russian
 - 🇬🇧 English
 
-Russian is the default language on first visit.
+The language preference is stored in the browser using the FinFlow localization system.
 
-The selected language is stored locally in the browser using `localStorage`.
+### Language switcher
 
-Dashboard localization and generated invoice document content are handled independently.
+There is intentionally **one language switcher on the Dashboard**.
+
+Other pages inherit the selected language automatically.
+
+The following pages do not display their own language switcher:
+
+- Analytics
+- Generator
+- Audit Log
+- Users
+- Login
+
+This keeps the interface consistent and avoids multiple independent language controls.
 
 ---
 
-## 🏗 Architecture
+## UI
 
-FinFlow is a server-rendered Flask application with a lightweight JavaScript frontend.
+FinFlow uses a modern dark financial-dashboard design.
+
+The current interface includes:
+
+- dark theme
+- glass-style panels
+- rounded cards
+- compact controls
+- status badges
+- responsive layouts
+- consistent navigation
+- contextual user menu
+- notification center
+- modern dashboard cards
+- company-specific financial visualization
+
+The Dashboard header includes:
+
+- FinFlow branding
+- database backend indicator
+- language switcher
+- authenticated username
+- role indicator
+- user dropdown
+- logout action
+
+Administrators additionally see the **Users** management entry.
+
+---
+
+## Database
+
+FinFlow currently uses **PostgreSQL** as its production database.
+
+Example backend:
 
 ```text
-┌───────────────────────────────┐
-│           Browser             │
-│       HTML / CSS / JS         │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│            Nginx              │
-│        Reverse Proxy          │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│          Gunicorn             │
-│         Flask / WSGI          │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│         SQLAlchemy            │
-│             ORM               │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│        PostgreSQL 17          │
-│       Production DB           │
-└───────────────────────────────┘
+PostgreSQL 17
 ```
 
-Production architecture
+SQLAlchemy is used as the database abstraction layer.
 
-The production environment uses:
+The PostgreSQL connection is configured through:
 
-* Nginx as reverse proxy
-* Gunicorn as WSGI application server
-* Flask as application framework
-* SQLAlchemy as ORM
-* PostgreSQL 17 as the production database
-* Alembic for schema migrations
-* systemd for service management
-* automated PostgreSQL backups
-* health checks
+```text
+DATABASE_URL
+```
 
-SQLite remains available only for legacy/local development and migration purposes.
+The application normalizes PostgreSQL URLs to use the Psycopg driver:
 
-⸻
+```text
+postgresql+psycopg
+```
 
-🛠 Technology Stack
+Database connections use connection health checking where appropriate.
 
-Backend
+---
 
-* Python 3.10+
-* Flask
-* Flask-SQLAlchemy
-* SQLAlchemy
-* Alembic
-* Gunicorn
+## Database Migrations
 
-Frontend
+FinFlow uses **Alembic** for database schema migrations.
 
-* HTML5
-* CSS3
-* Tailwind CSS
-* Vanilla JavaScript
-* Bootstrap Icons
+The migration chain currently contains:
 
-Database
+```text
+ea1415587321  baseline existing FinFlow schema
+        ↓
+4257ca3abaf2  add accounting data integrity constraints
+        ↓
+1a377231e5b3  add invoice lifecycle fields
+        ↓
+4c41fd40f894  add invoice payment tracking
+        ↓
+7f3a9c2d1b6e  add notifications
+        ↓
+8a4b6d2e91f0  add notification dedup key
+        ↓
+9c7e4a1b2d6f  add users
+        ↓
+d9d0cd767f81  add audit log user attribution
+```
 
-* PostgreSQL 17 — production
-* SQLite — legacy/local/migration use
-* SQLAlchemy ORM
-* Alembic migrations
+The current migration head is:
 
-Documents & Images
+```text
+d9d0cd767f81
+```
 
-* Pillow
-* PNG assets
-* Generated invoice documents
-* Printable invoice layouts
-* Synthetic stamp/signature generation
+Check the current database revision with:
 
-Infrastructure
+```bash
+./venv/bin/alembic current
+```
 
-* Nginx
-* systemd
-* Gunicorn
-* Cloudflare Tunnel-compatible deployment
-* Automated PostgreSQL backups
-* Application health checks
+Check available heads with:
 
-⸻
+```bash
+./venv/bin/alembic heads
+```
 
-📦 Project Structure
+Apply pending migrations with:
+
+```bash
+./venv/bin/alembic upgrade head
+```
+
+---
+
+## Technology Stack
+
+### Backend
+
+- Python 3.13+
+- Flask 3.1
+- Flask-SQLAlchemy
+- SQLAlchemy 2.x
+- Alembic
+- Psycopg 3
+
+### Database
+
+- PostgreSQL 17+
+
+### Production server
+
+- Gunicorn
+- systemd
+
+### Frontend
+
+- HTML5
+- JavaScript
+- Tailwind CSS
+- browser localStorage for language preference
+
+---
+
+## Project Structure
+
+```text
 FinFlow/
+├── .github/
+│   ├── dependabot.yml
+│   └── workflows/
+│       └── ci.yml
 │
-├── app.py
-│   └── Flask application, routes and SQLAlchemy models
+├── alembic/
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions/
+│       ├── ea1415587321_baseline_existing_finflow_schema.py
+│       ├── 4257ca3abaf2_add_accounting_data_integrity_.py
+│       ├── 1a377231e5b3_add_invoice_lifecycle_fields.py
+│       ├── 4c41fd40f894_add_invoice_payment_tracking.py
+│       ├── 20260909153330_add_notifications.py
+│       ├── 20260909-153654_add_notification_dedup_key.py
+│       ├── 20260909-195600_add_users.py
+│       └── d9d0cd767f81_add_audit_log_user_attribution.py
+│
+├── static/
+│   ├── favicon.svg
+│   ├── finflow-logo.png
+│   ├── finflow-preview.png
+│   ├── stamp_signature.png
+│   └── js/
+│       └── finflow-i18n.js
 │
 ├── templates/
 │   ├── index.html
-│   │   └── Main dashboard, analytics, alerts and invoice UI
-│   │
-│   └── generator.html
-│       └── Invoice generation interface
-│
-├── static/
-│   ├── finflow-logo.png
-│   └── finflow-preview.png
-│       └── Open Graph / social preview image
-│
-├── migrations/
-│   └── Alembic migration history
-│
-├── requirements.txt
-│   └── Python dependencies
+│   ├── analytics.html
+│   ├── generator.html
+│   ├── audit-log.html
+│   ├── users.html
+│   ├── login.html
+│   └── error.html
 │
 ├── alembic.ini
-│   └── Alembic configuration
-│
-├── deploy.sh
-│   └── Deployment / update helper
-│
-├── make_demo_stamp.py
-│   └── Synthetic stamp / signature generator
-│
+├── app.py
+├── seed_demo.py
+├── fix_budget_health.sh
 ├── migrate_sqlite_to_postgres.py
-│   └── SQLite → PostgreSQL migration utility
-│
-├── accounting.db
-│   └── Optional legacy SQLite database
-│
+├── requirements.txt
+├── deploy.sh
 ├── README.md
-│
-└── CHANGELOG.md
-🚀 Quick Start
+├── CHANGELOG.md
+└── LICENSE
+```
 
-Requirements
+---
 
-* Python 3.10+
-* Git
-* PostgreSQL 14+
-* python3-venv
+## Configuration
 
-Clone repository
+Production configuration is provided through an environment file.
+
+Example:
+
+```text
+DATABASE_URL=postgresql+psycopg://finflow:<password>@localhost:5432/finflow
+SECRET_KEY=<strong-random-secret>
+```
+
+Do not commit production credentials or secrets to Git.
+
+---
+
+## Local Development
+
+Clone the repository:
+
+```bash
 git clone git@github.com:abyss37/FinFlow.git
 cd FinFlow
-Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-Install dependencies
+```
+
+Create a virtual environment:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
-Configure database
+```
 
-For PostgreSQL:
-export DATABASE_URL="postgresql+psycopg://USER:PASSWORD@HOST:5432/finflow"
-For local SQLite development:
-export DATABASE_URL="sqlite:///accounting.db"
-Run migrations
+Configure the environment:
+
+```bash
+export DATABASE_URL="postgresql+psycopg://..."
+export SECRET_KEY="..."
+```
+
+Run migrations:
+
+```bash
 alembic upgrade head
-Start application
-python3 app.py
-Application:
-http://127.0.0.1:5000
-🗄 Database Configuration
+```
 
-FinFlow uses SQLAlchemy as the database abstraction layer.
+Start Flask:
 
-PostgreSQL
+```bash
+flask --app app run
+```
 
-Production deployments use PostgreSQL.
+For a production-like local server:
 
-Example:
-export DATABASE_URL="postgresql+psycopg://USER:PASSWORD@HOST:5432/finflow"
-The production database should be persistent and protected from direct public access.
-
-SQLite
-
-SQLite can be used for:
-
-* local development
-* testing
-* legacy environments
-* SQLite → PostgreSQL migration
-
-Example:
-export DATABASE_URL="sqlite:///accounting.db"
-SQLite is not the production database.
-
-Production credentials
-
-Database credentials must never be committed to Git.
-
-Recommended production configuration:
-/etc/accounting-app.env
-🔄 Database Migrations
-
-FinFlow uses Alembic for database schema lifecycle management.
-
-Check current revision
-alembic current
-Upgrade database
-alembic upgrade head
-Create a migration
-
-After changing SQLAlchemy models:
-alembic revision --autogenerate -m "describe change"
-Inspect the generated migration before applying it:
-alembic upgrade head
-Database migrations are preferred over destructive manual schema changes.
-
-⸻
-
-🔁 SQLite → PostgreSQL Migration
-
-FinFlow includes a dedicated migration utility for legacy SQLite data.
-python3 migrate_sqlite_to_postgres.py
-The migration utility is intended for transferring existing accounting data from:
-SQLite
-   │
-   ▼
-PostgreSQL
-After migration, the PostgreSQL database should be verified before switching production traffic.
-
-⸻
-
-🧪 Development
-
-Run Flask directly:
-python3 app.py
-Or use Gunicorn:
+```bash
 gunicorn --workers 3 --bind 127.0.0.1:5000 app:app
-Local application:
-http://127.0.0.1:5000
-Before submitting changes:
+```
 
-1. Verify Python syntax.
-2. Test affected application functionality.
-3. Inspect database migrations.
-4. Verify dashboard calculations.
-5. Verify invoice lifecycle behavior.
-6. Check that no secrets are committed.
+---
 
-⸻
+## Production Deployment
 
-🔐 Configuration & Secrets
+The production application runs under systemd.
 
-Production configuration is kept outside the Git repository.
+Example service:
 
-Example:
-/etc/accounting-app.env
-Do not commit:
+```text
+accounting-app.service
+```
 
-* Database passwords
-* API keys
-* Authentication secrets
-* Private certificates
-* Production environment files
-* Other credentials
+The application is served by Gunicorn on:
 
-A production environment file should have restricted filesystem permissions.
+```text
+127.0.0.1:5000
+```
 
-Example:
-chmod 600 /etc/accounting-app.env
-💾 Backups
+The application process runs as a dedicated system user.
 
-Production PostgreSQL data is backed up independently from the application.
+Check service status:
 
-The backup flow is:
-PostgreSQL
-    │
-    ▼
-  pg_dump
-    │
-    ▼
-Compressed backup
-    │
-    ▼
-Retention policy
-Backups should be stored separately from the primary database whenever possible.
-
-Restore testing
-
-A backup is useful only if restoration works.
-
-Restore procedures should therefore be tested periodically using a separate database or environment.
-
-⸻
-
-❤️ Health Checks
-
-Production monitoring should verify:
-
-* systemd service state
-* HTTP availability
-* PostgreSQL availability
-* database connectivity
-* backup freshness
-
-A failed health check should be treated as an operational alert.
-
-Service check
+```bash
 systemctl status accounting-app
-HTTP check
-curl -I http://127.0.0.1:5000/
-🧾 Invoice Lifecycle
+```
 
-Invoices have an explicit lifecycle:
-┌──────────────┐
-│    ISSUED    │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐
-│  CANCELLED   │
-└──────────────┘
-ISSUED
+Restart the application:
 
-An issued invoice participates in:
+```bash
+systemctl restart accounting-app
+```
 
-* budget calculations
-* utilization
-* analytics
-* dashboard totals
+Check recent service logs:
 
-CANCELLED
+```bash
+journalctl -u accounting-app -n 100 --no-pager
+```
 
-A cancelled invoice:
+---
 
-* remains in the database
-* remains available for historical inspection
-* is excluded from budget calculations
-* is excluded from analytics
-* cannot be edited
-* cannot be restored through the normal UI
+## Database Maintenance
 
-Cancellation is implemented as a soft delete.
+Check PostgreSQL connectivity:
 
-This preserves financial history without physically deleting the original record.
+```bash
+psql -d finflow
+```
 
-⸻
+Check Alembic state:
 
-🛡 Data Integrity
+```bash
+./venv/bin/alembic current
+```
 
-FinFlow uses both application-level validation and database-level constraints.
+Apply migrations:
 
-Examples include:
+```bash
+./venv/bin/alembic upgrade head
+```
 
-* Non-negative budgets
-* Positive invoice amounts
-* Foreign-key relationships
-* Company/product relationships
-* Duplicate invoice protection
-* Invoice lifecycle restrictions
+Never manually modify the production schema when a migration should be used.
 
-Monetary values use decimal-compatible database types rather than binary floating-point values.
+Create a new migration for schema changes:
 
-This is important for financial calculations where rounding precision matters.
+```bash
+./venv/bin/alembic revision -m "describe change"
+```
 
-⸻
+Review the generated migration before applying it.
 
-🔎 Duplicate Protection
+---
 
-Where an invoice number is supplied, duplicate protection is enforced around:
-Company
-   +
-Software / Product
-   +
-Invoice Number
-This prevents accidental creation of duplicate invoice records.
+## Demo / Seed Data
 
-The protection is implemented at the database level in addition to application validation.
+The repository contains:
 
-⸻
+```text
+seed_demo.py
+```
 
-🌐 Open Graph / Social Preview
+for preparing demo data.
 
-FinFlow provides a dedicated Open Graph preview image:
+Demo data should only be used intentionally and should not overwrite production data without verification.
 
-https://finflow.lexxkato.win/finflow-preview.png
-
-The main dashboard page exposes metadata for:
-
-* Open Graph
-* Twitter/X
-* page title
-* description
-* preview image
-* image dimensions
-* image alternative text
+---
 
-Current preview image:
-1733 × 908 PNG
-The preview allows the FinFlow URL to display a branded image when shared through supported social networks and messaging platforms.
+## Migration from SQLite
 
-⸻
+The project previously used SQLite during development.
 
-📊 Current Dashboard
+The current production architecture uses PostgreSQL.
 
-The current dashboard provides four major areas.
+The repository contains:
 
-Financial Summary
+```text
+migrate_sqlite_to_postgres.py
+```
 
-* Total budget
-* Total invoiced
-* Remaining budget
-* Budget utilization
-
-Company Cards
-
-Each company can display:
+for migration purposes.
 
-* Company name
-* ALPHA budget
-* ALPHA invoiced amount
-* BETA budget
-* BETA invoiced amount
-* Contract / completion dates
-
-Analytics
-
-* Budget utilization
-* Invoiced amount by company
-* Invoiced amount by product
-* Monthly invoiced amount
-* Invoice activity by date
-
-Alerts
-
-* Budget warning
-* Critical budget utilization
-* Exceeded budget
-* Upcoming contract end dates
+SQLite database files are intentionally excluded from Git.
 
-⸻
+---
 
-🗺 Roadmap
+## Testing
 
-✅ Completed
+Before committing changes, basic Python syntax should be checked:
 
-* Company management
-* Product budgets
-* Invoice management
-* Invoice editing
-* Invoice cancellation
-* Invoice lifecycle
-* Duplicate invoice protection
-* PostgreSQL production database
-* SQLite local / migration support
-* Alembic migrations
-* Dashboard financial summary
-* Financial analytics
-* Financial alerts
-* Contract expiration alerts
-* Russian / English localization
-* Mobile-responsive dashboard
-* Production Gunicorn deployment
-* Nginx reverse proxy
-* PostgreSQL backup automation
-* Backup restoration testing
-* Health checks
-* Open Graph metadata
-* Social preview image
+```bash
+python3 -m py_compile app.py seed_demo.py
+```
 
-🚧 Planned
+Templates should be rendered through the application and protected routes should be tested with an authenticated session.
 
-* Dedicated /analytics page
-* Advanced analytics filters
-* Date-range filtering
-* Company filtering
-* Product filtering
-* Exportable financial reports
-* Audit log
-* User roles and permissions
-* Approval workflow
-* Contract status management
-* Payment status tracking
-* Overdue invoice monitoring
-* Notifications
-* Multi-currency support
-* More detailed reporting
-* Dashboard customization
+Important areas to verify after backend changes:
 
-⸻
+- login
+- logout
+- role authorization
+- CSRF validation
+- invoice operations
+- payment updates
+- budget updates
+- notifications
+- Audit Log
+- user attribution
+- Analytics
+- language switching
 
-🎯 Design Principles
+---
 
-Keep the dashboard operational
+## Authentication Smoke Test
 
-The main page should answer:
+The following behavior is expected:
 
-What is happening with the budget right now?
+```text
+Unauthenticated protected page
+        ↓
+HTTP 302
+        ↓
+/login
+```
 
-The dashboard should prioritize current financial exposure rather than unnecessary complexity.
+Insufficient role:
 
-Preserve financial history
+```text
+Authenticated user
+        ↓
+Unauthorized operation
+        ↓
+HTTP 403
+```
 
-Cancelled records should not simply disappear.
+Unauthenticated API request:
 
-Financial records should remain available for historical inspection.
+```text
+HTTP 401
+```
 
-Separate invoices from revenue
+Invalid CSRF token:
 
-An issued invoice is not automatically:
+```text
+HTTP 403
+```
 
-* recognized revenue
-* received payment
-* cash expenditure
+---
 
-FinFlow therefore uses invoice-specific terminology throughout the financial dashboard.
+## Git Hygiene
 
-Prefer simple infrastructure
+Local development and production servers may contain temporary backup files created during development.
 
-FinFlow deliberately uses a small technology footprint:
-Flask
-   +
-SQLAlchemy
-   +
-PostgreSQL
-   +
-Vanilla JavaScript
-Database-first integrity
+These include files such as:
 
-Important financial rules should be enforced at the database level whenever practical.
+```text
+*.before-*
+*.bak
+*.bak-*
+```
 
-Make production state recoverable
+They are intentionally excluded from Git.
 
-Backups, migrations and health checks are treated as part of the application rather than optional infrastructure.
+Local databases, logs, virtual environments, backups, and environment files are also excluded.
 
-Avoid unnecessary complexity
+Only the actual application source, configuration templates, migrations, assets, and documentation should be committed.
 
-The system should remain understandable, maintainable and easy to operate.
+---
 
-⸻
+## Deployment Checklist
 
-🤝 Contributing
+Before deploying a new version:
 
-Contributions, bug reports and improvements are welcome.
+```bash
+git status
+git diff
+python3 -m py_compile app.py seed_demo.py
+```
 
-Before submitting changes:
+Verify the migration state:
 
-1. Create a feature branch.
-2. Make the smallest reasonable change.
-3. Run syntax checks.
-4. Test affected functionality.
-5. Check database migrations when models change.
-6. Verify financial calculations.
-7. Verify invoice lifecycle behavior.
-8. Do not commit secrets or production credentials.
+```bash
+./venv/bin/alembic current
+./venv/bin/alembic heads
+```
 
-Example:
-git checkout -b feature/my-change
-Commit changes:
-git add .
-git commit -m "feat: describe change"
-Push the branch:
-git push origin feature/my-change
-📄 License
+Apply migrations if required:
 
-FinFlow is released under the MIT License.
+```bash
+./venv/bin/alembic upgrade head
+```
 
-See LICENSE⁠￼.
+Restart the service:
+
+```bash
+systemctl restart accounting-app
+```
+
+Verify:
+
+```bash
+systemctl is-active accounting-app
+```
+
+Check recent errors:
+
+```bash
+journalctl -u accounting-app -n 50 --no-pager
+```
+
+Then verify the main application pages and authentication flow.
+
+---
+
+## Current Status
+
+FinFlow currently includes:
+
+- [x] PostgreSQL production database
+- [x] SQLAlchemy database layer
+- [x] Alembic migrations
+- [x] Invoice lifecycle management
+- [x] Payment tracking
+- [x] Budget management
+- [x] Financial notifications
+- [x] Notification deduplication
+- [x] User accounts
+- [x] Role-based access control
+- [x] Session authentication
+- [x] CSRF protection
+- [x] Audit Log
+- [x] Audit Log user attribution
+- [x] Audit Log filters
+- [x] Financial Analytics
+- [x] Company-specific dashboard metrics
+- [x] RU/EN localization
+- [x] Single Dashboard language switcher
+- [x] Modernized UI
+- [x] Responsive dashboard
+- [x] Production systemd/Gunicorn deployment
+
+---
+
+## Roadmap
+
+Planned next steps include:
+
+- final UI polish across all pages
+- additional consistency improvements
+- deployment and backup documentation
+- backup/restore procedures
+- additional automated tests
+- further reporting and financial controls
+
+---
+
+## Repository
+
+GitHub:
+
+```text
+https://github.com/abyss37/FinFlow
+```
+
+---
+
+## License
+
+See [`LICENSE`](LICENSE) for the project license.

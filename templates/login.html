@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>FinFlow — Sign in</title>
+
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #070b12;
+            --panel: rgba(18, 24, 36, 0.82);
+            --border: rgba(255, 255, 255, 0.09);
+            --text: #f4f7fb;
+            --muted: #8994a6;
+            --accent: #7c8cff;
+            --accent-hover: #8d9bff;
+            --danger: #ff6b7a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(
+                    circle at 50% 0%,
+                    rgba(124, 140, 255, 0.14),
+                    transparent 42%
+                ),
+                var(--bg);
+        }
+
+        .login-shell {
+            width: min(420px, 100%);
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .brand-title {
+            font-size: 30px;
+            font-weight: 750;
+            letter-spacing: -0.8px;
+        }
+
+        .brand-title span {
+            color: var(--accent);
+        }
+
+        .brand-subtitle {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .card {
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: var(--panel);
+            box-shadow:
+                0 24px 70px rgba(0, 0, 0, 0.42),
+                inset 0 1px 0 rgba(255, 255, 255, 0.035);
+            backdrop-filter: blur(18px);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 22px;
+            letter-spacing: -0.3px;
+        }
+
+        .description {
+            margin: 0 0 24px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        label {
+            display: block;
+            margin: 0 0 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            height: 46px;
+            padding: 0 14px;
+            margin-bottom: 17px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.045);
+            font: inherit;
+            transition:
+                border-color 0.15s ease,
+                background 0.15s ease;
+        }
+
+        input:focus {
+            border-color: rgba(124, 140, 255, 0.65);
+            background: rgba(255, 255, 255, 0.065);
+        }
+
+        button {
+            width: 100%;
+            height: 46px;
+            border: 0;
+            border-radius: 12px;
+            color: white;
+            background: var(--accent);
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition:
+                background 0.15s ease,
+                transform 0.1s ease;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .error {
+            margin-bottom: 18px;
+            padding: 11px 13px;
+            border: 1px solid rgba(255, 107, 122, 0.24);
+            border-radius: 11px;
+            color: #ffb5bd;
+            background: rgba(255, 107, 122, 0.08);
+            font-size: 13px;
+        }
+
+        .footer {
+            margin-top: 18px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px;
+                border-radius: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="login-shell">
+        <div class="brand">
+            <div class="brand-title">Fin<span>Flow</span></div>
+            <div class="brand-subtitle">Financial management system</div>
+        </div>
+
+        <section class="card">
+            <h1>Sign in</h1>
+            <p class="description">Enter your FinFlow credentials to continue.</p>
+
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <form method="post" action="{{ url_for('login', next=next_url) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="next" value="{{ next_url }}">
+
+                <label for="username">Username</label>
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    autocomplete="username"
+                    required
+                    autofocus
+                >
+
+                <label for="password">Password</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button type="submit">Sign in</button>
+            </form>
+        </section>
+
+        <div class="footer">
+            FinFlow
+        </div>
+    </main>
+</body>
+</html>

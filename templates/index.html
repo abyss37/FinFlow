@@ -12,6 +12,656 @@
         html { scroll-behavior: smooth; }
         body { background: #07111f; }
         .glass { background: rgba(15, 28, 45, .78); border: 1px solid rgba(71, 94, 120, .35); box-shadow: 0 18px 55px rgba(0,0,0,.22); backdrop-filter: blur(14px); }
+
+
+
+        /* FinFlow Notification Center v1 */
+
+        /* FinFlow Notification Center polish v1 */
+
+        .ff-notification-item {
+            transition:
+                background .16s ease,
+                transform .16s ease,
+                border-color .16s ease;
+        }
+
+        .ff-notification-item:hover {
+            transform: translateX(1px);
+        }
+
+        .ff-notification-icon {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid rgba(148,163,184,.12);
+        }
+
+        .ff-notification-icon.critical {
+            color: #fb7185;
+            background: rgba(244,63,94,.10);
+            border-color: rgba(251,113,133,.18);
+        }
+
+        .ff-notification-icon.warning {
+            color: #fbbf24;
+            background: rgba(245,158,11,.10);
+            border-color: rgba(251,191,36,.18);
+        }
+
+        .ff-notification-icon.info {
+            color: #67e8f9;
+            background: rgba(6,182,212,.10);
+            border-color: rgba(103,232,249,.18);
+        }
+
+        .ff-notification-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 9px;
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .ff-notification-level.critical {
+            color: #fb7185;
+        }
+
+        .ff-notification-level.warning {
+            color: #fbbf24;
+        }
+
+        .ff-notification-level.info {
+            color: #67e8f9;
+        }
+
+        .ff-notification-unread-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 6px;
+            margin-left: 5px;
+            border-radius: 999px;
+            background: rgba(244,63,94,.14);
+            border: 1px solid rgba(251,113,133,.22);
+            color: #fb7185;
+            font-size: 9px;
+            line-height: 1;
+            font-weight: 900;
+            vertical-align: middle;
+        }
+
+        .ff-notification-item:not(.unread) {
+            opacity: .78;
+        }
+
+        .ff-notification-item:not(.unread):hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            .ff-notification-panel {
+                top: 64px;
+                max-height: calc(100vh - 82px);
+            }
+
+            .ff-notification-list {
+                max-height: calc(100vh - 150px);
+            }
+        }
+
+
+
+        .ff-notification-wrap {
+            position: relative;
+        }
+
+        .ff-notification-btn {
+            position: relative;
+            min-height: 42px;
+            min-width: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            border: 1px solid rgba(71,94,120,.42);
+            background: rgba(15,23,42,.72);
+            color: #cbd5e1;
+            transition:
+                transform .18s ease,
+                border-color .18s ease,
+                background .18s ease,
+                box-shadow .18s ease;
+        }
+
+        .ff-notification-btn:hover,
+        .ff-notification-btn.is-open {
+            transform: translateY(-1px);
+            border-color: rgba(52,211,153,.45);
+            background: rgba(15,23,42,.95);
+            color: #f8fafc;
+            box-shadow: 0 8px 25px rgba(0,0,0,.18);
+        }
+
+        .ff-notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            border: 2px solid #07111f;
+            background: #f43f5e;
+            color: white;
+            font-size: 9px;
+            line-height: 1;
+            font-weight: 900;
+            box-shadow: 0 4px 14px rgba(244,63,94,.35);
+        }
+
+        .ff-notification-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            z-index: 80;
+            width: min(420px, calc(100vw - 24px));
+            overflow: hidden;
+            border: 1px solid rgba(71,94,120,.42);
+            border-radius: 18px;
+            background: rgba(9,21,37,.96);
+            box-shadow: 0 24px 70px rgba(0,0,0,.42);
+            backdrop-filter: blur(18px);
+        }
+
+        .ff-notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 15px;
+            border-bottom: 1px solid rgba(71,94,120,.24);
+        }
+
+        .ff-notification-list {
+            max-height: min(520px, 65vh);
+            overflow-y: auto;
+        }
+
+        .ff-notification-item {
+            position: relative;
+            padding: 13px 15px;
+            border-bottom: 1px solid rgba(71,94,120,.16);
+            cursor: pointer;
+            transition: background .16s ease;
+        }
+
+        .ff-notification-item:hover {
+            background: rgba(30,41,59,.42);
+        }
+
+        .ff-notification-item.unread {
+            background: rgba(52,211,153,.025);
+        }
+
+        .ff-notification-item.unread::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #34d399;
+        }
+
+        .ff-notification-item.critical.unread::before {
+            background: #fb7185;
+        }
+
+        .ff-notification-item.warning.unread::before {
+            background: #fbbf24;
+        }
+
+        .ff-notification-dot {
+            width: 8px;
+            height: 8px;
+            flex: 0 0 8px;
+            margin-top: 5px;
+            border-radius: 999px;
+        }
+
+        .ff-notification-dot.critical {
+            background: #fb7185;
+            box-shadow: 0 0 12px rgba(251,113,133,.42);
+        }
+
+        .ff-notification-dot.warning {
+            background: #fbbf24;
+            box-shadow: 0 0 12px rgba(251,191,36,.34);
+        }
+
+        .ff-notification-dot.info {
+            background: #67e8f9;
+            box-shadow: 0 0 12px rgba(103,232,249,.30);
+        }
+
+        .ff-notification-empty {
+            padding: 32px 20px;
+            text-align: center;
+        }
+
+        .ff-notification-action {
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 800;
+            transition: color .15s ease;
+        }
+
+        .ff-notification-action:hover {
+            color: #34d399;
+        }
+
+        @media (max-width: 640px) {
+            .ff-notification-panel {
+                position: fixed;
+                top: 70px;
+                right: 12px;
+                left: 12px;
+                width: auto;
+            }
+        }
+
+        /* FinFlow UI foundation */
+        .ff-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(
+                145deg,
+                rgba(17, 34, 54, .92),
+                rgba(8, 20, 35, .88)
+            );
+            border: 1px solid rgba(71, 94, 120, .32);
+            border-radius: 18px;
+            box-shadow: 0 16px 50px rgba(0,0,0,.18);
+        }
+
+        .ff-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(
+                    circle at 100% 0%,
+                    rgba(52,211,153,.055),
+                    transparent 38%
+                );
+        }
+
+        .ff-card-hover {
+            transition:
+                transform .22s ease,
+                border-color .22s ease,
+                box-shadow .22s ease;
+        }
+
+        .ff-card-hover:hover {
+            transform: translateY(-2px);
+            border-color: rgba(71, 94, 120, .52);
+            box-shadow: 0 22px 65px rgba(0,0,0,.28);
+        }
+
+        .ff-icon {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            border: 1px solid rgba(71,94,120,.30);
+            background: rgba(15,23,42,.62);
+        }
+
+        .ff-section-label {
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .16em;
+            color: #34d399;
+        }
+
+        .ff-section-title {
+            margin-top: 6px;
+            font-size: 20px;
+            line-height: 1.15;
+            font-weight: 900;
+            letter-spacing: -.025em;
+        }
+
+        .ff-section-description {
+            margin-top: 6px;
+            font-size: 12px;
+            line-height: 1.55;
+            color: #64748b;
+        }
+
+        .ff-btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(71,94,120,.42);
+            background: rgba(15,23,42,.72);
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 800;
+            transition:
+                transform .18s ease,
+                border-color .18s ease,
+                background .18s ease,
+                box-shadow .18s ease;
+        }
+
+        .ff-btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(52,211,153,.45);
+            background: rgba(15,23,42,.95);
+            box-shadow: 0 8px 25px rgba(0,0,0,.18);
+        }
+
+        .ff-btn-primary {
+            border-color: rgba(52,211,153,.30);
+            background: linear-gradient(
+                135deg,
+                rgba(52,211,153,.95),
+                rgba(16,185,129,.88)
+            );
+            color: #04130d;
+            box-shadow: 0 10px 30px rgba(16,185,129,.12);
+        }
+
+        .ff-btn-primary:hover {
+            border-color: rgba(110,231,183,.65);
+            background: linear-gradient(
+                135deg,
+                rgba(110,231,183,1),
+                rgba(52,211,153,.95)
+            );
+            box-shadow: 0 12px 35px rgba(16,185,129,.20);
+        }
+
+        .ff-kpi {
+            position: relative;
+            overflow: hidden;
+            min-width: 0;
+            padding: 17px;
+            border-radius: 17px;
+            border: 1px solid rgba(71,94,120,.30);
+            background: linear-gradient(
+                145deg,
+                rgba(17,34,54,.94),
+                rgba(9,21,37,.92)
+            );
+            box-shadow: 0 14px 42px rgba(0,0,0,.16);
+            transition:
+                transform .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .ff-kpi:hover {
+            transform: translateY(-2px);
+            border-color: rgba(71,94,120,.48);
+            box-shadow: 0 20px 55px rgba(0,0,0,.24);
+        }
+
+        .ff-kpi-icon {
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .ff-kpi-label {
+            margin-top: 14px;
+            font-size: 10px;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: .09em;
+            font-weight: 800;
+            color: #64748b;
+        }
+
+        .ff-kpi-value {
+            margin-top: 7px;
+            font-size: 24px;
+            line-height: 1;
+            font-weight: 950;
+            letter-spacing: -.035em;
+            color: #f1f5f9;
+        }
+
+        .ff-kpi-note {
+            margin-top: 7px;
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        .ff-alert {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            gap: 13px;
+            align-items: flex-start;
+            padding: 15px;
+            border-radius: 16px;
+            transition:
+                transform .2s ease,
+                border-color .2s ease,
+                background .2s ease;
+        }
+
+        .ff-alert:hover {
+            transform: translateY(-2px);
+        }
+
+        .ff-alert-icon {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+        }
+
+        .ff-alert-title {
+            font-size: 13px;
+            font-weight: 900;
+            color: #e2e8f0;
+        }
+
+        .ff-alert-text {
+            margin-top: 4px;
+            font-size: 11px;
+            line-height: 1.55;
+            color: #94a3b8;
+        }
+
+        .ff-alert-count {
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            border: 1px solid rgba(245,158,11,.20);
+            background: rgba(245,158,11,.08);
+            color: #fbbf24;
+        }
+
+        @media (max-width: 640px) {
+            .ff-kpi {
+                padding: 14px;
+            }
+
+            .ff-kpi-value {
+                font-size: 20px;
+            }
+
+            .ff-btn {
+                min-height: 40px;
+            }
+        }
+
+        /* FinFlow UI v2 */
+        .product-card-v2 {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+        }
+
+        .product-card-v2:hover {
+            transform: translateY(-3px);
+            border-color: rgba(52, 211, 153, .38);
+            box-shadow: 0 22px 65px rgba(0,0,0,.32);
+        }
+
+        .product-card-v2:active {
+            transform: translateY(-1px);
+        }
+
+        .product-card-v2::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 90% 0%, rgba(52,211,153,.10), transparent 42%);
+        }
+
+        .product-card-v2.beta::before {
+            background: radial-gradient(circle at 90% 0%, rgba(34,211,238,.10), transparent 42%);
+        }
+
+        .product-card-v2 .product-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            font-size: 17px;
+        }
+
+        .product-card-v2 .product-progress {
+            height: 7px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(15,23,42,.9);
+            border: 1px solid rgba(71,94,120,.25);
+        }
+
+        .product-card-v2 .product-progress > div {
+            height: 100%;
+            border-radius: inherit;
+            transition: width .45s ease;
+        }
+
+        .product-card-v2 .metric-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #64748b;
+            font-weight: 800;
+        }
+
+        .product-card-v2 .metric-value {
+            margin-top: 3px;
+            font-size: 14px;
+            font-weight: 900;
+            color: #e2e8f0;
+        }
+
+        .product-card-v2 .remaining-value {
+            font-size: 30px;
+            line-height: 1;
+            font-weight: 950;
+            letter-spacing: -.04em;
+        }
+
+        .product-card-v2 .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 17px;
+            padding-top: 13px;
+            border-top: 1px solid rgba(71,94,120,.22);
+        }
+
+        .budget-modal-v2 {
+            border-color: rgba(71,94,120,.45);
+            box-shadow: 0 30px 100px rgba(0,0,0,.55);
+        }
+
+        .budget-modal-stat {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(71,94,120,.28);
+            background: rgba(2,6,23,.55);
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .budget-modal-stat::after {
+            content: "";
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            right: -25px;
+            top: -25px;
+            border-radius: 50%;
+            background: rgba(52,211,153,.06);
+            pointer-events: none;
+        }
+
+        .budget-modal-table thead th {
+            font-weight: 900;
+        }
+
+        .budget-modal-table tbody tr {
+            transition: background .15s ease;
+        }
+
+        .budget-modal-table tbody tr:hover {
+            background: rgba(30,41,59,.38);
+        }
+
+        @media (max-width: 640px) {
+            .product-card-v2 .remaining-value {
+                font-size: 26px;
+            }
+        }
+
         .kpi { background: linear-gradient(145deg, rgba(17,34,54,.95), rgba(10,22,38,.92)); }
         .progress-track { background: #07111f; }
         .form-field { height: 42px; }
@@ -20,6 +670,381 @@
         .risk-good { color:#34d399; }
         .risk-warning { color:#fbbf24; }
         .risk-critical { color:#fb7185; }
+
+
+
+        /* Financial Analytics hover motion */
+        .analytics-card {
+            position: relative;
+            overflow: hidden;
+            transition:
+                transform .22s ease,
+                border-color .22s ease,
+                box-shadow .22s ease;
+            will-change: transform;
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-3px) scale(1.01);
+            border-color: rgba(71,94,120,.58);
+            box-shadow: 0 22px 60px rgba(0,0,0,.28);
+        }
+
+        .analytics-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            background: radial-gradient(
+                circle at 100% 0%,
+                rgba(52,211,153,.045),
+                transparent 42%
+            );
+            opacity: 0;
+            transition: opacity .22s ease;
+        }
+
+        .analytics-card:hover::after {
+            opacity: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .analytics-card {
+                transition: none;
+            }
+
+            .analytics-card:hover {
+                transform: none;
+            }
+        }
+
+        
+/* Financial Analytics — unified dashboard */
+.analytics-dashboard {
+    position: relative;
+}
+
+.analytics-dashboard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: 1.25rem;
+    background:
+        radial-gradient(circle at 8% 0%, rgba(52,211,153,.035), transparent 28%),
+        radial-gradient(circle at 92% 12%, rgba(34,211,238,.025), transparent 30%);
+}
+
+.analytics-dashboard > * {
+    position: relative;
+}
+
+.analytics-panel {
+    background: rgba(15,23,42,.48);
+    border: 1px solid rgba(51,65,85,.62);
+    box-shadow: 0 14px 42px rgba(0,0,0,.16);
+}
+
+.analytics-panel:hover {
+    border-color: rgba(71,94,120,.62);
+}
+
+.analytics-dashboard .analytics-card {
+    min-width: 0;
+}
+
+.analytics-dashboard .analytics-card h3,
+.analytics-dashboard .analytics-card h4 {
+    letter-spacing: -.01em;
+}
+
+.analytics-dashboard .analytics-card .text-2xl,
+.analytics-dashboard .analytics-card .text-3xl {
+    letter-spacing: -.035em;
+}
+
+.analytics-dashboard .progress-track,
+.analytics-dashboard .h-2.rounded-full,
+.analytics-dashboard .h-1\.5.rounded-full {
+    background: rgba(30,41,59,.9);
+}
+
+.analytics-dashboard .analytics-card table {
+    width: 100%;
+}
+
+.analytics-dashboard .analytics-card table td,
+.analytics-dashboard .analytics-card table th {
+    min-width: 0;
+}
+
+@media (max-width: 767px) {
+    .analytics-dashboard {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .analytics-dashboard .analytics-card {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .analytics-dashboard .analytics-card {
+        transition: none;
+    }
+
+    .analytics-dashboard .analytics-card:hover {
+        transform: none;
+    }
+}
+
+/* Company workspace — standalone visual layer */
+        .company-card {
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+            border: 1px solid rgba(71,94,120,.38);
+            border-radius: 18px;
+            background:
+                linear-gradient(145deg, rgba(17,34,54,.94), rgba(8,20,35,.92));
+            box-shadow: 0 14px 42px rgba(0,0,0,.18);
+            color: #e2e8f0;
+            transition:
+                transform .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .company-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(71,94,120,.58);
+            box-shadow: 0 20px 55px rgba(0,0,0,.26);
+        }
+
+        .company-card .company-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .company-card .company-header > button {
+            display: block;
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .company-card .company-header > button > div {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .company-card .company-header > button > div > div:first-child {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            background: rgba(52,211,153,.09);
+            border: 1px solid rgba(52,211,153,.16);
+            color: #6ee7b7;
+        }
+
+        .company-card .company-header > button > div > div:last-child {
+            min-width: 0;
+        }
+
+        .company-card .company-header .font-black {
+            color: #f1f5f9;
+            font-size: 14px;
+            line-height: 1.35;
+        }
+
+        .company-card .company-header .text-\[11px\] {
+            margin-top: 3px;
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .company-card .sw-select {
+            flex: 0 0 auto;
+            min-width: 76px;
+            height: 32px;
+            padding: 0 10px;
+            border: 1px solid rgba(71,94,120,.48);
+            border-radius: 9px;
+            background: #0b1727;
+            color: #6ee7b7;
+            font-size: 11px;
+            font-weight: 900;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .company-card .sw-select:focus {
+            border-color: rgba(52,211,153,.55);
+        }
+
+        .company-card > .mt-5 {
+            margin-top: 20px;
+        }
+
+        .company-card form {
+            margin: 0;
+        }
+
+        .company-card form label {
+            display: block;
+            margin-bottom: 6px;
+            color: #64748b;
+            font-size: 10px;
+            line-height: 1.2;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .company-card .budget-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .company-card .budget-input {
+            flex: 1 1 auto;
+            width: 100%;
+            min-width: 0;
+            height: 40px;
+            padding: 0 12px;
+            border: 1px solid rgba(71,94,120,.42);
+            border-radius: 11px;
+            background: #0b1727;
+            color: #f1f5f9;
+            font-size: 13px;
+            font-weight: 800;
+            outline: none;
+        }
+
+        .company-card .budget-input:focus {
+            border-color: rgba(52,211,153,.58);
+            box-shadow: 0 0 0 3px rgba(52,211,153,.06);
+        }
+
+        .company-card .budget-row button {
+            flex: 0 0 auto;
+            height: 40px;
+            padding: 0 14px;
+            border: 1px solid rgba(52,211,153,.28);
+            border-radius: 11px;
+            background: rgba(52,211,153,.92);
+            color: #04130d;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: .18s ease;
+        }
+
+        .company-card .budget-row button:hover {
+            background: #6ee7b7;
+            transform: translateY(-1px);
+        }
+
+        .company-card .spent-display {
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .company-card .remainder-display {
+            color: #34d399;
+            font-size: 22px;
+            line-height: 1.1;
+            font-weight: 900;
+        }
+
+        .company-card .card-date-input {
+            height: 32px;
+            padding: 0 8px;
+            border: 1px solid rgba(71,94,120,.42);
+            border-radius: 9px;
+            background: #0b1727;
+            color: #94a3b8;
+            font-size: 11px;
+            outline: none;
+        }
+
+        .company-card .card-date-input:focus {
+            border-color: rgba(52,211,153,.55);
+            color: #e2e8f0;
+        }
+
+        .company-card .progress-track {
+            height: 7px;
+            margin-top: 2px;
+            overflow: hidden;
+            border: 1px solid rgba(71,94,120,.28);
+            border-radius: 999px;
+            background: #07111f;
+        }
+
+        .company-card .progress-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: #34d399;
+            transition: width .5s ease;
+        }
+
+        .company-card .usage-label {
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 767px) {
+            .company-card {
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .company-card .company-header {
+                gap: 8px;
+            }
+
+            .company-card .company-header > button > div {
+                gap: 9px;
+            }
+
+            .company-card .company-header > button > div > div:first-child {
+                width: 34px;
+                height: 34px;
+                flex-basis: 34px;
+            }
+
+            .company-card .company-header .font-black {
+                font-size: 13px;
+            }
+
+            .company-card .sw-select {
+                min-width: 68px;
+            }
+
+            .company-card .card-date-input {
+                max-width: 145px;
+            }
+        }
 
         /* Mobile layout protection */
         *, *::before, *::after {
@@ -297,7 +1322,291 @@
             }
         }
 
-    </style>
+    
+/* =========================================================
+   FinFlow — Dashboard Final Polish
+   Visual-only layer. No business logic changes.
+   ========================================================= */
+
+:root {
+    --ff-bg-deep: #07111f;
+    --ff-surface: rgba(15, 28, 45, .78);
+    --ff-surface-strong: rgba(17, 34, 54, .94);
+    --ff-border: rgba(71, 94, 120, .34);
+    --ff-border-soft: rgba(71, 94, 120, .22);
+    --ff-text: #f1f5f9;
+    --ff-muted: #64748b;
+    --ff-green: #34d399;
+    --ff-cyan: #22d3ee;
+}
+
+/* ---------- Main dashboard rhythm ---------- */
+
+main {
+    scroll-margin-top: 24px;
+}
+
+main > section {
+    position: relative;
+}
+
+main > section + section {
+    margin-top: 18px;
+}
+
+/* ---------- Hero ---------- */
+
+.glass.rounded-2xl {
+    border-color: var(--ff-border);
+}
+
+.glass.rounded-2xl:hover {
+    border-color: rgba(71, 94, 120, .42);
+}
+
+/* ---------- KPI cards ---------- */
+
+.ff-kpi {
+    position: relative;
+    overflow: hidden;
+    min-height: 128px;
+    padding: 18px 19px;
+    border: 1px solid var(--ff-border);
+    border-radius: 16px;
+    background:
+        linear-gradient(145deg, rgba(17, 34, 54, .92), rgba(8, 20, 35, .88));
+    box-shadow:
+        0 12px 36px rgba(0, 0, 0, .16),
+        inset 0 1px 0 rgba(255, 255, 255, .018);
+    transition:
+        transform .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
+}
+
+.ff-kpi::after {
+    content: "";
+    position: absolute;
+    right: -34px;
+    top: -42px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(52, 211, 153, .035);
+    pointer-events: none;
+}
+
+.ff-kpi:hover {
+    transform: translateY(-2px);
+    border-color: rgba(71, 94, 120, .48);
+    box-shadow:
+        0 18px 48px rgba(0, 0, 0, .23),
+        inset 0 1px 0 rgba(255, 255, 255, .025);
+}
+
+.ff-kpi-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 1px solid rgba(71, 94, 120, .28);
+    background: rgba(7, 17, 31, .55);
+}
+
+.ff-kpi-label {
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .075em;
+    text-transform: uppercase;
+}
+
+.ff-kpi-value {
+    margin-top: 7px;
+    color: var(--ff-text);
+    font-size: 23px;
+    line-height: 1.08;
+    letter-spacing: -.025em;
+    font-weight: 900;
+}
+
+.ff-kpi-note {
+    margin-top: 7px;
+    color: #475569;
+    font-size: 10px;
+    font-weight: 650;
+}
+
+/* ---------- Section headings ---------- */
+
+section h2 {
+    letter-spacing: -.015em;
+}
+
+section > .flex h2,
+section > div > h2 {
+    color: #e2e8f0;
+}
+
+/* ---------- Budget Health ---------- */
+
+section .remaining-value {
+    letter-spacing: -.025em;
+}
+
+.progress-track {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .22);
+}
+
+.progress-bar-fill {
+    box-shadow: 0 0 12px rgba(52, 211, 153, .12);
+}
+
+/* ---------- Company & Contracts ---------- */
+
+.company-card {
+    min-height: 286px;
+    padding: 21px;
+    border-color: rgba(71, 94, 120, .34);
+    background:
+        linear-gradient(150deg, rgba(17, 34, 54, .96), rgba(8, 20, 35, .94));
+    box-shadow:
+        0 14px 42px rgba(0, 0, 0, .18),
+        inset 0 1px 0 rgba(255, 255, 255, .018);
+}
+
+.company-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(71, 94, 120, .52);
+    box-shadow:
+        0 22px 58px rgba(0, 0, 0, .27),
+        inset 0 1px 0 rgba(255, 255, 255, .025);
+}
+
+.company-card .company-header {
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(71, 94, 120, .16);
+}
+
+.company-card .company-header .font-black {
+    font-size: 14px;
+    letter-spacing: -.01em;
+}
+
+.company-card .sw-select {
+    min-width: 82px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(7, 17, 31, .72);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .015);
+}
+
+.company-card .budget-input {
+    height: 42px;
+    border-radius: 11px;
+    background: rgba(7, 17, 31, .72);
+}
+
+.company-card .budget-row button {
+    height: 42px;
+    min-width: 64px;
+    border-radius: 11px;
+}
+
+.company-card .spent-display {
+    color: #cbd5e1;
+}
+
+.company-card .remainder-display {
+    font-size: 23px;
+    letter-spacing: -.025em;
+}
+
+.company-card .card-date-input {
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(7, 17, 31, .72);
+}
+
+.company-card .progress-track {
+    margin-top: 5px;
+    height: 7px;
+}
+
+.company-card .usage-label {
+    color: #64748b;
+}
+
+/* ---------- Search field ---------- */
+
+#companyCardSearch {
+    height: 40px;
+    border-radius: 11px;
+    border-color: rgba(71, 94, 120, .34);
+    background: rgba(7, 17, 31, .62);
+}
+
+#companyCardSearch:focus {
+    border-color: rgba(52, 211, 153, .48);
+    box-shadow: 0 0 0 3px rgba(52, 211, 153, .055);
+}
+
+/* ---------- Tables / invoice area ---------- */
+
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+tbody tr {
+    transition: background-color .14s ease;
+}
+
+tbody tr:hover {
+    background: rgba(30, 41, 59, .28);
+}
+
+/* ---------- Buttons ---------- */
+
+button,
+select,
+input {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 2px solid rgba(52, 211, 153, .35);
+    outline-offset: 2px;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 767px) {
+    .ff-kpi {
+        min-height: 116px;
+        padding: 15px;
+    }
+
+    .ff-kpi-value {
+        font-size: 20px;
+    }
+
+    .company-card {
+        min-height: 0;
+        padding: 17px;
+    }
+
+    .company-card .company-header {
+        gap: 9px;
+    }
+
+    .company-card .sw-select {
+        min-width: 72px;
+    }
+}
+
+</style>
     <!-- Open Graph / social preview -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://finflow.lexxkato.win/">
@@ -317,55 +1626,284 @@
 
 </head>
 <body class="text-slate-100 font-sans min-h-screen antialiased">
-<header class="sticky top-0 z-50 border-b border-slate-800/80 bg-[#07111f]/90 backdrop-blur-xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        <a href="#top" class="flex items-center gap-3 min-w-0">
-            <div class="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/25 flex items-center justify-center overflow-hidden">
+<header class="sticky top-0 z-50 border-b border-slate-800/70 bg-[#07111f]/80 backdrop-blur-2xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[68px] flex items-center justify-between gap-4">
+
+        <a href="#top" class="flex items-center gap-3 min-w-0 group">
+            <div class="relative w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/25 flex items-center justify-center overflow-hidden transition group-hover:border-emerald-300/50 group-hover:bg-emerald-400/15">
                 <img
                     src="{{ url_for('static', filename='finflow-logo.png') }}"
                     alt="FinFlow"
                     class="w-full h-full object-contain"
                 >
             </div>
+
             <div class="min-w-0">
-                <div class="font-black tracking-tight text-lg">FinFlow</div>
-                <div class="text-[11px] text-slate-400 truncate">Financial control for contracts, invoices & budgets</div>
+                <div class="flex items-center gap-2">
+                    <div class="font-black tracking-tight text-lg text-slate-100">
+                        FinFlow
+                    </div>
+                    <span class="hidden sm:inline-flex px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-400/10 border border-emerald-400/20 text-emerald-300">
+                        Control
+                    </span>
+                </div>
+
+                <div class="text-[10px] text-slate-500 truncate">
+                    Financial control platform
+                </div>
             </div>
         </a>
-        <div class="flex items-center gap-2 text-[11px]">
-            <span class="hidden sm:inline-flex px-2.5 py-1 rounded-full border border-emerald-400/20 bg-emerald-400/10 text-emerald-300">{{ database_backend }}</span>
+
+        <div class="flex items-center gap-2">
+
+            <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-700/70 bg-slate-900/60 text-[10px] font-black text-slate-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,.7)]"></span>
+                {{ database_backend }}
+            </span>
+
+            {% if current_user %}
+            <div class="relative" id="ff-user-menu">
+
+                <button
+                    type="button"
+                    id="ff-user-menu-button"
+                    aria-expanded="false"
+                    aria-controls="ff-user-dropdown"
+                    class="inline-flex items-center gap-2 min-h-[42px] px-3 rounded-xl border border-slate-700/70 bg-slate-900/60 text-slate-300 text-xs font-black transition hover:border-emerald-400/35 hover:bg-slate-900/90 hover:text-white"
+                >
+                    <span class="w-7 h-7 rounded-lg bg-emerald-400/10 border border-emerald-400/20 text-emerald-300 flex items-center justify-center">
+                        <i class="bi bi-person-fill text-xs"></i>
+                    </span>
+
+                    <span class="max-w-[120px] truncate">
+                        {{ current_user.username }}
+                    </span>
+
+                    <i id="ff-user-menu-chevron" class="bi bi-chevron-down text-[9px] text-slate-500 transition-transform"></i>
+                </button>
+
+                <div
+                    id="ff-user-dropdown"
+                    class="hidden absolute right-0 top-[calc(100%+10px)] z-[90] w-56 overflow-hidden rounded-2xl border border-slate-700/70 bg-[#091525]/95 shadow-[0_24px_70px_rgba(0,0,0,.45)] backdrop-blur-2xl"
+                >
+                    <div class="px-4 py-3 border-b border-slate-700/50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-400/10 border border-emerald-400/20 text-emerald-300 flex items-center justify-center">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+
+                            <div class="min-w-0">
+                                <div class="text-xs font-black text-slate-100 truncate">
+                                    {{ current_user.username }}
+                                </div>
+                                <div class="text-[9px] font-black uppercase tracking-wider text-emerald-300/80 mt-0.5">
+                                    {% if current_user.role == 'admin' %}
+                                        Administrator
+                                    {% elif current_user.role == 'manager' %}
+                                        Manager
+                                    {% else %}
+                                        Viewer
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-1.5">
+                        {% if current_user.role == 'admin' %}
+                        <a
+                            href="{{ url_for('users_page') }}"
+                            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs font-black text-slate-400 transition hover:bg-blue-400/10 hover:text-blue-300"
+                        >
+                            <span class="w-8 h-8 rounded-lg bg-blue-400/10 flex items-center justify-center">
+                                <i class="bi bi-people-fill"></i>
+                            </span>
+                            <span>Users</span>
+                        </a>
+                        {% endif %}
+
+                        <form method="post" action="{{ url_for('logout') }}" class="m-0">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button
+                                type="submit"
+                                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs font-black text-slate-400 transition hover:bg-rose-400/10 hover:text-rose-300"
+                            >
+                                <span class="w-8 h-8 rounded-lg bg-rose-400/10 flex items-center justify-center">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                </span>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            {% endif %}
 
         </div>
+
     </div>
 </header>
 
 <main id="top" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-7">
-    <section class="flex flex-col md:flex-row md:items-end justify-between gap-5">
-        <div>
-            <div class="text-xs font-bold uppercase tracking-[.18em] text-emerald-400 mb-2">Financial overview</div>
-            <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Know where your budget stands.</h1>
-            <p class="mt-2 text-sm text-slate-400 max-w-2xl">Track contract budgets, invoices and remaining spend in one place — with early warnings before a budget becomes a problem.</p>
+    <section class="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+
+        <div class="min-w-0">
+            <div class="ff-section-label">Financial overview</div>
+
+            <h1 class="text-3xl sm:text-4xl font-black tracking-tight mt-2">
+                Know where your budget stands.
+            </h1>
+
+            <p class="mt-2 text-sm leading-6 text-slate-400 max-w-2xl">
+                Track contract budgets, invoices and remaining spend in one place — with early warnings before a budget becomes a problem.
+            </p>
         </div>
-        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto shrink-0">
-            <button type="button"
-                    onclick="openQuickAddInvoiceModal()"
-                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-900/70 hover:border-emerald-400/50 text-sm font-bold transition">
+
+        <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto shrink-0">
+
+            <button
+                type="button"
+                onclick="openQuickAddInvoiceModal()"
+                class="ff-btn w-full sm:w-auto"
+            >
                 <i class="bi bi-file-earmark-plus text-emerald-400"></i>
                 <span>Add invoice</span>
             </button>
-            <a href="/generator"
-               class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-sm font-bold transition">
+
+
+            <!-- FinFlow Notification Center v1 -->
+            <div class="ff-notification-wrap">
+                <button
+                    id="notificationBell"
+                    type="button"
+                    class="ff-notification-btn"
+                    onclick="toggleNotificationCenter(event)"
+                    aria-label="Notifications"
+                    title="Notifications"
+                >
+                    <i class="bi bi-bell text-[16px]"></i>
+                    <span id="notificationBadge" class="ff-notification-badge hidden">0</span>
+                </button>
+
+                <div
+                    id="notificationPanel"
+                    class="ff-notification-panel hidden"
+                    role="dialog"
+                    aria-label="Notification center"
+                >
+                    <div class="ff-notification-header">
+                        <div>
+                            <div id="notificationPanelTitle" class="text-sm font-black text-slate-100">
+                                Notifications
+                            </div>
+                            <div id="notificationPanelSubtitle" class="text-[10px] text-slate-500 mt-0.5">
+                                Recent system alerts
+                            </div>
+                        </div>
+
+                        <button
+                            id="notificationReadAll"
+                            type="button"
+                            class="ff-notification-action hidden"
+                            onclick="markAllNotificationsRead(event)"
+                        >
+                            Mark all as read
+                        </button>
+                    </div>
+
+                    <div id="notificationList" class="ff-notification-list">
+                        <div class="ff-notification-empty">
+                            <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-400/10 text-emerald-300 flex items-center justify-center">
+                                <i class="bi bi-check2-circle text-lg"></i>
+                            </div>
+                            <div class="text-sm font-bold text-slate-300 mt-3">
+                                All clear
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">
+                                No active notifications.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a
+                href="/analytics"
+                class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-cyan-400/20 bg-cyan-400/5 text-cyan-300 hover:bg-cyan-400/10 hover:border-cyan-400/40 transition-all text-xs font-black"
+                title="Financial Analytics"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a
+                href="/audit-log"
+                class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-violet-400/20 bg-violet-400/5 text-violet-300 hover:bg-violet-400/10 hover:border-violet-400/40 transition-all text-xs font-black"
+                title="Audit Log"
+            >
+                <i class="bi bi-clock-history"></i>
+                <span>Audit Log</span>
+            </a>
+
+            <a
+                href="/generator"
+                class="ff-btn ff-btn-primary w-full sm:w-auto"
+            >
                 <i class="bi bi-receipt"></i>
                 <span>Create invoice PDF</span>
             </a>
+
         </div>
+
     </section>
 
     <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="glass kpi rounded-2xl p-4 sm:p-5"><div class="text-xs text-slate-400">Total budget</div><div class="mt-2 text-xl sm:text-2xl font-black">€{{ "%.2f"|format(metrics.total_budget) }}</div><div class="mt-1 text-[11px] text-slate-500">All active products</div></div>
-        <div class="glass kpi rounded-2xl p-4 sm:p-5"><div class="text-xs text-slate-400">Invoiced</div><div class="mt-2 text-xl sm:text-2xl font-black">€{{ "%.2f"|format(metrics.total_spent) }}</div><div class="mt-1 text-[11px] text-slate-500">Recorded spend</div></div>
-        <div class="glass kpi rounded-2xl p-4 sm:p-5"><div class="text-xs text-slate-400">Remaining</div><div class="mt-2 text-xl sm:text-2xl font-black {{ 'text-rose-400' if metrics.remaining < 0 else 'text-emerald-400' }}">€{{ "%.2f"|format(metrics.remaining) }}</div><div class="mt-1 text-[11px] text-slate-500">Available budget</div></div>
-        <div class="glass kpi rounded-2xl p-4 sm:p-5"><div class="text-xs text-slate-400">Utilization</div><div class="mt-2 text-xl sm:text-2xl font-black">{{ "%.1f"|format(metrics.utilization) }}%</div><div class="mt-1 text-[11px] text-slate-500">Budget consumed</div></div>
+
+        <div class="ff-kpi">
+            <div class="ff-kpi-icon bg-emerald-400/10 border border-emerald-400/15 text-emerald-300">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div class="ff-kpi-label">Total budget</div>
+            <div class="ff-kpi-value">
+                €{{ "%.2f"|format(metrics.total_budget) }}
+            </div>
+            <div class="ff-kpi-note">All active products</div>
+        </div>
+
+        <div class="ff-kpi">
+            <div class="ff-kpi-icon bg-cyan-400/10 border border-cyan-400/15 text-cyan-300">
+                <i class="bi bi-receipt"></i>
+            </div>
+            <div class="ff-kpi-label">Invoiced</div>
+            <div class="ff-kpi-value">
+                €{{ "%.2f"|format(metrics.total_spent) }}
+            </div>
+            <div class="ff-kpi-note">Recorded spend</div>
+        </div>
+
+        <div class="ff-kpi">
+            <div class="ff-kpi-icon {{ 'bg-rose-400/10 border border-rose-400/15 text-rose-300' if metrics.remaining < 0 else 'bg-emerald-400/10 border border-emerald-400/15 text-emerald-300' }}">
+                <i class="bi {{ 'bi-exclamation-triangle' if metrics.remaining < 0 else 'bi-piggy-bank' }}"></i>
+            </div>
+            <div class="ff-kpi-label">Remaining</div>
+            <div class="ff-kpi-value {{ 'text-rose-300' if metrics.remaining < 0 else 'text-emerald-300' }}">
+                €{{ "%.2f"|format(metrics.remaining) }}
+            </div>
+            <div class="ff-kpi-note">Available budget</div>
+        </div>
+
+        <div class="ff-kpi">
+            <div class="ff-kpi-icon bg-violet-400/10 border border-violet-400/15 text-violet-300">
+                <i class="bi bi-speedometer2"></i>
+            </div>
+            <div class="ff-kpi-label">Utilization</div>
+            <div class="ff-kpi-value">
+                {{ "%.1f"|format(metrics.utilization) }}%
+            </div>
+            <div class="ff-kpi-note">Budget consumed</div>
+        </div>
+
     </section>
 
     {% if alerts %}
@@ -373,7 +1911,13 @@
         <div class="flex items-center justify-between"><div><h2 class="font-black text-lg">Attention needed</h2><p class="text-xs text-slate-500 mt-1">Issues that may affect contract or budget control.</p></div><span class="text-xs font-bold px-2 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-300">{{ alerts|length }} alerts</span></div>
         <div class="grid md:grid-cols-2 gap-3">
             {% for alert in alerts %}
-            <div class="rounded-2xl border p-4 {{ 'alert-critical' if alert.level == 'critical' else 'alert-warning' }}">
+            <div
+            class="rounded-2xl border p-4 {{ 'alert-critical' if alert.level == 'critical' else 'alert-warning' }} {{ 'cursor-pointer hover:border-rose-400/40 transition' if alert.type == 'overdue_invoice' else '' }}"
+            {% if alert.type == 'overdue_invoice' %}
+            onclick="openAlertInvoice({{ alert.company_id }}, {{ alert.software|tojson }})"
+            title="Open invoice details"
+            {% endif %}
+        >
                 <div class="flex gap-3"><div class="text-lg {{ 'text-rose-400' if alert.level == 'critical' else 'text-amber-400' }}"><i class="bi {{ alert.icon }}"></i></div><div><div class="text-sm font-bold">{{ alert.title }}</div><div class="text-xs text-slate-400 mt-1">{{ alert.text }}</div></div></div>
             </div>
             {% endfor %}
@@ -387,151 +1931,346 @@
     <!-- =======================================================
          Financial Analytics
          ======================================================= -->
-    <section id="finflowAnalytics" class="space-y-3">
+    <section id="finflowAnalytics"
+         class="analytics-dashboard rounded-3xl border border-slate-800/80 bg-slate-950/35 p-4 sm:p-5 lg:p-6 space-y-5">
 
-        <div class="flex items-end justify-between gap-3">
-            <div>
-                <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">
-                    Financial Analytics
+    <!-- Analytics header -->
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+        <div>
+            <div class="ff-section-label">Financial Analytics</div>
+            <h2 class="ff-section-title mt-1">Financial control dashboard</h2>
+            <p class="ff-section-description mt-1">
+                A compact view of budget utilization, invoice exposure and spending trends.
+            </p>
+        </div>
+
+        <div class="inline-flex items-center gap-2 self-start lg:self-auto
+                    px-3 py-2 rounded-xl border border-violet-400/15
+                    bg-violet-400/5 text-xs font-bold text-violet-300">
+            <i class="bi bi-bar-chart-line"></i>
+            Live dashboard
+        </div>
+    </div>
+
+    <!-- Main utilization -->
+    <article class="analytics-card glass rounded-2xl p-5 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-violet-400/10
+                                border border-violet-400/15
+                                text-violet-300 flex items-center justify-center">
+                        <i class="bi bi-speedometer2"></i>
+                    </div>
+
+                    <div>
+                        <div class="text-xs font-black uppercase tracking-wider text-slate-500">
+                            Overall utilization
+                        </div>
+                        <div class="text-xs text-slate-600 mt-0.5">
+                            Invoiced amount against total budget
+                        </div>
+                    </div>
                 </div>
-                <h2 class="text-xl font-black mt-1">Spending overview</h2>
-                <p class="text-xs text-slate-500 mt-1">
-                    Budget utilization and spending activity.
+
+                <div class="mt-5 flex items-end gap-3">
+                    <div class="text-4xl sm:text-5xl font-black tracking-tight
+                                text-violet-300"
+                         id="analyticsUtilizationValue">
+                        {{ "%.1f"|format(metrics.utilization) }}%
+                    </div>
+
+                    <div class="pb-1 text-xs text-slate-500">
+                        of total budget
+                    </div>
+                </div>
+
+                <div class="mt-4 h-2 rounded-full bg-slate-800/80 overflow-hidden">
+                    <div id="analyticsUtilizationProgress"
+                         class="h-full rounded-full bg-violet-400 transition-all duration-500"
+                         style="width: {{ [metrics.utilization, 100]|min }}%;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="shrink-0 w-full sm:w-48">
+                <div class="rounded-2xl border border-slate-800 bg-slate-950/45 p-4">
+                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-600">
+                        Exposure
+                    </div>
+
+                    <div class="mt-2 text-xl font-black text-slate-100">
+                        €{{ "%.2f"|format(metrics.total_spent) }}
+                    </div>
+
+                    <div class="mt-1 text-xs text-slate-500">
+                        invoiced of €{{ "%.2f"|format(metrics.total_budget) }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </article>
+
+    <!-- Unified KPI strip -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+        <article class="analytics-card glass rounded-2xl p-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-400/10
+                            border border-emerald-400/15
+                            text-emerald-300 flex items-center justify-center">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+
+                <div class="min-w-0">
+                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-600">
+                        Budget
+                    </div>
+                    <div class="mt-1 text-xl font-black text-slate-100">
+                        €{{ "%.2f"|format(metrics.total_budget) }}
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="analytics-card glass rounded-2xl p-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-cyan-400/10
+                            border border-cyan-400/15
+                            text-cyan-300 flex items-center justify-center">
+                    <i class="bi bi-receipt"></i>
+                </div>
+
+                <div class="min-w-0">
+                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-600">
+                        Invoiced
+                    </div>
+                    <div class="mt-1 text-xl font-black text-slate-100">
+                        €{{ "%.2f"|format(metrics.total_spent) }}
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="analytics-card glass rounded-2xl p-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl
+                            {{ 'bg-rose-400/10 border border-rose-400/15 text-rose-300'
+                               if metrics.remaining < 0
+                               else 'bg-emerald-400/10 border border-emerald-400/15 text-emerald-300' }}">
+                    <i class="bi {{ 'bi-exclamation-triangle'
+                                   if metrics.remaining < 0
+                                   else 'bi-piggy-bank' }}"></i>
+                </div>
+
+                <div class="min-w-0">
+                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-600">
+                        Remaining
+                    </div>
+                    <div class="mt-1 text-xl font-black
+                                {{ 'text-rose-300' if metrics.remaining < 0 else 'text-emerald-300' }}">
+                        €{{ "%.2f"|format(metrics.remaining) }}
+                    </div>
+                </div>
+            </div>
+        </article>
+
+    </div>
+
+    <!-- Company / product analytics -->
+    <div class="grid lg:grid-cols-2 gap-4">
+
+        <article class="analytics-card glass rounded-2xl p-5">
+            <div class="flex items-start justify-between gap-3 mb-5">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-400/10
+                                    border border-emerald-400/15
+                                    text-emerald-300 flex items-center justify-center">
+                            <i class="bi bi-buildings"></i>
+                        </div>
+
+                        <h3 class="text-sm font-black text-slate-100">
+                            Spend by company
+                        </h3>
+                    </div>
+
+                    <p class="text-xs text-slate-500 mt-2">
+                        Active invoiced amount by company.
+                    </p>
+                </div>
+
+                <span class="text-[10px] font-black uppercase tracking-wider
+                             text-emerald-300/70">
+                    Companies
+                </span>
+            </div>
+
+            <div id="analyticsCompanyBars" class="space-y-4"></div>
+        </article>
+
+        <article class="analytics-card glass rounded-2xl p-5">
+            <div class="flex items-start justify-between gap-3 mb-5">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-400/10
+                                    border border-cyan-400/15
+                                    text-cyan-300 flex items-center justify-center">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+
+                        <h3 class="text-sm font-black text-slate-100">
+                            Spend by product
+                        </h3>
+                    </div>
+
+                    <p class="text-xs text-slate-500 mt-2">
+                        Active invoiced amount by product.
+                    </p>
+                </div>
+
+                <span class="text-[10px] font-black uppercase tracking-wider
+                             text-cyan-300/70">
+                    ALPHA · BETA
+                </span>
+            </div>
+
+            <div id="analyticsSoftwareBars" class="space-y-4"></div>
+        </article>
+
+    </div>
+
+    <!-- Monthly spending -->
+    <article class="analytics-card glass rounded-2xl p-5 sm:p-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
+            <div>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-violet-400/10
+                                border border-violet-400/15
+                                text-violet-300 flex items-center justify-center">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+
+                    <h3 class="text-sm font-black text-slate-100">
+                        Monthly spending
+                    </h3>
+                </div>
+
+                <p class="text-xs text-slate-500 mt-2">
+                    Active invoiced amount grouped by invoice month.
                 </p>
             </div>
+
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-600">
+                Timeline
+            </span>
         </div>
 
-        <div class="analytics-grid">
+        <div id="analyticsMonthlyChart" class="analytics-month-chart"></div>
 
-            <!-- Budget utilization -->
-            <article class="glass analytics-card rounded-2xl p-5">
+    </article>
 
-                <div class="flex items-center justify-between gap-3 mb-4">
-                    <div>
-                        <div class="text-xs text-slate-400">Budget utilization</div>
-                        <div id="analyticsUtilizationAmount"
-                             class="text-lg font-black mt-1">
-                            €0.00 / €0.00
-                        </div>
-                    </div>
+</section>
 
-                    <i class="bi bi-pie-chart text-emerald-300 text-xl"></i>
-                </div>
-
-                <div class="flex items-center justify-center gap-5">
-
-                    <div id="analyticsDonut"
-                         class="analytics-donut"
-                         style="background: conic-gradient(rgb(52 211 153) 0deg, rgba(51,65,85,.55) 0deg);">
-
-                        <div class="analytics-donut-center">
-                            <div id="analyticsUtilizationPct"
-                                 class="text-2xl font-black text-emerald-300">
-                                0%
-                            </div>
-
-                            <div class="text-[10px] uppercase tracking-wider text-slate-500">
-                                used
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-3 text-xs min-w-0">
-
-                        <div>
-                            <div class="text-slate-500">Budget</div>
-                            <div id="analyticsBudget"
-                                 class="font-black text-slate-200">
-                                €0.00
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="text-slate-500">Invoiced</div>
-                            <div id="analyticsSpent"
-                                 class="font-black text-emerald-300">
-                                €0.00
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="text-slate-500">Remaining</div>
-                            <div id="analyticsRemaining"
-                                 class="font-black text-slate-200">
-                                €0.00
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </article>
-
-
-            <!-- Spend by company -->
-            <article class="glass analytics-card rounded-2xl p-5">
-
-                <div class="flex items-center justify-between gap-3 mb-4">
-                    <div>
-                        <div class="text-xs text-slate-400">Spend by company</div>
-                        <div class="text-[11px] text-slate-500 mt-1">
-                            Active invoices only
-                        </div>
-                    </div>
-
-                    <i class="bi bi-buildings text-emerald-300 text-xl"></i>
-                </div>
-
-                <div id="analyticsCompanyBars" class="space-y-4"></div>
-
-            </article>
-
-
-            <!-- Spend by software -->
-            <article class="glass analytics-card rounded-2xl p-5">
-
-                <div class="flex items-center justify-between gap-3 mb-4">
-                    <div>
-                        <div class="text-xs text-slate-400">Spend by software</div>
-                        <div class="text-[11px] text-slate-500 mt-1">
-                            Active invoices only
-                        </div>
-                    </div>
-
-                    <i class="bi bi-boxes text-emerald-300 text-xl"></i>
-                </div>
-
-                <div id="analyticsSoftwareBars" class="space-y-4"></div>
-
-            </article>
-
-
-            <!-- Monthly spending -->
-            <article class="glass analytics-card rounded-2xl p-5">
-
-                <div class="flex items-center justify-between gap-3 mb-4">
-                    <div>
-                        <div class="text-xs text-slate-400">Monthly spending</div>
-                        <div class="text-[11px] text-slate-500 mt-1">
-                            Invoice activity by date
-                        </div>
-                    </div>
-
-                    <i class="bi bi-bar-chart-line text-emerald-300 text-xl"></i>
-                </div>
-
-                <div id="analyticsMonthlyChart"
-                     class="analytics-month-chart"></div>
-
-            </article>
-
-        </div>
-    </section>
-
-    <section class="grid lg:grid-cols-2 gap-4">
+<section class="grid lg:grid-cols-2 gap-4">
         {% for software in ['ALPHA','BETA'] %}
-        <div class="glass rounded-2xl p-5" id="product-{{ software }}">
-            <div class="flex items-center justify-between gap-3 mb-4"><div><div class="flex items-center gap-2"><span class="px-2 py-1 rounded-lg text-[10px] font-black bg-emerald-400/10 text-emerald-300 border border-emerald-400/20">{{ software }}</span><h2 class="font-black">Budget health</h2></div><p class="text-xs text-slate-500 mt-1">Remaining budget by company</p></div><div id="summary{{ software }}Total" class="text-lg font-black text-emerald-300">€0.00</div></div>
-            <div id="summary{{ software }}List" class="space-y-2 max-h-64 overflow-auto"></div>
+        <div class="glass product-card-v2 {{ 'beta' if software == 'BETA' else '' }} rounded-2xl p-5"
+             id="product-{{ software }}"
+             data-product="{{ software }}">
+
+            <div class="relative z-10">
+
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="product-icon
+                            {{ 'bg-cyan-400/10 text-cyan-300 border border-cyan-400/20' if software == 'BETA'
+                               else 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20' }}">
+                            <i class="bi {{ 'bi-box-seam' if software == 'BETA' else 'bi-layers' }}"></i>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-1 rounded-lg text-[10px] font-black
+                                    {{ 'bg-cyan-400/10 text-cyan-300 border border-cyan-400/20' if software == 'BETA'
+                                       else 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20' }}">
+                                    {{ software }}
+                                </span>
+                                <span class="text-[10px] uppercase tracking-wider text-slate-600 font-bold">
+                                    Product
+                                </span>
+                            </div>
+
+                            <h2 class="font-black text-lg mt-1">Budget health</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                Remaining budget by company
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <div class="metric-label">Remaining</div>
+                        <div id="summary{{ software }}Total"
+                             class="remaining-value {{ 'text-cyan-300' if software == 'BETA' else 'text-emerald-300' }}">
+                            €0.00
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 mt-6">
+                    <div>
+                        <div class="metric-label">Budget</div>
+                        <div id="summary{{ software }}Budget" class="metric-value">€0.00</div>
+                    </div>
+
+                    <div>
+                        <div class="metric-label">Invoiced</div>
+                        <div id="summary{{ software }}Spent" class="metric-value">€0.00</div>
+                    </div>
+
+                    <div>
+                        <div class="metric-label">Companies</div>
+                        <div id="summary{{ software }}Companies" class="metric-value">0</div>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="metric-label">Budget utilization</span>
+                        <span id="summary{{ software }}Pct"
+                              class="text-[11px] font-black {{ 'text-cyan-300' if software == 'BETA' else 'text-emerald-300' }}">
+                            0%
+                        </span>
+                    </div>
+
+                    <div class="product-progress">
+                        <div id="summary{{ software }}Progress"
+                             class="{{ 'bg-cyan-400' if software == 'BETA' else 'bg-emerald-400' }}"
+                             style="width:0%">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="summary{{ software }}List"
+                     class="space-y-2 max-h-64 overflow-auto mt-5">
+                </div>
+
+                <div class="product-footer">
+                    <span class="text-[11px] text-slate-500">
+                        <i class="bi bi-bar-chart-line mr-1"></i>
+                        Click for detailed overview
+                    </span>
+
+                    <span class="text-[11px] font-black
+                        {{ 'text-cyan-300' if software == 'BETA' else 'text-emerald-300' }}">
+                        View details
+                        <i class="bi bi-arrow-right ml-1"></i>
+                    </span>
+                </div>
+
+            </div>
         </div>
         {% endfor %}
     </section>
@@ -546,7 +2285,7 @@
         <div class="company-card rounded-2xl border border-slate-700/60 bg-slate-950/30 p-5" data-company-name="{{ c.name|lower }}" data-company-title="{{ c.name }}" data-company-id="{{ c.id }}" data-has-alpha="{{ '1' if c.has_alpha else '0' }}" data-has-beta="{{ '1' if c.has_beta else '0' }}" data-alpha-budget="{{ c.alpha_budget }}" data-alpha-spent="{{ c.alpha_spent }}" data-alpha-date="{{ c.alpha_date }}" data-beta-budget="{{ c.beta_budget }}" data-beta-spent="{{ c.beta_spent }}" data-beta-date="{{ c.beta_date }}" id="card-{{ c.id }}">
             <div class="flex items-start justify-between gap-3 company-header"><button onclick="openCompanyInvoicesModal({{ c.id }})" class="text-left min-w-0"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-emerald-400/10 text-emerald-300 flex items-center justify-center"><i class="bi bi-building"></i></div><div class="min-w-0"><div class="font-black truncate" title="{{ c.name }}">{{ c.name }}</div><div class="text-[11px] text-slate-500">Click to view invoices</div></div></div></button><select onchange="switchSoftware({{ c.id }}, this.value)" class="sw-select bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs font-black text-emerald-300 outline-none">{% if c.has_alpha %}<option value="ALPHA" {{ 'selected' if c.default_sw == 'ALPHA' }}>ALPHA</option>{% endif %}{% if c.has_beta %}<option value="BETA" {{ 'selected' if c.default_sw == 'BETA' }}>BETA</option>{% endif %}</select></div>
             <div class="mt-5 space-y-3">
-                <form action="/update_company_budget" onsubmit="saveCompanyBudget(event,this)" method="POST"><input type="hidden" name="company_id" value="{{ c.id }}"><input type="hidden" name="software" class="sw-hidden-input" value="{{ c.default_sw }}"><label class="text-[10px] uppercase tracking-wider font-bold text-slate-500">Contract budget (€)</label><div class="flex gap-2 mt-1 budget-row"><input type="number" min="0" step="0.01" name="total_amount" class="budget-input w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold outline-none focus:border-emerald-400" value="0.00"><button class="px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs">Save</button></div></form>
+                <form action="/update_company_budget" onsubmit="saveCompanyBudget(event,this)" method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="company_id" value="{{ c.id }}"><input type="hidden" name="software" class="sw-hidden-input" value="{{ c.default_sw }}"><label class="text-[10px] uppercase tracking-wider font-bold text-slate-500">Contract budget (€)</label><div class="flex gap-2 mt-1 budget-row"><input type="number" min="0" step="0.01" name="total_amount" class="budget-input w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold outline-none focus:border-emerald-400" value="0.00"><button class="px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs">Save</button></div></form>
                 <div class="flex justify-between text-sm"><span class="text-slate-500">Invoiced</span><span class="spent-display font-bold">€0.00</span></div>
                 <div class="flex justify-between items-end"><span class="text-slate-500 text-sm">Remaining</span><span class="remainder-display text-xl font-black">€0.00</span></div>
                 <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-800"><span class="text-xs text-slate-500">Contract end</span><input type="date" onchange="saveCompanyCompletionDate({{ c.id }},this.value,this)" class="card-date-input bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs outline-none focus:border-emerald-400"></div>
@@ -572,11 +2311,28 @@
   <div id="budgetHealthModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm items-center justify-center p-4">
     <div class="glass w-full max-w-6xl max-h-[90vh] rounded-2xl overflow-hidden flex flex-col">
 
-      <div class="p-5 border-b border-slate-800 flex items-start justify-between gap-4">
-        <div>
-          <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">Budget overview</div>
-          <h3 class="font-black text-xl mt-1">Budget health</h3>
-          <p class="text-xs text-slate-500 mt-1">All companies, budgets and invoice history</p>
+      <div class="p-5 sm:p-6 border-b border-slate-800 flex items-start justify-between gap-4 bg-slate-950/20">
+        <div class="flex items-start gap-3">
+          <div id="budgetHealthModalIcon"
+               class="w-11 h-11 rounded-xl bg-emerald-400/10 border border-emerald-400/20 text-emerald-300 flex items-center justify-center shrink-0">
+            <i class="bi bi-bar-chart-line"></i>
+          </div>
+
+          <div>
+            <div id="budgetHealthModalProduct"
+                 class="text-xs font-black uppercase tracking-wider text-emerald-400">
+              Budget overview
+            </div>
+
+            <h3 class="font-black text-xl mt-1">
+              Budget health
+            </h3>
+
+            <p id="budgetHealthModalDescription"
+               class="text-xs text-slate-500 mt-1">
+              Selected product budget and invoice overview
+            </p>
+          </div>
         </div>
 
         <div class="flex items-center gap-2">
@@ -600,29 +2356,29 @@
       <div id="budgetHealthExport" class="p-5 overflow-auto bg-slate-950/40">
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-          <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+          <div class="budget-modal-stat">
             <div class="text-[10px] uppercase tracking-wider text-slate-500">Companies</div>
             <div id="budgetHealthCompanies" class="text-2xl font-black mt-1">0</div>
           </div>
 
-          <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+          <div class="budget-modal-stat">
             <div class="text-[10px] uppercase tracking-wider text-slate-500">Total budget</div>
             <div id="budgetHealthTotalBudget" class="text-2xl font-black text-emerald-300 mt-1">€0.00</div>
           </div>
 
-          <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+          <div class="budget-modal-stat">
             <div class="text-[10px] uppercase tracking-wider text-slate-500">Active invoiced</div>
             <div id="budgetHealthTotalSpent" class="text-2xl font-black text-cyan-300 mt-1">€0.00</div>
           </div>
 
-          <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+          <div class="budget-modal-stat">
             <div class="text-[10px] uppercase tracking-wider text-slate-500">Remaining</div>
             <div id="budgetHealthTotalRemaining" class="text-2xl font-black mt-1">€0.00</div>
           </div>
         </div>
 
         <div class="overflow-auto rounded-xl border border-slate-800">
-          <table class="w-full text-sm" id="budgetHealthTable">
+          <table class="w-full text-sm budget-modal-table" id="budgetHealthTable">
             <thead class="bg-slate-950 text-slate-500 text-[10px] uppercase tracking-wider">
               <tr>
                 <th class="text-left px-4 py-3">Company</th>
@@ -663,6 +2419,7 @@
     </div>
 
     <form id="quickAddInvoiceForm" class="p-6">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 
         <div class="md:col-span-2">
@@ -761,7 +2518,25 @@
   </div>
 </div>
 
-<div id="companyInvoicesModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm items-center justify-center p-4"><div class="glass w-full max-w-4xl rounded-2xl overflow-hidden"><div class="p-5 border-b border-slate-800 flex justify-between"><div><h3 id="modalCompanyName" class="font-black text-lg">Company</h3><p id="modalSubTitle" class="text-xs text-slate-500 mt-1"></p></div><button onclick="closeCompanyInvoicesModal()" class="text-slate-500 hover:text-white"><i class="bi bi-x-lg"></i></button></div><div class="p-4 max-h-[65vh] overflow-auto"><table class="w-full text-sm"><thead class="text-[10px] uppercase text-slate-500"><tr><th class="text-left p-2">Invoice</th><th class="text-left p-2">Date</th><th class="text-right p-2">Amount</th><th class="p-2"></th></tr></thead><tbody id="modalInvoicesTbody" class="divide-y divide-slate-800"></tbody></table></div><div class="p-4 border-t border-slate-800 text-right">Total: <strong id="modalTotalSum" class="text-emerald-300">€0.00</strong></div></div></div>
+<div id="companyInvoicesModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm items-center justify-center p-4"><div class="glass w-full max-w-4xl rounded-2xl overflow-hidden"><div class="p-5 border-b border-slate-800 flex justify-between"><div><h3 id="modalCompanyName" class="font-black text-lg">Company</h3><p id="modalSubTitle" class="text-xs text-slate-500 mt-1"></p></div><button onclick="closeCompanyInvoicesModal()" class="text-slate-500 hover:text-white"><i class="bi bi-x-lg"></i></button></div><div class="p-4 max-h-[65vh] overflow-auto"><table class="w-full text-sm"><thead class="text-[10px] uppercase text-slate-500"><tr><th class="text-left p-2">Invoice</th><th class="text-left p-2">Date</th><th class="text-right p-2">Amount</th><th class="p-2"></th></tr></thead><tbody id="modalInvoicesTbody" class="divide-y divide-slate-800"></tbody></table></div><div class="p-4 border-t border-slate-800">
+  <div data-payment-summary>
+    <div class="grid grid-cols-3 gap-3 text-xs">
+      <div>
+        <div class="text-slate-500">Invoiced</div>
+        <div class="mt-1 font-black text-white">€0.00</div>
+      </div>
+      <div>
+        <div class="text-slate-500">Paid</div>
+        <div class="mt-1 font-black text-emerald-300">€0.00</div>
+      </div>
+      <div>
+        <div class="text-slate-500">Outstanding</div>
+        <div class="mt-1 font-black text-amber-300">€0.00</div>
+      </div>
+    </div>
+  </div>
+  <span id="modalTotalSum" class="hidden">€0.00</span>
+</div></div></div>
 
 
 <script id="finflowAnalyticsInvoiceData" type="application/json">
@@ -779,8 +2554,426 @@
 </script>
 
 <script>
-let allInvoices = [{% for inv in invoices %}{id:{{ inv.id }},company_id:{{ inv.company_id }},invoice_number:{{ (inv.invoice_number or '—')|tojson }},invoice_date:{{ (inv.invoice_date or '—')|tojson }},software:{{ inv.software|tojson }},amount:{{ inv.amount_eur }},contract_details:{{ ((inv.contract_details|parse_details) or '—')|tojson }},status:{{ inv.status|tojson }},cancelled_at:{{ (inv.cancelled_at.isoformat() if inv.cancelled_at else '')|tojson }},cancellation_reason:{{ (inv.cancellation_reason or '')|tojson }}}{% if not loop.last %},{% endif %}{% endfor %}];
+let allInvoices = [{% for inv in invoices %}{id:{{ inv.id }},company_id:{{ inv.company_id }},invoice_number:{{ (inv.invoice_number or '—')|tojson }},invoice_date:{{ (inv.invoice_date or '—')|tojson }},completion_date:{{ (inv.completion_date.isoformat() if inv.completion_date else '')|tojson }},software:{{ inv.software|tojson }},amount:{{ inv.amount_eur }},paid_amount:{{ inv.paid_amount_eur or 0 }},payment_status:{{ (inv.payment_status or 'UNPAID')|tojson }},contract_details:{{ ((inv.contract_details|parse_details) or '—')|tojson }},status:{{ inv.status|tojson }},cancelled_at:{{ (inv.cancelled_at.isoformat() if inv.cancelled_at else '')|tojson }},cancellation_reason:{{ (inv.cancellation_reason or '')|tojson }}}{% if not loop.last %},{% endif %}{% endfor %}];
 let currentModalSoftware='ALPHA';
+
+
+/* FinFlow Notification Center JS v1 */
+
+let finflowNotifications = [];
+let notificationPollTimer = null;
+
+const notificationUiText = {
+    ru: {
+        title: "Уведомления",
+        subtitle: "Последние системные события",
+        readAll: "Прочитать все",
+        allClear: "Всё чисто",
+        noNotifications: "Нет активных уведомлений.",
+        markRead: "Отметить прочитанным",
+        critical: "Критическое",
+        warning: "Предупреждение",
+        info: "Информация",
+        overdue: "Просроченный счёт",
+        budgetWarning: "Предупреждение по бюджету",
+        budgetCritical: "Критический уровень бюджета",
+        budgetExceeded: "Бюджет превышен",
+        contractExpiring: "Истекает договор",
+        justNow: "только что",
+        minutes: "мин назад",
+        hours: "ч назад",
+        days: "дн назад"
+    },
+    en: {
+        title: "Notifications",
+        subtitle: "Recent system alerts",
+        readAll: "Mark all as read",
+        allClear: "All clear",
+        noNotifications: "No active notifications.",
+        markRead: "Mark as read",
+        critical: "Critical",
+        warning: "Warning",
+        info: "Information",
+        overdue: "Overdue invoice",
+        budgetWarning: "Budget warning",
+        budgetCritical: "Critical budget level",
+        budgetExceeded: "Budget exceeded",
+        contractExpiring: "Contract expiring",
+        justNow: "just now",
+        minutes: "min ago",
+        hours: "h ago",
+        days: "d ago"
+    }
+};
+
+function notificationLang(){
+    try {
+        return (typeof getLang === "function" ? getLang() : "en") === "ru"
+            ? "ru"
+            : "en";
+    } catch (_) {
+        return "en";
+    }
+}
+
+function notificationText(){
+    return notificationUiText[notificationLang()];
+}
+
+function notificationTypeLabel(type){
+    const t = notificationText();
+
+    return {
+        OVERDUE_INVOICE: t.overdue,
+        BUDGET_WARNING: t.budgetWarning,
+        BUDGET_CRITICAL: t.budgetCritical,
+        BUDGET_EXCEEDED: t.budgetExceeded,
+        CONTRACT_EXPIRING: t.contractExpiring
+    }[type] || t.info;
+}
+
+function notificationTime(value){
+    if(!value) return "";
+
+    const created = new Date(value);
+    if(Number.isNaN(created.getTime())) return "";
+
+    const diff = Math.max(0, Date.now() - created.getTime());
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const t = notificationText();
+
+    if(minutes < 1) return t.justNow;
+    if(hours < 1) return `${minutes} ${t.minutes}`;
+    if(days < 1) return `${hours} ${t.hours}`;
+    return `${days} ${t.days}`;
+}
+
+function notificationIcon(type){
+    return {
+        OVERDUE_INVOICE: "bi-exclamation-octagon",
+        BUDGET_WARNING: "bi-speedometer2",
+        BUDGET_CRITICAL: "bi-exclamation-triangle",
+        BUDGET_EXCEEDED: "bi-exclamation-diamond",
+        CONTRACT_EXPIRING: "bi-calendar2-event"
+    }[type] || "bi-bell";
+}
+
+function renderNotificationCenter(){
+    const list = document.getElementById("notificationList");
+    const badge = document.getElementById("notificationBadge");
+    const readAll = document.getElementById("notificationReadAll");
+    const title = document.getElementById("notificationPanelTitle");
+    const subtitle = document.getElementById("notificationPanelSubtitle");
+
+    if(!list) return;
+
+    const t = notificationText();
+    const unread = finflowNotifications.filter(n => !n.is_read).length;
+
+    if(title){
+        title.innerHTML = `
+            ${escapeHtml(t.title)}
+            ${
+                unread > 0
+                    ? `<span class="ff-notification-unread-count">${unread > 99 ? "99+" : unread}</span>`
+                    : ""
+            }
+        `;
+    }
+
+    if(subtitle){
+        subtitle.textContent = t.subtitle;
+    }
+
+    if(badge){
+        badge.textContent = unread > 99 ? "99+" : String(unread);
+        badge.classList.toggle("hidden", unread === 0);
+    }
+
+    if(readAll){
+        readAll.textContent = t.readAll;
+        readAll.classList.toggle("hidden", unread === 0);
+    }
+
+    if(!finflowNotifications.length){
+        list.innerHTML = `
+            <div class="ff-notification-empty">
+                <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-400/10 text-emerald-300 flex items-center justify-center">
+                    <i class="bi bi-check2-circle text-lg"></i>
+                </div>
+
+                <div class="text-sm font-bold text-slate-300 mt-3">
+                    ${escapeHtml(t.allClear)}
+                </div>
+
+                <div class="text-xs text-slate-500 mt-1">
+                    ${escapeHtml(t.noNotifications)}
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    list.innerHTML = finflowNotifications.map(n => {
+        const level = ["critical", "warning", "info"].includes(n.level)
+            ? n.level
+            : "info";
+
+        const unreadClass = n.is_read ? "" : "unread";
+        const typeLabel = notificationTypeLabel(n.type);
+        const levelLabel = t[level] || t.info;
+        const icon = notificationIcon(n.type);
+
+        return `
+            <div
+                class="ff-notification-item ${level} ${unreadClass}"
+                data-notification-id="${n.id}"
+                onclick="openNotification(${n.id})"
+            >
+                <div class="flex gap-3">
+
+                    <div class="ff-notification-icon ${level}">
+                        <i class="bi ${icon}"></i>
+                    </div>
+
+                    <div class="min-w-0 flex-1">
+
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="ff-notification-level ${level}">
+                                <i class="bi ${
+                                    level === "critical"
+                                        ? "bi-exclamation-circle"
+                                        : level === "warning"
+                                            ? "bi-exclamation-triangle"
+                                            : "bi-info-circle"
+                                }"></i>
+                                ${escapeHtml(levelLabel)}
+                            </div>
+
+                            <div class="text-[10px] text-slate-600 shrink-0">
+                                ${escapeHtml(notificationTime(n.created_at))}
+                            </div>
+                        </div>
+
+                        <div class="text-[10px] uppercase tracking-[.10em] font-black text-slate-500 mt-2">
+                            ${escapeHtml(typeLabel)}
+                        </div>
+
+                        <div class="text-sm font-bold text-slate-200 mt-1">
+                            ${escapeHtml(n.title)}
+                        </div>
+
+                        <div class="text-xs leading-5 text-slate-400 mt-1">
+                            ${escapeHtml(n.message)}
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 mt-2">
+                            ${
+                                !n.is_read
+                                    ? `<button
+                                        type="button"
+                                        class="ff-notification-action"
+                                        onclick="markNotificationRead(${n.id}, event)"
+                                    >${escapeHtml(t.markRead)}</button>`
+                                    : ""
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+function getCsrfToken(){
+    const input = document.querySelector('input[name="csrf_token"]');
+    return input ? input.value : "";
+}
+
+async function loadNotifications(){
+    try {
+        const response = await fetch("/api/notifications", {
+            headers: { "Accept": "application/json" },
+            cache: "no-store"
+        });
+
+        if(!response.ok) return;
+
+        const data = await response.json();
+
+        if(data.status !== "ok") return;
+
+        finflowNotifications = Array.isArray(data.notifications)
+            ? data.notifications
+            : [];
+
+        renderNotificationCenter();
+    } catch (_) {
+        // Notification center must never break the dashboard.
+    }
+}
+
+function toggleNotificationCenter(event){
+    if(event) event.stopPropagation();
+
+    const panel = document.getElementById("notificationPanel");
+    const bell = document.getElementById("notificationBell");
+
+    if(!panel) return;
+
+    const willOpen = panel.classList.contains("hidden");
+
+    panel.classList.toggle("hidden", !willOpen);
+    bell?.classList.toggle("is-open", willOpen);
+
+    if(willOpen){
+        loadNotifications();
+    }
+}
+
+function closeNotificationCenter(){
+    const panel = document.getElementById("notificationPanel");
+    const bell = document.getElementById("notificationBell");
+
+    panel?.classList.add("hidden");
+    bell?.classList.remove("is-open");
+}
+
+async function markNotificationRead(id, event){
+    if(event){
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    try {
+        const response = await fetch(`/api/notifications/${id}/read`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "X-CSRF-Token": getCsrfToken()
+            }
+        });
+
+        const data = await response.json();
+
+        if(!response.ok || data.status !== "ok"){
+            throw new Error(data.message || "Failed to mark notification as read");
+        }
+
+        const local = finflowNotifications.find(n => Number(n.id) === Number(id));
+
+        if(local){
+            local.is_read = true;
+            local.read_at = data.notification?.read_at || new Date().toISOString();
+        }
+
+        renderNotificationCenter();
+    } catch (error) {
+        console.error("Notification read error:", error);
+    }
+}
+
+async function markAllNotificationsRead(event){
+    if(event){
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    try {
+        const response = await fetch("/api/notifications/read-all", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "X-CSRF-Token": getCsrfToken()
+            }
+        });
+
+        const data = await response.json();
+
+        if(!response.ok || data.status !== "ok"){
+            throw new Error(data.message || "Failed to mark notifications as read");
+        }
+
+        finflowNotifications.forEach(n => {
+            n.is_read = true;
+            n.read_at = new Date().toISOString();
+        });
+
+        renderNotificationCenter();
+    } catch (error) {
+        console.error("Notification read-all error:", error);
+    }
+}
+
+function openNotification(id){
+    const notification = finflowNotifications.find(
+        n => Number(n.id) === Number(id)
+    );
+
+    if(!notification) return;
+
+    if(!notification.is_read){
+        markNotificationRead(id);
+    }
+
+    closeNotificationCenter();
+
+    const companyId = Number(notification.company_id || 0);
+    const software = notification.software || "";
+
+    if(
+        notification.type === "OVERDUE_INVOICE" &&
+        companyId &&
+        typeof openAlertInvoice === "function"
+    ){
+        openAlertInvoice(companyId, software);
+        return;
+    }
+
+    if(companyId){
+        const card = document.getElementById(`card-${companyId}`);
+
+        if(card){
+            if(
+                software &&
+                typeof switchSoftware === "function" &&
+                (software === "ALPHA" || software === "BETA")
+            ){
+                switchSoftware(companyId, software);
+            }
+
+            card.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            card.classList.add("ring-2", "ring-emerald-400/40");
+
+            setTimeout(() => {
+                card.classList.remove("ring-2", "ring-emerald-400/40");
+            }, 1400);
+        }
+    }
+}
+
+document.addEventListener("click", function(event){
+    const wrap = document.querySelector(".ff-notification-wrap");
+
+    if(wrap && !wrap.contains(event.target)){
+        closeNotificationCenter();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function(){
+    loadNotifications();
+
+    notificationPollTimer = setInterval(
+        loadNotifications,
+        30000
+    );
+});
+
 
 function openQuickAddInvoiceModal(){
   const modal = document.getElementById('quickAddInvoiceModal');
@@ -898,9 +3091,175 @@ function updateSummaryCards(){
   }
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-function switchSoftware(companyId, software){const card=document.getElementById('card-'+companyId); if(!card)return; const s=software.toLowerCase(); const budget=Number(card.dataset[s+'Budget']||0),spent=Number(card.dataset[s+'Spent']||0),date=card.dataset[s+'Date']||''; card.querySelector('.sw-hidden-input').value=software; card.querySelector('.budget-input').value=budget.toFixed(2); card.querySelector('.spent-display').textContent=euro(spent); card.querySelector('.remainder-display').textContent=euro(budget-spent); card.querySelector('.remainder-display').className='remainder-display text-xl font-black '+(budget-spent<0?'text-rose-400':'text-emerald-300'); card.querySelector('.card-date-input').value=date; const pct=budget>0?spent/budget*100:0; card.querySelector('.progress-bar-fill').style.width=Math.min(pct,100)+'%'; card.querySelector('.progress-bar-fill').className='progress-bar-fill h-full transition-all duration-500 '+(pct>100?'bg-rose-500':pct>=85?'bg-amber-400':'bg-emerald-400'); card.querySelector('.usage-label').textContent=pct.toFixed(0)+'% used';}
-async function saveCompanyBudget(e,form){e.preventDefault(); try{const r=await fetch(form.action,{method:'POST',body:new FormData(form)}),d=await r.json(); if(!r.ok||d.status!=='ok') throw Error(d.message||'Save failed'); const id=form.company_id.value,sw=form.software.value,card=document.getElementById('card-'+id),s=sw.toLowerCase(); card.dataset[s+'Budget']=d.total_amount; switchSoftware(id,sw); updateSummaryCards();}catch(err){alert(err.message);}}
-async function saveCompanyCompletionDate(id,val,input){const card=document.getElementById('card-'+id),sw=card.querySelector('.sw-select').value; try{const fd=new FormData();fd.append('company_id',id);fd.append('software',sw);fd.append('completion_date',val);const r=await fetch('/update_company_completion_date',{method:'POST',body:fd}),d=await r.json();if(!r.ok||d.status!=='ok')throw Error(d.message||'Save failed');card.dataset[sw.toLowerCase()+'Date']=d.completion_date;input.classList.add('border-emerald-400');setTimeout(()=>input.classList.remove('border-emerald-400'),900);}catch(err){input.classList.add('border-rose-400');}}
+function openAlertInvoice(companyId, software){
+  const card = document.getElementById('card-' + companyId);
+  if(!card) return;
+
+  const select = card.querySelector('.sw-select');
+  if(select){
+    select.value = software;
+  }
+
+  switchSoftware(companyId, software);
+  openCompanyInvoicesModal(companyId);
+}
+
+function switchSoftware(companyId, software){
+  const card = document.getElementById('card-' + companyId);
+  if(!card) return;
+
+  const selected = String(software || '').trim().toUpperCase();
+  if(selected !== 'ALPHA' && selected !== 'BETA') return;
+
+  const key = selected.toLowerCase();
+
+  const budget = Number(card.dataset[key + 'Budget'] || 0);
+  const spent = Number(card.dataset[key + 'Spent'] || 0);
+  const date = card.dataset[key + 'Date'] || '';
+  const remaining = budget - spent;
+  const pct = budget > 0 ? (spent / budget) * 100 : 0;
+  const cappedPct = Math.min(Math.max(pct, 0), 100);
+
+  const hiddenInput = card.querySelector('.sw-hidden-input');
+  const budgetInput = card.querySelector('.budget-input');
+  const spentDisplay = card.querySelector('.spent-display');
+  const remainderDisplay = card.querySelector('.remainder-display');
+  const dateInput = card.querySelector('.card-date-input');
+  const progress = card.querySelector('.progress-bar-fill');
+  const usageLabel = card.querySelector('.usage-label');
+
+  if(hiddenInput){
+    hiddenInput.value = selected;
+  }
+
+  if(budgetInput){
+    budgetInput.value = budget.toFixed(2);
+  }
+
+  if(spentDisplay){
+    spentDisplay.textContent = euro(spent);
+  }
+
+  if(remainderDisplay){
+    remainderDisplay.textContent = euro(remaining);
+    remainderDisplay.className =
+      'remainder-display text-xl font-black ' +
+      (remaining < 0 ? 'text-rose-400' : 'text-emerald-300');
+  }
+
+  if(dateInput){
+    dateInput.value = date;
+  }
+
+  if(progress){
+    progress.style.width = cappedPct.toFixed(1) + '%';
+    progress.className =
+      'progress-bar-fill h-full transition-all duration-500 ' +
+      (
+        pct >= 100
+          ? 'bg-rose-500'
+          : pct >= 85
+            ? 'bg-amber-400'
+            : selected === 'BETA'
+              ? 'bg-cyan-400'
+              : 'bg-emerald-400'
+      );
+  }
+
+  if(usageLabel){
+    usageLabel.textContent = pct.toFixed(0) + '% used';
+  }
+}
+
+async function saveCompanyBudget(e, form){
+  e.preventDefault();
+
+  try{
+    const response = await fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form)
+    });
+
+    const data = await response.json();
+
+    if(!response.ok || data.status !== 'ok'){
+      throw Error(data.message || 'Save failed');
+    }
+
+    const companyId = form.company_id.value;
+    const software = String(form.software.value || '').trim().toUpperCase();
+    const card = document.getElementById('card-' + companyId);
+
+    if(!card){
+      throw Error('Company card not found');
+    }
+
+    const key = software.toLowerCase();
+
+    card.dataset[key + 'Budget'] = Number(data.total_amount || 0);
+
+    switchSoftware(companyId, software);
+    updateSummaryCards();
+    updateProductCardMetrics();
+
+  }catch(err){
+    alert(err.message || 'Save failed');
+  }
+}
+
+async function saveCompanyCompletionDate(id, value, input){
+  const card = document.getElementById('card-' + id);
+  if(!card) return;
+
+  const select = card.querySelector('.sw-select');
+  const software = select
+    ? String(select.value || '').trim().toUpperCase()
+    : '';
+
+  if(software !== 'ALPHA' && software !== 'BETA'){
+    return;
+  }
+
+  try{
+    const formData = new FormData();
+    formData.append('company_id', id);
+    formData.append('software', software);
+    formData.append('completion_date', value);
+    formData.append('csrf_token', getCsrfToken());
+
+    const response = await fetch('/update_company_completion_date', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if(!response.ok || data.status !== 'ok'){
+      throw Error(data.message || 'Save failed');
+    }
+
+    card.dataset[software.toLowerCase() + 'Date'] =
+      data.completion_date || '';
+
+    if(input){
+      input.classList.remove('border-rose-400');
+      input.classList.add('border-emerald-400');
+
+      setTimeout(() => {
+        input.classList.remove('border-emerald-400');
+      }, 900);
+    }
+
+  }catch(err){
+    if(input){
+      input.classList.remove('border-emerald-400');
+      input.classList.add('border-rose-400');
+    }
+
+    alert(err.message || 'Save failed');
+  }
+}
+
 async function cancelInvoice(id,source){
   const reason=prompt('Cancellation reason:');
   if(reason===null)return;
@@ -910,7 +3269,10 @@ async function cancelInvoice(id,source){
   try{
     const r=await fetch('/cancel_invoice/'+id,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'X-CSRF-Token':getCsrfToken()
+      },
       body:JSON.stringify({reason:cleanReason})
     });
     const d=await r.json();
@@ -940,39 +3302,268 @@ async function cancelInvoice(id,source){
     }
 
     updateSummaryCards();
+    updateProductCardMetrics();
     if(source==='modal')openCompanyInvoicesModal(d.company_id);
   }catch(err){alert(err.message);}
 }
+async function updateInvoicePayment(id){
+  const item = allInvoices.find(x => x.id === id);
+  if(!item || item.status === 'CANCELLED') return;
+
+  const currentPaid = Number(item.paid_amount || 0);
+  const amount = Number(item.amount || 0);
+  const currentDue = Math.max(amount - currentPaid, 0);
+
+  const value = prompt(
+    `Paid amount for invoice #${item.invoice_number}\n` +
+    `Total: €${amount.toFixed(2)}\n` +
+    `Currently paid: €${currentPaid.toFixed(2)}\n` +
+    `Remaining: €${currentDue.toFixed(2)}\n\n` +
+    `Enter total paid amount:`,
+    currentPaid.toFixed(2)
+  );
+
+  if(value === null) return;
+
+  const paid = Number(String(value).replace(',', '.'));
+
+  if(!Number.isFinite(paid) || paid < 0){
+    alert('Please enter a valid non-negative amount.');
+    return;
+  }
+
+  if(paid > amount){
+    alert(`Paid amount cannot exceed invoice total (€${amount.toFixed(2)}).`);
+    return;
+  }
+
+  try{
+    const r = await fetch('/update_invoice_payment/'+id,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-CSRF-Token':getCsrfToken()
+      },
+      body:JSON.stringify({paid_amount_eur:paid})
+    });
+
+    const d = await r.json();
+
+    if(!r.ok || d.status !== 'ok'){
+      throw Error(d.message || 'Payment update failed');
+    }
+
+    if(d.invoice){
+      item.paid_amount = Number(d.invoice.paid_amount_eur || 0);
+      item.payment_status = d.invoice.payment_status || 'UNPAID';
+      item.amount = Number(d.invoice.amount_eur || item.amount);
+    }
+
+    openCompanyInvoicesModal(item.company_id);
+
+  }catch(err){
+    alert(err.message);
+  }
+}
+
+function isInvoiceOverdue(item){
+  if(!item || item.status === 'CANCELLED') return false;
+
+  const amount = Number(item.amount || 0);
+  const paid = Number(item.paid_amount || 0);
+
+  if(amount <= 0 || paid >= amount) return false;
+  if(!item.completion_date) return false;
+
+  const completion = new Date(item.completion_date + 'T23:59:59');
+  if(Number.isNaN(completion.getTime())) return false;
+
+  return completion < new Date();
+}
+
+function overdueDays(item){
+  if(!item || !item.completion_date) return 0;
+
+  const completion = new Date(item.completion_date + 'T00:00:00');
+  if(Number.isNaN(completion.getTime())) return 0;
+
+  const today = new Date();
+  const startToday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  return Math.max(
+    0,
+    Math.floor((startToday - completion) / 86400000)
+  );
+}
+
+function paymentBadge(item){
+  if(item.status === 'CANCELLED') return '';
+
+  const paid = Number(item.paid_amount || 0);
+  const amount = Number(item.amount || 0);
+  const due = Math.max(amount - paid, 0);
+  const status = item.payment_status || 'UNPAID';
+
+  if(status === 'PAID'){
+    return `
+      <div class="mt-1 flex items-center justify-end gap-2 text-[10px]">
+        <span class="px-2 py-0.5 rounded-md bg-emerald-400/10 text-emerald-300 font-black">
+          PAID
+        </span>
+        <span class="text-emerald-300/70">€${paid.toFixed(2)}</span>
+      </div>`;
+  }
+
+  if(status === 'PARTIALLY_PAID'){
+    return `
+      <div class="mt-1 text-[10px]">
+        <div class="flex items-center justify-end gap-2">
+          <span class="px-2 py-0.5 rounded-md bg-amber-400/10 text-amber-300 font-black">
+            PARTIAL
+          </span>
+          <span class="text-slate-400">
+            €${paid.toFixed(2)} paid
+          </span>
+        </div>
+        <div class="text-right text-slate-500 mt-0.5">
+          €${due.toFixed(2)} due
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="mt-1 text-[10px]">
+      <div class="flex items-center justify-end gap-2">
+        <span class="px-2 py-0.5 rounded-md bg-slate-400/10 text-slate-400 font-black">
+          UNPAID
+        </span>
+      </div>
+      <div class="text-right text-slate-500 mt-0.5">
+        €${due.toFixed(2)} due
+      </div>
+    </div>`;
+}
+
 function openCompanyInvoicesModal(id){
   const card=document.getElementById('card-'+id);
   if(!card)return;
+
   const sw=card.querySelector('.sw-select').value,
         company=card.dataset.companyTitle,
         rows=allInvoices.filter(x=>x.company_id===id&&x.software===sw);
+
   document.getElementById('modalCompanyName').textContent=company;
   document.getElementById('modalSubTitle').textContent='Invoices · '+sw;
+
   let total=0;
+  let paidTotal=0;
+  let dueTotal=0;
+
   const tbody=document.getElementById('modalInvoicesTbody');
+
   tbody.innerHTML=rows.length?rows.map(x=>{
     const cancelled=x.status==='CANCELLED';
-    if(!cancelled)total+=Number(x.amount);
+
+    if(!cancelled){
+      const amount=Number(x.amount||0);
+      const paid=Math.min(Number(x.paid_amount||0),amount);
+      total+=amount;
+      paidTotal+=paid;
+      dueTotal+=Math.max(amount-paid,0);
+    }
+
+    const overdue=isInvoiceOverdue(x);
+    const overdueDaysCount=overdueDays(x);
+
     const statusBadge=cancelled
       ? '<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">CANCELLED</span>'
-      : '<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">ISSUED</span>';
+      : overdue
+        ? `<div class="flex flex-col items-end gap-1">
+            <span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">
+              OVERDUE
+            </span>
+            <span class="text-[10px] text-rose-300/70">
+              ${overdueDaysCount} day${overdueDaysCount === 1 ? '' : 's'}
+            </span>
+          </div>`
+        : '<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">ISSUED</span>';
+
     const action=cancelled
       ? statusBadge
-      : `<button onclick="cancelInvoice(${x.id},'modal')" class="text-slate-600 hover:text-rose-400 p-2" title="Cancel invoice"><i class="bi bi-x-circle"></i></button>`;
+      : `
+        <div class="flex items-center justify-end gap-1">
+          <button
+            onclick="updateInvoicePayment(${x.id})"
+            class="text-slate-500 hover:text-emerald-300 p-2 transition"
+            title="Update payment"
+          >
+            <i class="bi bi-cash-coin"></i>
+          </button>
+          <button
+            onclick="cancelInvoice(${x.id},'modal')"
+            class="text-slate-600 hover:text-rose-400 p-2 transition"
+            title="Cancel invoice"
+          >
+            <i class="bi bi-x-circle"></i>
+          </button>
+        </div>`;
+
+    const invoiceStatus=cancelled
+      ? statusBadge
+      : overdue
+        ? statusBadge
+        : '<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">ISSUED</span>';
+
     const reason=cancelled&&x.cancellation_reason
       ? `<div class="text-[10px] text-rose-300/70 mt-1">${escapeHtml(x.cancellation_reason)}</div>`
       : '';
+
     return `<tr class="${cancelled?'opacity-60':''}">
-      <td class="p-2 font-bold ${cancelled?'text-slate-500 line-through':'text-emerald-300'}">#${escapeHtml(x.invoice_number)}${reason}</td>
+      <td class="p-2 font-bold ${cancelled?'text-slate-500 line-through':'text-emerald-300'}">
+        #${escapeHtml(x.invoice_number)}${reason}
+      </td>
       <td class="p-2 text-slate-500">${escapeHtml(x.invoice_date)}</td>
-      <td class="p-2 text-right font-bold ${cancelled?'text-slate-500 line-through':''}">${euro(x.amount)}</td>
-      <td class="p-2 text-right">${action}</td>
+      <td class="p-2 text-right">
+        <div class="font-bold ${cancelled?'text-slate-500 line-through':'text-white'}">
+          ${euro(x.amount)}
+        </div>
+        ${paymentBadge(x)}
+      </td>
+      <td class="p-2 text-right">
+        <div class="flex items-center justify-end gap-2">
+          ${invoiceStatus}
+          ${cancelled ? '' : action}
+        </div>
+      </td>
     </tr>`;
   }).join(''):'<tr><td colspan="4" class="p-8 text-center text-slate-600">No invoices</td></tr>';
+
   document.getElementById('modalTotalSum').textContent=euro(total);
+
+  const footer=document.querySelector('#companyInvoicesModal [data-payment-summary]');
+
+  if(footer){
+    footer.innerHTML=`
+      <div class="grid grid-cols-3 gap-3 text-xs">
+        <div>
+          <div class="text-slate-500">Invoiced</div>
+          <div class="mt-1 font-black text-white">${euro(total)}</div>
+        </div>
+        <div>
+          <div class="text-slate-500">Paid</div>
+          <div class="mt-1 font-black text-emerald-300">${euro(paidTotal)}</div>
+        </div>
+        <div>
+          <div class="text-slate-500">Outstanding</div>
+          <div class="mt-1 font-black ${dueTotal>0?'text-amber-300':'text-emerald-300'}">${euro(dueTotal)}</div>
+        </div>
+      </div>`;
+  }
+
   document.getElementById('companyInvoicesModal').classList.remove('hidden');
   document.getElementById('companyInvoicesModal').classList.add('flex');
 }
@@ -980,10 +3571,105 @@ function closeCompanyInvoicesModal(){const m=document.getElementById('companyInv
 document.getElementById('companyCardSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('.company-card').forEach(c=>c.style.display=c.dataset.companyName.includes(q)?'':'none');});
 document.getElementById('tableSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#mainInvoicesTbody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCompanyInvoicesModal();});
-document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.company-card').forEach(c=>{const sw=c.querySelector('.sw-select')?.value;if(sw)switchSoftware(c.dataset.companyId,sw)});updateSummaryCards();renderFinFlowAnalytics();});
+function updateProductCardMetrics(){
+  for(const software of ['ALPHA','BETA']){
+    let budgetTotal=0;
+    let spentTotal=0;
+    let companies=0;
 
-  function openBudgetHealthModal(){
-    renderBudgetHealth();
+    document.querySelectorAll('.company-card').forEach(card=>{
+      const key=software.toLowerCase();
+      const budget=Number(card.dataset[key+'Budget']||0);
+      const spent=Number(card.dataset[key+'Spent']||0);
+      const has=card.dataset['has'+software.charAt(0)+software.slice(1).toLowerCase()] === '1'
+        || budget>0
+        || spent>0;
+
+      if(!has)return;
+
+      budgetTotal+=budget;
+      spentTotal+=spent;
+      companies++;
+    });
+
+    const remaining=budgetTotal-spentTotal;
+    const pct=budgetTotal>0 ? (spentTotal/budgetTotal*100) : 0;
+    const cappedPct=Math.min(Math.max(pct,0),100);
+
+    const budgetEl=document.getElementById('summary'+software+'Budget');
+    const spentEl=document.getElementById('summary'+software+'Spent');
+    const companiesEl=document.getElementById('summary'+software+'Companies');
+    const pctEl=document.getElementById('summary'+software+'Pct');
+    const progressEl=document.getElementById('summary'+software+'Progress');
+    const remainingEl=document.getElementById('summary'+software+'Total');
+
+    if(budgetEl)budgetEl.textContent=euro(budgetTotal);
+    if(spentEl)spentEl.textContent=euro(spentTotal);
+    if(companiesEl)companiesEl.textContent=companies;
+    if(pctEl)pctEl.textContent=pct.toFixed(1)+'%';
+    if(progressEl)progressEl.style.width=cappedPct.toFixed(1)+'%';
+
+    if(remainingEl){
+      remainingEl.classList.remove(
+        'text-emerald-300',
+        'text-cyan-300',
+        'text-amber-300',
+        'text-rose-400'
+      );
+
+      if(remaining<0){
+        remainingEl.classList.add('text-rose-400');
+      }else if(pct>=85){
+        remainingEl.classList.add('text-amber-300');
+      }else if(software==='BETA'){
+        remainingEl.classList.add('text-cyan-300');
+      }else{
+        remainingEl.classList.add('text-emerald-300');
+      }
+    }
+  }
+}
+
+
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.company-card').forEach(c=>{const sw=c.querySelector('.sw-select')?.value;if(sw)switchSoftware(c.dataset.companyId,sw)});updateSummaryCards();updateProductCardMetrics();renderFinFlowAnalytics();});
+
+  function openBudgetHealthModal(software){
+    const selected=canonicalSoftwareForUi(software);
+    const productEl=document.getElementById('budgetHealthModalProduct');
+    const descriptionEl=document.getElementById('budgetHealthModalDescription');
+    const iconEl=document.getElementById('budgetHealthModalIcon');
+
+    if(productEl){
+      productEl.textContent=selected || budgetHealthText('Budget overview','Обзор бюджета');
+      productEl.className=
+        'text-xs font-black uppercase tracking-wider '+
+        (selected==='BETA' ? 'text-cyan-400' : 'text-emerald-400');
+    }
+
+    if(descriptionEl){
+      descriptionEl.textContent=selected
+        ? budgetHealthText(
+            'Only '+selected+' companies and invoices',
+            'Только компании и счета '+selected
+          )
+        : budgetHealthText(
+            'Selected product budget and invoice overview',
+            'Обзор бюджета и счетов выбранного продукта'
+          );
+    }
+
+    if(iconEl){
+      iconEl.className=
+        'w-11 h-11 rounded-xl flex items-center justify-center shrink-0 '+
+        (selected==='BETA'
+          ? 'bg-cyan-400/10 border border-cyan-400/20 text-cyan-300'
+          : 'bg-emerald-400/10 border border-emerald-400/20 text-emerald-300');
+
+      iconEl.innerHTML=
+        '<i class="bi '+(selected==='BETA' ? 'bi-box-seam' : 'bi-layers')+'"></i>';
+    }
+
+    renderBudgetHealth(selected);
     const m=document.getElementById('budgetHealthModal');
     m.classList.remove('hidden');
     m.classList.add('flex');
@@ -1008,8 +3694,11 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
       : en;
   }
 
-  function renderBudgetHealth(){
+  function renderBudgetHealth(selectedSoftware){
     const tbody=document.getElementById('budgetHealthTbody');
+    const selected = selectedSoftware
+      ? canonicalSoftwareForUi(selectedSoftware)
+      : null;
     if(!tbody)return;
 
     let totalBudget=0;
@@ -1035,7 +3724,7 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
           software:'BETA',
           budget:Number(card.dataset.betaBudget||0)
         }
-      ];
+      ].filter(row => !selected || row.software === selected);
 
       /*
        * Preserve legacy / historical invoice products that are not
@@ -1045,6 +3734,8 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
 
       companyInvoices.forEach(inv=>{
         const canonical=canonicalSoftwareForUi(inv.software);
+
+        if(selected && canonical !== selected)return;
 
         if(!knownSoftware.has(canonical)){
           softwareRows.push({
@@ -1245,7 +3936,11 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
 
     card.addEventListener('click',function(e){
       if(e.target.closest('button,a,input,select,textarea'))return;
-      openBudgetHealthModal();
+      openBudgetHealthModal(
+        card.id === 'product-ALPHA' ? 'ALPHA' :
+        card.id === 'product-BETA' ? 'BETA' :
+        null
+      );
     });
   });
 
@@ -1259,40 +3954,30 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
 (function () {
     const translations = {
         ru: {
+            "FinFlow — Financial Control": "FinFlow — Финансовый контроль",
+            "FinFlow": "FinFlow",
+            "Control": "Контроль",
+            "Financial control platform": "Платформа финансового контроля",
+            "Financial overview": "Финансовый обзор",
+
             "Financial control for contracts, invoices & budgets": "Финансовый контроль договоров, счетов и бюджетов",
-            "Create invoice PDF": "Создать счёт PDF",
             "Know where your budget stands.": "Контролируйте состояние бюджета.",
             "Track contract budgets, invoices and remaining spend in one place — with early warnings before a budget becomes a problem.": "Контролируйте бюджеты договоров, счета и остаток средств в одном месте — с ранними предупреждениями о рисках.",
+
             "Add invoice": "Добавить счёт",
-"FINANCIAL ANALYTICS": "ФИНАНСОВАЯ АНАЛИТИКА",
-"Financial analytics": "Финансовая аналитика",
-"Spending overview": "Обзор выставленных счетов",
-"Budget utilization and spending activity.": "Использование бюджета и динамика выставленных счетов.",
-"Budget utilization": "Использование бюджета",
-"Budget": "Бюджет",
-"Active invoices only": "Только активные счета",
-"Spend by company": "Сумма счетов по компаниям",
-"Spend by software": "Сумма счетов по продуктам",
-"Monthly spending": "Выставленные счета по месяцам",
-"Invoice activity by date": "Динамика выставленных счетов",
-"No active invoice spending yet.": "Активных выставленных счетов пока нет.",
-"Budget exceeded": "Бюджет превышен",
-"Budget attention": "Бюджет требует внимания",
-"Budget almost exhausted": "Бюджет почти исчерпан",
-"Used": "Использовано",
-"USED": "ИСПОЛЬЗОВАНО",
-"Sep": "Сен",
-"Jan": "Янв",
-"Feb": "Фев",
-"Mar": "Мар",
-"Apr": "Апр",
-"May": "Май",
-"Jun": "Июн",
-"Jul": "Июл",
-"Aug": "Авг",
-"Oct": "Окт",
-"Nov": "Ноя",
-"Dec": "Дек",
+            "Create invoice": "Создать счёт",
+            "Create invoice PDF": "Создать счёт PDF",
+
+            "Notifications": "Уведомления",
+            "Recent system alerts": "Последние системные события",
+            "Mark all as read": "Прочитать все",
+            "All clear": "Всё чисто",
+            "No active notifications.": "Нет активных уведомлений.",
+            "Mark as read": "Отметить прочитанным",
+
+            "Analytics": "Аналитика",
+            "Audit Log": "Журнал аудита",
+
             "Total budget": "Общий бюджет",
             "All active products": "Все активные продукты",
             "Invoiced": "Выставлено счетов",
@@ -1301,68 +3986,142 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
             "Available budget": "Доступный бюджет",
             "Utilization": "Использование",
             "Budget consumed": "Использовано бюджета",
+
             "Attention needed": "Требуется внимание",
             "Issues that may affect contract or budget control.": "Проблемы, которые могут повлиять на контроль договоров или бюджета.",
-            "alerts": "предупреждений",
             "Everything looks healthy": "Всё в порядке",
             "No budgets above 80% and no contracts ending within 30 days.": "Нет бюджетов выше 80% и договоров, заканчивающихся в ближайшие 30 дней.",
+
+            "Financial Analytics": "Финансовая аналитика",
+            "FINANCIAL ANALYTICS": "ФИНАНСОВАЯ АНАЛИТИКА",
+            "Financial control dashboard": "Панель финансового контроля",
+            "A compact view of budget utilization, invoice exposure and spending trends.": "Компактный обзор использования бюджета, выставленных счетов и динамики расходов.",
+            "Live dashboard": "Данные в реальном времени",
+            "Overall utilization": "Общее использование",
+            "Invoiced amount against total budget": "Выставленная сумма относительно общего бюджета",
+            "of total budget": "от общего бюджета",
+            "Exposure": "Объём обязательств",
+
+            "Budget": "Бюджет",
+            "Budget utilization": "Использование бюджета",
             "Budget health": "Состояние бюджета",
+            "Budget overview": "Обзор бюджета",
+            "Selected product budget and invoice overview": "Обзор бюджета и счетов выбранного продукта",
             "Remaining budget by company": "Остаток бюджета по компаниям",
+            "Click for detailed overview": "Нажмите для подробного обзора",
+            "Click to view full budget overview": "Нажмите, чтобы посмотреть полный обзор бюджета",
+            "View details": "Подробнее",
+
+            "Budget exceeded": "Бюджет превышен",
+            "Budget attention": "Бюджет требует внимания",
+            "Budget almost exhausted": "Бюджет почти исчерпан",
+            "USED": "ИСПОЛЬЗОВАНО",
+            "Used": "Использовано",
+            "% used": "% использовано",
+
+            "Spend by company": "Сумма счетов по компаниям",
+            "Active invoiced amount by company.": "Сумма активных счетов по компаниям.",
+            "Companies": "Компании",
+
+            "Spend by product": "Сумма счетов по продуктам",
+            "Active invoiced amount by product.": "Сумма активных счетов по продуктам.",
+            "ALPHA · BETA": "ALPHA · BETA",
+
+            "Monthly spending": "Сумма счетов по месяцам",
+            "Active invoiced amount grouped by invoice month.": "Сумма активных счетов в разрезе месяцев выставления.",
+            "Invoice activity by date": "Динамика выставленных счетов",
+            "Timeline": "Динамика",
+            "No active invoice spending yet.": "Активных выставленных счетов пока нет.",
+
             "Workspace": "Рабочая область",
             "Companies & contracts": "Компании и договоры",
             "Set budgets, review spend and spot risk at a glance.": "Устанавливайте бюджеты, контролируйте расходы и сразу замечайте риски.",
             "Search companies...": "Поиск компаний...",
             "Click to view invoices": "Нажмите, чтобы посмотреть счета",
             "Contract budget (€)": "Бюджет договора (€)",
-            "Save": "Сохранить",
             "Contract end": "Окончание договора",
+            "Save": "Сохранить",
+
             "No companies yet. Create your first invoice to get started.": "Компаний пока нет. Создайте первый счёт, чтобы начать.",
+
             "Invoice registry": "Реестр счетов",
             "Recent invoices": "Последние счета",
             "Search invoices...": "Поиск счетов...",
             "Invoice": "Счёт",
+            "Invoices": "Счета",
             "Date": "Дата",
             "Company": "Компания",
             "Product": "Продукт",
             "Amount": "Сумма",
-            "Edit invoice": "Редактировать счёт",
-            "Cancel invoice": "Аннулировать счёт",
-            "No invoices yet.": "Счетов пока нет.",
-            "Cancelled": "Аннулирован",
-            "CANCELLED": "АННУЛИРОВАН",
+            "Status": "Статус",
+
             "ISSUED": "ВЫСТАВЛЕН",
             "Issued": "Выставлен",
-            "Invoices": "Счета",
+            "CANCELLED": "АННУЛИРОВАН",
+            "Cancelled": "Аннулирован",
+            "PAID": "ОПЛАЧЕН",
+            "PARTIAL": "ЧАСТИЧНО",
+            "UNPAID": "НЕ ОПЛАЧЕН",
+            "OVERDUE": "ПРОСРОЧЕН",
+            "HISTORY": "ИСТОРИЯ",
+            "OVER BUDGET": "ПРЕВЫШЕНИЕ БЮДЖЕТА",
+            "HIGH USAGE": "ВЫСОКАЯ ЗАГРУЗКА",
+            "HEALTHY": "В НОРМЕ",
+
+            "Paid": "Оплачено",
+            "Outstanding": "К оплате",
+            "No invoices yet.": "Счетов пока нет.",
             "No invoices": "Счетов нет",
             "Total:": "Итого:",
-            "% used": "% использовано",
             "No data yet": "Данных пока нет",
+            "No budget data": "Нет данных по бюджету",
 
-            "Invoice Generator": "Генератор счетов",
-            "Save to Registry": "Сохранить в реестр",
-            "Редактируется шаблон из архива:": "Редактируется счёт из архива:",
-            "Client / Company Name": "Название клиента / компании",
-            "Payment Terms": "Условия оплаты",
+            "Invoices · ": "Счета · ",
+
+            "Quickly add an invoice directly to the registry": "Быстро добавьте счёт непосредственно в реестр",
+            "Company name": "Название компании",
             "Software Product": "Программный продукт",
-            "Notes": "Примечания",
-            "Terms": "Условия",
-            "Notes - any relevant information not already covered": "Примечания — дополнительная информация",
-            "Terms - late fees, payment methods, delivery schedules": "Условия — штрафы, способы оплаты, сроки поставки",
+            "Invoice number": "Номер счёта",
+            "Invoice date": "Дата счёта",
+            "Completion date": "Дата окончания",
             "Amount (€)": "Сумма (€)",
-            "Search in archive...": "Поиск в архиве...",
-            "Поиск в архиве...": "Поиск в архиве...",
-            "Cancel this invoice? It will remain in the registry as CANCELLED.": "Аннулировать этот счёт? Он останется в реестре со статусом «АННУЛИРОВАН».",
-            "Cancellation reason:": "Причина аннулирования:",
-            "Cancellation reason is required.": "Необходимо указать причину аннулирования.",
-            "Cancelled invoices cannot be edited": "Аннулированные счета нельзя редактировать",
-            "Cancelled invoices cannot be edited.": "Аннулированные счета нельзя редактировать.",
-            "Cancellation failed": "Не удалось аннулировать счёт",
-            "Save failed": "Не удалось сохранить",
+            "Save to Registry": "Сохранить в реестр",
+
+            "Edit invoice": "Редактировать счёт",
+            "Cancel invoice": "Аннулировать счёт",
+            "Update payment": "Обновить оплату",
+            "Cancel": "Аннулировать",
             "Close": "Закрыть",
             "Edit": "Редактировать",
-            "Cancel": "Аннулировать",
+
+            "Cancellation reason:": "Причина аннулирования:",
+            "Cancellation reason is required.": "Необходимо указать причину аннулирования.",
+            "Cancel this invoice? It will remain in the registry as CANCELLED.": "Аннулировать этот счёт? Он останется в реестре со статусом «АННУЛИРОВАН».",
+            "Cancelled invoices cannot be edited": "Аннулированные счета нельзя редактировать",
+            "Cancelled invoices cannot be edited.": "Аннулированные счета нельзя редактировать.",
+            "Cancelled invoices remain in history but are excluded from active spend and remaining budget.": "Аннулированные счета остаются в истории, но не учитываются в активных расходах и остатке бюджета.",
+
+            "Cancellation failed": "Не удалось аннулировать счёт",
+            "Payment update failed": "Не удалось обновить оплату",
+            "Save failed": "Не удалось сохранить",
+            "Save failed.": "Не удалось сохранить.",
+            "Could not save invoice.": "Не удалось сохранить счёт.",
+            "PNG export is unavailable.": "Экспорт PNG недоступен.",
+            "Could not save PNG.": "Не удалось сохранить PNG.",
+
+            "Save PNG": "Сохранить PNG",
+            "Active invoiced": "Активно выставлено",
+
+            "Invoice Generator": "Генератор счетов",
+            "Client / Company Name": "Название клиента / компании",
+            "Payment Terms": "Условия оплаты",
+            "Notes": "Примечания",
+            "Terms": "Условия",
             "Generate": "Создать",
-            "Draft": "Черновик"
+            "Draft": "Черновик",
+            "Notes - any relevant information not already covered": "Примечания — дополнительная информация",
+            "Terms - late fees, payment methods, delivery schedules": "Условия — штрафы, способы оплаты, сроки поставки",
+            "Search in archive...": "Поиск в архиве..."
         }
     };
 
@@ -1380,6 +4139,12 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
     function setLang(lang) {
         localStorage.setItem("finflow-language", lang);
         applyLanguage(lang);
+
+        // Keep dynamic Notification Center content synchronized
+        // with the global RU/EN language switcher.
+        if (typeof renderNotificationCenter === "function") {
+            renderNotificationCenter();
+        }
     }
 
     const originalTextNodes = new WeakMap();
@@ -1394,44 +4159,117 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
     function translate(value, lang) {
         if (!value) return value;
 
-        const ru = originalToRussian[value];
-        if (lang === "ru" && ru) return ru;
+        const text = String(value);
 
-        if (lang === "en") {
-            if (russianToEnglish[value]) return russianToEnglish[value];
-            return value;
+        // Exact English -> Russian
+        if (lang === "ru") {
+            if (originalToRussian[text]) {
+                return originalToRussian[text];
+            }
+
+            // Case-insensitive lookup for headings / labels
+            const lower = text.toLowerCase();
+            const englishKey = Object.keys(originalToRussian).find(function (key) {
+                return key.toLowerCase() === lower;
+            });
+
+            if (englishKey) {
+                return originalToRussian[englishKey];
+            }
+
+            // Russian status / helper fallbacks
+            return text;
         }
 
-        return value;
+        // Exact Russian -> English
+        if (lang === "en") {
+            if (russianToEnglish[text]) {
+                return russianToEnglish[text];
+            }
+
+            // Case-insensitive reverse lookup
+            const lower = text.toLowerCase();
+            const russianKey = Object.keys(russianToEnglish).find(function (key) {
+                return key.toLowerCase() === lower;
+            });
+
+            if (russianKey) {
+                return russianToEnglish[russianKey];
+            }
+
+            return text;
+        }
+
+        return text;
     }
 
     function translateSmart(value, lang) {
         let result = translate(value, lang);
 
         if (lang === "ru") {
-            result = result.replace(/\bISSUED\b/g, "ВЫСТАВЛЕН");
-            result = result.replace(/\bCANCELLED\b/g, "АННУЛИРОВАН");
-            result = result.replace(/\bused\b/g, "использовано");
-            result = result.replace(/\balerts\b/g, "предупреждений");
-        } else {
-            result = result.replace(/\bВЫСТАВЛЕН\b/g, "ISSUED");
-            result = result.replace(/\bАННУЛИРОВАН\b/g, "CANCELLED");
-            result = result.replace(/\bиспользовано\b/g, "used");
-            result = result.replace(/\bпредупреждений\b/g, "alerts");
+            // Statuses / compact dynamic labels
+            result = result.replace(/\bISSUED\b/gi, "ВЫСТАВЛЕН");
+            result = result.replace(/\bCANCELLED\b/gi, "АННУЛИРОВАН");
+            result = result.replace(/\bPAID\b/gi, "ОПЛАЧЕН");
+            result = result.replace(/\bPARTIAL\b/gi, "ЧАСТИЧНО");
+            result = result.replace(/\bUNPAID\b/gi, "НЕ ОПЛАЧЕН");
+            result = result.replace(/\bOVERDUE\b/gi, "ПРОСРОЧЕН");
+            result = result.replace(/\bHISTORY\b/gi, "ИСТОРИЯ");
+            result = result.replace(/\bHEALTHY\b/gi, "В НОРМЕ");
+            result = result.replace(/\bHIGH USAGE\b/gi, "ВЫСОКАЯ ЗАГРУЗКА");
+            result = result.replace(/\bOVER BUDGET\b/gi, "ПРЕВЫШЕНИЕ БЮДЖЕТА");
+            result = result.replace(/\bused\b/gi, "использовано");
+            result = result.replace(/\balerts\b/gi, "предупреждений");
 
+            // Dynamic budget warning
             result = result.replace(
-                /Budget exceeded by €([\d,.]+)/g,
+                /Budget exceeded by €([\d,.]+)/gi,
                 "Бюджет превышен на €$1"
             );
 
+            // Dynamic utilization text
             result = result.replace(
-                /([\d.]+)% of the budget has been invoiced\. €([\d,.]+) remains\./g,
+                /([\d.]+)% of the budget has been invoiced\. €([\d,.]+) remains\./gi,
                 "Выставлено $1% бюджета. Остаток: €$2."
             );
 
+            // Contract countdown
             result = result.replace(
-                /Contract ends in (\d+) day/g,
+                /Contract ends in (\d+) day(?:s)?/gi,
                 "До окончания договора $1 дн"
+            );
+
+        } else if (lang === "en") {
+            // Russian statuses / compact dynamic labels
+            result = result.replace(/\bВЫСТАВЛЕН\b/gi, "ISSUED");
+            result = result.replace(/\bАННУЛИРОВАН\b/gi, "CANCELLED");
+            result = result.replace(/\bОПЛАЧЕН\b/gi, "PAID");
+            result = result.replace(/\bЧАСТИЧНО\b/gi, "PARTIAL");
+            result = result.replace(/\bНЕ ОПЛАЧЕН\b/gi, "UNPAID");
+            result = result.replace(/\bПРОСРОЧЕН\b/gi, "OVERDUE");
+            result = result.replace(/\bИСТОРИЯ\b/gi, "HISTORY");
+            result = result.replace(/\bВ НОРМЕ\b/gi, "HEALTHY");
+            result = result.replace(/\bВЫСОКАЯ ЗАГРУЗКА\b/gi, "HIGH USAGE");
+            result = result.replace(/\bПРЕВЫШЕНИЕ БЮДЖЕТА\b/gi, "OVER BUDGET");
+            result = result.replace(/\bИСПОЛЬЗОВАНО\b/gi, "used");
+            result = result.replace(/\bПРЕДУПРЕЖДЕНИЙ\b/gi, "alerts");
+
+            // Dynamic budget warning
+            result = result.replace(
+                /Бюджет превышен на €([\d,.]+)/gi,
+                "Budget exceeded by €$1"
+            );
+
+            // Dynamic utilization text
+            result = result.replace(
+                /Выставлено ([\d.]+)% бюджета\. Остаток: €([\d,.]+)\./gi,
+                "$1% of the budget has been invoiced. €$2 remains."
+            );
+
+            // Contract countdown
+            result = result.replace(
+                /До окончания договора (\d+) дн/gi,
+                "Contract ends in $1 day"
             );
         }
 
@@ -1505,58 +4343,63 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
     }
 
     function updateSwitcher(lang) {
-        const ru = document.getElementById("finflow-lang-ru");
-        const en = document.getElementById("finflow-lang-en");
+        const button = document.getElementById("finflow-lang-button");
+        if (!button) return;
 
-        if (!ru || !en) return;
-
-        ru.classList.toggle("bg-emerald-500", lang === "ru");
-        ru.classList.toggle("text-slate-950", lang === "ru");
-        ru.classList.toggle("text-slate-400", lang !== "ru");
-
-        en.classList.toggle("bg-emerald-500", lang === "en");
-        en.classList.toggle("text-slate-950", lang === "en");
-        en.classList.toggle("text-slate-400", lang !== "en");
+        button.textContent = lang === "ru" ? "RU" : "EN";
+        button.setAttribute(
+            "aria-label",
+            lang === "ru"
+                ? "Switch language to English"
+                : "Переключить язык на русский"
+        );
+        button.title =
+            lang === "ru"
+                ? "Switch to English"
+                : "Переключить на русский";
     }
 
     function applyLanguage(lang) {
         document.documentElement.lang = lang;
         translateDom(document.body, lang);
         updateSwitcher(lang);
+
+        // Keep dynamic UI synchronized with the global language switcher.
+        if (typeof renderNotificationCenter === "function") {
+            renderNotificationCenter();
+        }
+
+        if (typeof updateSummaryCards === "function") {
+            updateSummaryCards();
+        }
+
+        if (typeof updateProductCardMetrics === "function") {
+            updateProductCardMetrics();
+        }
     }
 
     function addLanguageSwitcher() {
-        if (document.getElementById("finflow-language-switcher")) return;
+        if (document.getElementById("finflow-lang-button")) return;
 
-        const wrapper = document.createElement("div");
-        wrapper.id = "finflow-language-switcher";
-        wrapper.className =
-            "fixed top-4 right-4 z-[100] flex items-center gap-1 p-1 rounded-xl bg-slate-900/95 border border-slate-700 shadow-xl backdrop-blur";
+        const button = document.createElement("button");
+        button.id = "finflow-lang-button";
+        button.type = "button";
+        button.className =
+            "inline-flex items-center justify-center min-w-[42px] h-[42px] px-2.5 rounded-xl border border-slate-700/70 bg-slate-900/60 text-slate-300 text-[11px] font-black transition hover:border-emerald-400/35 hover:bg-slate-900/90 hover:text-white";
 
-        wrapper.innerHTML = `
-            <button id="finflow-lang-ru"
-                    type="button"
-                    class="px-2.5 py-1.5 rounded-lg text-[11px] font-black transition">
-                RU
-            </button>
-            <button id="finflow-lang-en"
-                    type="button"
-                    class="px-2.5 py-1.5 rounded-lg text-[11px] font-black transition">
-                EN
-            </button>
-        `;
+        button.addEventListener("click", function () {
+            setLang(getLang() === "ru" ? "en" : "ru");
+        });
 
-        document.body.appendChild(wrapper);
+        const userMenu = document.getElementById("ff-user-menu");
 
-        document.getElementById("finflow-lang-ru")
-            .addEventListener("click", function () {
-                setLang("ru");
-            });
+        if (userMenu && userMenu.parentElement) {
+            userMenu.parentElement.insertBefore(button, userMenu);
+        } else {
+            document.body.appendChild(button);
+        }
 
-        document.getElementById("finflow-lang-en")
-            .addEventListener("click", function () {
-                setLang("en");
-            });
+        updateSwitcher(getLang());
     }
 
     const originalAlert = window.alert;
@@ -1911,6 +4754,53 @@ function renderFinFlowAnalytics(){
 }
 
 
+</script>
+
+
+<script>
+(function () {
+    const menu = document.getElementById("ff-user-menu");
+    const button = document.getElementById("ff-user-menu-button");
+    const dropdown = document.getElementById("ff-user-dropdown");
+    const chevron = document.getElementById("ff-user-menu-chevron");
+
+    if (!menu || !button || !dropdown) return;
+
+    function closeUserMenu() {
+        dropdown.classList.add("hidden");
+        button.setAttribute("aria-expanded", "false");
+        if (chevron) chevron.classList.remove("rotate-180");
+    }
+
+    function toggleUserMenu() {
+        const isOpen = !dropdown.classList.contains("hidden");
+
+        if (isOpen) {
+            closeUserMenu();
+        } else {
+            dropdown.classList.remove("hidden");
+            button.setAttribute("aria-expanded", "true");
+            if (chevron) chevron.classList.add("rotate-180");
+        }
+    }
+
+    button.addEventListener("click", function (event) {
+        event.stopPropagation();
+        toggleUserMenu();
+    });
+
+    dropdown.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", closeUserMenu);
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeUserMenu();
+        }
+    });
+})();
 </script>
 
 </body></html>

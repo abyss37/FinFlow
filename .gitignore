@@ -1,7 +1,55 @@
+# Python
 venv/
+.venv/
 __pycache__/
-*.pyc
-*.log
+*.py[cod]
+*$py.class
+
+# Environment / secrets
 .env
-*.pdf
-accounting.db
+.env.*
+*.secret
+*.secrets
+
+# Logs / runtime
+*.log
+*.pid
+*.sock
+
+# Local databases / database backups
+*.db
+*.sqlite
+*.sqlite3
+
+# Local backups / working copies
+backups/
+*.bak
+*.before-*
+*.broken*
+*.backup
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Generated / temporary files
+*.tmp
+*.temp
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Timestamped backup files with extensions before .bak
+*.bak-*

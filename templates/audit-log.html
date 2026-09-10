@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Audit Log — FinFlow</title>
+
+    <meta name="theme-color" content="#09090b">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <style>
+    html {
+        scroll-behavior: smooth;
+        background: #07111f;
+    }
+
+    body {
+        background:
+            radial-gradient(
+                circle at 0% 0%,
+                rgba(52, 211, 153, .075),
+                transparent 34%
+            ),
+            radial-gradient(
+                circle at 100% 0%,
+                rgba(34, 211, 238, .065),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 50% 100%,
+                rgba(139, 92, 246, .045),
+                transparent 38%
+            ),
+            #07111f;
+        color: #e2e8f0;
+        background-attachment: fixed;
+    }
+
+    /* FinFlow Glass Foundation */
+    .glass {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(
+            145deg,
+            rgba(17, 34, 54, .92),
+            rgba(8, 20, 35, .88)
+        );
+        border: 1px solid rgba(71, 94, 120, .32);
+        box-shadow: 0 16px 50px rgba(0, 0, 0, .18);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+    }
+
+    .glass::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(
+                circle at 100% 0%,
+                rgba(52, 211, 153, .045),
+                transparent 34%
+            ),
+            radial-gradient(
+                circle at 0% 100%,
+                rgba(34, 211, 238, .025),
+                transparent 30%
+            );
+    }
+
+    .glass > * {
+        position: relative;
+        z-index: 1;
+    }
+
+
+    /* Dashboard-compatible FinFlow card */
+    .ff-card {
+        position: relative;
+        overflow: hidden;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(17, 34, 54, .94),
+                rgba(8, 20, 35, .90)
+            );
+        border: 1px solid rgba(71, 94, 120, .34);
+        border-radius: 18px;
+        box-shadow:
+            0 18px 55px rgba(0, 0, 0, .22),
+            inset 0 1px 0 rgba(255,255,255,.025);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+    }
+
+    .ff-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(
+                circle at 100% 0%,
+                rgba(52, 211, 153, .065),
+                transparent 34%
+            ),
+            radial-gradient(
+                circle at 0% 100%,
+                rgba(34, 211, 238, .035),
+                transparent 30%
+            );
+    }
+
+    .ff-card > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Header icon */
+    .audit-header-icon {
+        position: relative;
+        width: 46px;
+        height: 46px;
+        flex: 0 0 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        border: 1px solid rgba(139, 92, 246, .25);
+        background:
+            linear-gradient(
+                145deg,
+                rgba(139, 92, 246, .12),
+                rgba(34, 211, 238, .06)
+            );
+        box-shadow:
+            0 10px 30px rgba(0, 0, 0, .16),
+            0 0 28px rgba(139, 92, 246, .055);
+    }
+
+    .audit-header-icon::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(
+            circle at 50% 0%,
+            rgba(255,255,255,.08),
+            transparent 58%
+        );
+        pointer-events: none;
+    }
+
+    /* Section labels */
+    .ff-section-label {
+        font-size: 10px;
+        line-height: 1;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: .16em;
+        color: #34d399;
+    }
+
+    .ff-section-title {
+        margin-top: 6px;
+        font-size: 20px;
+        line-height: 1.15;
+        font-weight: 900;
+        letter-spacing: -.025em;
+        color: #f1f5f9;
+    }
+
+    .ff-section-description {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.55;
+        color: #64748b;
+    }
+
+    /* FinFlow buttons */
+    .ff-btn {
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(71, 94, 120, .42);
+        background: rgba(15, 23, 42, .72);
+        color: #e2e8f0;
+        font-size: 12px;
+        font-weight: 800;
+        transition:
+            transform .18s ease,
+            border-color .18s ease,
+            background .18s ease,
+            box-shadow .18s ease;
+    }
+
+    .ff-btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(52, 211, 153, .45);
+        background: rgba(15, 23, 42, .95);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .18);
+    }
+
+    .ff-btn-primary {
+        border-color: rgba(52, 211, 153, .30);
+        background: linear-gradient(
+            135deg,
+            rgba(52, 211, 153, .95),
+            rgba(16, 185, 129, .88)
+        );
+        color: #04130d;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, .12);
+    }
+
+    .ff-btn-primary:hover {
+        border-color: rgba(110, 231, 183, .65);
+        background: linear-gradient(
+            135deg,
+            rgba(110, 231, 183, 1),
+            rgba(52, 211, 153, .95)
+        );
+        box-shadow: 0 12px 35px rgba(16, 185, 129, .20);
+    }
+
+    /* Filter controls */
+    .ff-field {
+        background: rgba(7, 17, 31, .52) !important;
+        border: 1px solid rgba(71, 94, 120, .34) !important;
+        color: #e2e8f0 !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.015);
+    }
+
+    .ff-field:hover {
+        border-color: rgba(71, 94, 120, .50) !important;
+    }
+
+    .ff-field:focus {
+        border-color: rgba(52, 211, 153, .48) !important;
+        box-shadow:
+            0 0 0 3px rgba(52, 211, 153, .055),
+            0 8px 25px rgba(0,0,0,.12);
+    }
+
+    select.ff-field option {
+        background: #0b1727;
+        color: #e2e8f0;
+    }
+
+    input,
+    select {
+        color-scheme: dark;
+    }
+
+    ::placeholder {
+        color: #64748b;
+    }
+
+    /* Table */
+    .table-row {
+        border-top: 1px solid rgba(71, 94, 120, .16);
+        transition:
+            background .18s ease,
+            box-shadow .18s ease;
+    }
+
+    .table-row:hover {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(52, 211, 153, .035),
+                rgba(34, 211, 238, .018),
+                transparent
+            );
+        box-shadow: inset 3px 0 0 rgba(52, 211, 153, .30);
+    }
+
+    .audit-table-head {
+        background: rgba(7, 17, 31, .24);
+        border-bottom: 1px solid rgba(71, 94, 120, .18);
+    }
+
+    /* Details */
+    .details-panel {
+        background:
+            linear-gradient(
+                145deg,
+                rgba(7, 17, 31, .78),
+                rgba(9, 21, 37, .68)
+            );
+        border: 1px solid rgba(71, 94, 120, .24);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.015);
+    }
+
+    /* Action badges */
+    .action-created {
+        color: #6ee7b7;
+        background: rgba(52, 211, 153, .075);
+        border-color: rgba(52, 211, 153, .20);
+    }
+
+    .action-updated {
+        color: #67e8f9;
+        background: rgba(34, 211, 238, .075);
+        border-color: rgba(34, 211, 238, .20);
+    }
+
+    .action-cancelled {
+        color: #fca5a5;
+        background: rgba(239, 68, 68, .075);
+        border-color: rgba(239, 68, 68, .20);
+    }
+
+    .action-budget {
+        color: #c4b5fd;
+        background: rgba(139, 92, 246, .075);
+        border-color: rgba(139, 92, 246, .20);
+    }
+
+    .action-date {
+        color: #fcd34d;
+        background: rgba(245, 158, 11, .075);
+        border-color: rgba(245, 158, 11, .20);
+    }
+
+    /* Small KPI counter */
+    .audit-counter {
+        padding: 7px 11px;
+        border-radius: 11px;
+        border: 1px solid rgba(71, 94, 120, .25);
+        background: rgba(15, 23, 42, .45);
+        color: #64748b;
+    }
+
+    /* Pagination */
+    .pagination-divider {
+        border-top-color: rgba(71, 94, 120, .18) !important;
+    }
+
+    /* Empty/loading */
+    .audit-empty-icon {
+        border-color: rgba(71, 94, 120, .25) !important;
+        background: rgba(15, 23, 42, .38) !important;
+    }
+
+    /* Soft entrance */
+    .fade-in {
+        animation: fadeIn .25s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(4px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+        .ff-btn {
+            min-height: 40px;
+        }
+
+        .audit-header-icon {
+            width: 42px;
+            height: 42px;
+            flex-basis: 42px;
+        }
+    }
+</style>
+</head>
+
+<body class="min-h-screen">
+
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Header -->
+    <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+
+        <div>
+            <div class="flex items-center gap-3">
+                <div class="audit-header-icon">
+                    <i class="bi bi-shield-check text-xl text-violet-300"></i>
+                </div>
+
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-100">
+                        <span data-i18n="Audit Log">Audit Log</span>
+                    </h1>
+
+                    <p class="ff-section-description" data-i18n="Complete history of financial and system changes">
+                        Complete history of financial and system changes
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex items-center justify-end gap-2 whitespace-nowrap shrink-0">
+
+            <a
+                href="/"
+                class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-500/30 bg-slate-900/30 text-slate-300 hover:bg-slate-800/50 hover:border-slate-400/40 transition text-xs font-black"
+            >
+                <i class="bi bi-grid-1x2"></i>
+                <span data-i18n="Dashboard">Dashboard</span>
+            </a>
+
+            <a
+                href="/analytics"
+                class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-cyan-400/20 bg-cyan-400/5 text-cyan-300 hover:bg-cyan-400/10 hover:border-cyan-400/40 transition text-xs font-black"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                <span data-i18n="Analytics">Analytics</span>
+            </a>
+
+
+
+        </nav>
+    </header>
+
+
+    <!-- Filters -->
+    <section class="ff-card p-4 sm:p-5 mb-6">
+
+        <div class="flex items-center justify-between gap-3 mb-4">
+            <div>
+                <h2 class="font-black text-sm">
+                    <span data-i18n="Filters">Filters</span>
+                </h2>
+
+                <p class="text-xs text-slate-400 mt-1">
+                    <span data-i18n="Narrow the audit history by event, company, product or date.">Narrow the audit history by event, company, product or date.</span>
+                </p>
+            </div>
+
+            <div
+                id="resultCount"
+                class="audit-counter text-xs font-bold whitespace-nowrap"
+            >
+                0 events
+            </div>
+        </div>
+
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-3">
+
+            <!-- Search -->
+            <div class="xl:col-span-2">
+                <label class="block text-[11px] uppercase tracking-wider font-black text-slate-400 mb-2">
+                    <span data-i18n="Search">Search</span>
+                </label>
+
+                <div class="relative">
+                    <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+
+                    <input
+                        id="filterSearch"
+                        type="text"
+                        placeholder="Invoice, description, ID..." data-i18n-placeholder="Invoice, description, ID..."
+                        class="ff-field w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none transition"
+                    >
+                </div>
+            </div>
+
+
+            <!-- Action -->
+            <div>
+                <label class="block text-[11px] uppercase tracking-wider font-black text-slate-400 mb-2">
+                    <span data-i18n="Action">Action</span>
+                </label>
+
+                <select
+                    id="filterAction"
+                    class="ff-field w-full rounded-xl px-3 py-2.5 text-sm outline-none transition"
+                >
+                    <option value="" data-i18n-option="All actions">All actions</option>
+                    <option value="COMPANY_CREATED" data-i18n-option="Company created">Company created</option>
+                    <option value="INVOICE_CREATED" data-i18n-option="Invoice created">Invoice created</option>
+                    <option value="INVOICE_UPDATED" data-i18n-option="Invoice updated">Invoice updated</option>
+                    <option value="INVOICE_CANCELLED" data-i18n-option="Invoice cancelled">Invoice cancelled</option>
+                    <option value="BUDGET_UPDATED" data-i18n-option="Budget updated">Budget updated</option>
+                    <option value="CONTRACT_DATE_UPDATED" data-i18n-option="Contract date updated">Contract date updated</option>
+                </select>
+            </div>
+
+
+            <!-- User -->
+            <div>
+                <label class="block text-[11px] uppercase tracking-wider font-black text-slate-400 mb-2">
+                    <span data-i18n="User">User</span>
+                </label>
+
+                <select
+                    id="filterUser"
+                    class="ff-field w-full rounded-xl px-3 py-2.5 text-sm outline-none transition"
+                >
+                    <option value="" data-i18n-option="All users">All users</option>
+                </select>
+            </div>
+
+
+            <!-- Company -->
+            <div>
+                <label class="block text-[11px] uppercase tracking-wider font-black text-slate-400 mb-2">
+                    <span data-i18n="Company">Company</span>
+                </label>
+
+                <select
+                    id="filterCompany"
+                    class="ff-field w-full rounded-xl px-3 py-2.5 text-sm outline-none transition"
+                >
+                    <option value="" data-i18n-option="All companies">All companies</option>
+                </select>
+            </div>
+
+
+            <!-- Product -->
+            <div>
+                <label class="block text-[11px] uppercase tracking-wider font-black text-slate-400 mb-2">
+                    <span data-i18n="Product">Product</span>
+                </label>
+
+                <select
+                    id="filterProduct"
+                    class="ff-field w-full rounded-xl px-3 py-2.5 text-sm outline-none transition"
+                >
+                    <option value="" data-i18n-option="All products">All products</option>
+                    <option value="ALPHA">ALPHA</option>
+                    <option value="BETA">BETA</option>
+                </select>
+            </div>
+
+
+            <!-- Date From -->
+            <div>
+                <label class="block text-[11px] uppercase tracking-wider font-black text-slate-400 mb-2">
+                    <span data-i18n="From">From</span>
+                </label>
+
+                <input
+                    id="filterDateFrom"
+                    type="date"
+                    class="ff-field w-full rounded-xl px-3 py-2.5 text-sm outline-none transition"
+                >
+            </div>
+
+
+            <!-- Date To -->
+            <div>
+                <label class="block text-[11px] uppercase tracking-wider font-black text-slate-400 mb-2">
+                    <span data-i18n="To">To</span>
+                </label>
+
+                <input
+                    id="filterDateTo"
+                    type="date"
+                    class="ff-field w-full rounded-xl px-3 py-2.5 text-sm outline-none transition"
+                >
+            </div>
+
+        </div>
+
+
+        <div class="flex flex-wrap items-center gap-2 mt-4">
+
+            <button
+                id="applyFilters"
+                type="button"
+                class="ff-btn ff-btn-primary"
+            >
+                <i class="bi bi-funnel"></i>
+                Apply filters
+            </button>
+
+            <button
+                id="resetFilters"
+                type="button"
+                class="ff-btn"
+            >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Reset
+            </button>
+
+        </div>
+    </section>
+
+
+    <!-- Table -->
+    <section class="ff-card overflow-hidden">
+
+        <div
+            id="loadingState"
+            class="hidden px-6 py-14 text-center"
+        >
+            <i class="bi bi-arrow-repeat animate-spin text-2xl text-cyan-300"></i>
+            <p class="text-sm text-slate-400 mt-3">
+                Loading audit history...
+            </p>
+        </div>
+
+
+        <div
+            id="emptyState"
+            class="hidden px-6 py-16 text-center"
+        >
+            <div class="audit-empty-icon w-14 h-14 mx-auto rounded-2xl flex items-center justify-center">
+                <i class="bi bi-inbox text-2xl text-slate-500"></i>
+            </div>
+
+            <h3 class="mt-4 font-black text-slate-200">
+                No audit events
+            </h3>
+
+            <p class="mt-1 text-sm text-slate-500">
+                No events match the selected filters.
+            </p>
+        </div>
+
+
+        <div id="tableContainer" class="hidden overflow-x-auto">
+
+            <table class="w-full min-w-[1000px]">
+
+                <thead>
+                    <tr class="audit-table-head text-left text-[10px] uppercase tracking-wider">
+                        <th class="px-5 py-4 font-black" data-i18n="Date & Time">Date & Time</th>
+                        <th class="px-5 py-4 font-black" data-i18n="Action">Action</th>
+                        <th class="px-5 py-4 font-black" data-i18n="Company">Company</th>
+                        <th class="px-5 py-4 font-black" data-i18n="Product">Product</th>
+                        <th class="px-5 py-4 font-black" data-i18n="Entity">Entity</th>
+                        <th class="px-5 py-4 font-black" data-i18n="Description">Description</th>
+                        <th class="px-5 py-4 font-black text-right" data-i18n="Details">Details</th>
+                    </tr>
+                </thead>
+
+                <tbody id="auditTableBody"></tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- Pagination -->
+        <div
+            id="pagination"
+            class="hidden pagination-divider border-t px-4 sm:px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-3"
+        >
+
+            <div
+                id="paginationInfo"
+                class="text-xs text-slate-500"
+            ></div>
+
+            <div class="flex items-center gap-2">
+
+                <button
+                    id="prevPage"
+                    type="button"
+                    class="w-9 h-9 rounded-xl border border-slate-500/30 bg-slate-900/30 text-slate-400 hover:bg-slate-800/50 hover:border-slate-400/40 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <span
+                    id="pageInfo"
+                    class="px-2 text-xs font-black text-slate-400"
+                >
+                    1 / 1
+                </span>
+
+                <button
+                    id="nextPage"
+                    type="button"
+                    class="w-9 h-9 rounded-xl border border-slate-500/30 bg-slate-900/30 text-slate-400 hover:bg-slate-800/50 hover:border-slate-400/40 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script src="/static/js/finflow-i18n.js?v=20260909-dashboard-only"></script>
+<script>
+const state = {
+    page: 1,
+    perPage: 50,
+    pages: 0,
+    total: 0
+};
+
+
+const els = {
+    search: document.getElementById("filterSearch"),
+    action: document.getElementById("filterAction"),
+    user: document.getElementById("filterUser"),
+    company: document.getElementById("filterCompany"),
+    product: document.getElementById("filterProduct"),
+    dateFrom: document.getElementById("filterDateFrom"),
+    dateTo: document.getElementById("filterDateTo"),
+
+    apply: document.getElementById("applyFilters"),
+    reset: document.getElementById("resetFilters"),
+
+    resultCount: document.getElementById("resultCount"),
+
+    loading: document.getElementById("loadingState"),
+    empty: document.getElementById("emptyState"),
+    table: document.getElementById("tableContainer"),
+    body: document.getElementById("auditTableBody"),
+
+    pagination: document.getElementById("pagination"),
+    paginationInfo: document.getElementById("paginationInfo"),
+    pageInfo: document.getElementById("pageInfo"),
+    prev: document.getElementById("prevPage"),
+    next: document.getElementById("nextPage")
+};
+
+
+function escapeHtml(value) {
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function formatDateTime(value) {
+    if (!value) {
+        return "—";
+    }
+
+    const d = new Date(value);
+
+    if (Number.isNaN(d.getTime())) {
+        return value;
+    }
+
+    const lang =
+        window.finflowI18n &&
+        typeof window.finflowI18n.getLanguage === "function"
+            ? window.finflowI18n.getLanguage()
+            : (localStorage.getItem("finflow-language") || "ru");
+
+    return new Intl.DateTimeFormat(
+        lang === "en" ? "en-US" : "ru-RU",
+        {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    ).format(d);
+}
+
+
+function actionClass(action) {
+    if (action === "INVOICE_CANCELLED") {
+        return "action-cancelled";
+    }
+
+    if (action === "BUDGET_UPDATED") {
+        return "action-budget";
+    }
+
+    if (action === "CONTRACT_DATE_UPDATED") {
+        return "action-date";
+    }
+
+    if (action === "COMPANY_CREATED" || action === "INVOICE_CREATED") {
+        return "action-created";
+    }
+
+    return "action-updated";
+}
+
+
+function actionLabel(action) {
+    const labels = {
+        COMPANY_CREATED: "Company created",
+        INVOICE_CREATED: "Invoice created",
+        INVOICE_UPDATED: "Invoice updated",
+        INVOICE_CANCELLED: "Invoice cancelled",
+        BUDGET_UPDATED: "Budget updated",
+        CONTRACT_DATE_UPDATED: "Contract date updated"
+    };
+
+    const label = labels[action] || action;
+
+    if (
+        window.finflowI18n &&
+        typeof window.finflowI18n.translate === "function"
+    ) {
+        return window.finflowI18n.translate(label);
+    }
+
+    return label;
+}
+
+
+function detailFieldLabel(field) {
+    const labels = {
+        amount: "Amount",
+        amount_eur: "Amount",
+        paid_amount_eur: "Paid amount",
+        payment_status: "Payment status",
+        status: "Status",
+        software: "Product",
+        company: "Company",
+        invoice_number: "Invoice number",
+        invoice_id: "Invoice ID",
+        completion_date: "Completion date",
+        contract_date: "Contract date",
+        total_amount: "Contract budget",
+        description: "Description",
+        reason: "Cancellation reason"
+    };
+
+    const label = labels[field] || field;
+
+    if (
+        window.finflowI18n &&
+        typeof window.finflowI18n.translate === "function"
+    ) {
+        return window.finflowI18n.translate(label);
+    }
+
+    return label;
+}
+
+
+function auditText(value) {
+    if (
+        window.finflowI18n &&
+        typeof window.finflowI18n.translate === "function"
+    ) {
+        return window.finflowI18n.translate(value);
+    }
+
+    return value;
+}
+
+
+function localizedDescription(item) {
+    const action = item.action;
+    const details = item.details || {};
+    const company = details.company || "";
+    const invoice = details.invoice_number || item.entity_id || "";
+    const software = item.software || details.software || "";
+
+    const lang =
+        window.finflowI18n &&
+        typeof window.finflowI18n.getLanguage === "function"
+            ? window.finflowI18n.getLanguage()
+            : (localStorage.getItem("finflow-language") || "ru");
+
+    if (lang === "en") {
+        switch (action) {
+            case "COMPANY_CREATED":
+                return `Company ${company} created`;
+
+            case "INVOICE_CREATED":
+                return `Invoice ${invoice} created`;
+
+            case "INVOICE_UPDATED":
+                return `Invoice ${invoice} updated`;
+
+            case "INVOICE_CANCELLED":
+                return `Invoice ${invoice} cancelled`;
+
+            case "BUDGET_UPDATED":
+                return `${software} budget updated for ${company}`;
+
+            case "CONTRACT_DATE_UPDATED":
+                return `${software} contract completion date updated for ${company}`;
+
+            default:
+                return item.description || "";
+        }
+    }
+
+    switch (action) {
+        case "COMPANY_CREATED":
+            return `Компания ${company} создана`;
+
+        case "INVOICE_CREATED":
+            return `Счёт ${invoice} создан`;
+
+        case "INVOICE_UPDATED":
+            return `Счёт ${invoice} изменён`;
+
+        case "INVOICE_CANCELLED":
+            return `Счёт ${invoice} аннулирован`;
+
+        case "BUDGET_UPDATED":
+            return `Бюджет ${software} изменён для ${company}`;
+
+        case "CONTRACT_DATE_UPDATED":
+            return `Дата окончания договора ${software} изменена для ${company}`;
+
+        default:
+            return item.description || "";
+    }
+}
+
+
+function renderDetails(details) {
+    if (!details) {
+        return '<span class="text-zinc-700">—</span>';
+    }
+
+    const changes = details.changes || {};
+
+    let content = "";
+
+    if (Object.keys(changes).length) {
+        content += `
+            <div class="space-y-2">
+                ${Object.entries(changes).map(([field, change]) => `
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                        <div class="text-[11px] font-black uppercase tracking-wider text-slate-500 sm:w-36">
+                            ${escapeHtml(detailFieldLabel(field))}
+                        </div>
+
+                        <div class="flex items-center gap-2 text-xs">
+                            <span class="text-red-300/80 break-all">
+                                ${escapeHtml(change.from ?? "—")}
+                            </span>
+
+                            <i class="bi bi-arrow-right text-zinc-700"></i>
+
+                            <span class="text-emerald-300/90 break-all">
+                                ${escapeHtml(change.to ?? "—")}
+                            </span>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    const extras = Object.entries(details).filter(
+        ([key]) => key !== "changes"
+    );
+
+    if (extras.length) {
+        content += `
+            <div class="${content ? "mt-4 pt-4 border-t border-white/[0.06]" : ""} space-y-2">
+                ${extras.map(([key, value]) => `
+                    <div class="flex flex-col sm:flex-row gap-1 sm:gap-3 text-xs">
+                        <span class="text-slate-500 font-black uppercase tracking-wider sm:w-36">
+                            ${escapeHtml(detailFieldLabel(key))}
+                        </span>
+                        <span class="text-slate-300 break-all">
+                            ${escapeHtml(
+                                typeof value === "object"
+                                    ? JSON.stringify(value)
+                                    : value
+                            )}
+                        </span>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    return `
+        <div class="details-panel rounded-2xl p-4 mt-3 fade-in">
+            ${content || '<span class="text-slate-500 text-xs">No additional details.</span>'}
+        </div>
+    `;
+}
+
+
+function renderRows(items) {
+    els.body.innerHTML = "";
+
+    items.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.className = "table-row";
+
+        const detailsId = `details-${item.id}`;
+
+        tr.innerHTML = `
+            <td class="px-5 py-4 align-top">
+                <div class="text-xs font-bold text-slate-200 whitespace-nowrap">
+                    ${escapeHtml(formatDateTime(item.created_at))}
+                </div>
+            </td>
+
+            <td class="px-5 py-4 align-top">
+                <span class="inline-flex items-center rounded-lg border px-2.5 py-1 text-[10px] font-black whitespace-nowrap ${actionClass(item.action)}">
+                    ${escapeHtml(actionLabel(item.action))}
+                </span>
+            </td>
+
+            <td class="px-5 py-4 align-top">
+                <div class="text-xs font-bold text-slate-200">
+                    ${escapeHtml(item.details?.company || "—")}
+                </div>
+            </td>
+
+            <td class="px-5 py-4 align-top">
+                ${
+                    item.software
+                        ? `<span class="text-xs font-black ${
+                            item.software === "ALPHA"
+                                ? "text-cyan-300"
+                                : "text-violet-300"
+                        }">${escapeHtml(item.software)}</span>`
+                        : '<span class="text-zinc-700">—</span>'
+                }
+            </td>
+
+            <td class="px-5 py-4 align-top">
+                <div class="text-xs text-slate-400">
+                    ${escapeHtml(auditText(item.entity_type))}
+                </div>
+
+                <div class="text-[10px] text-zinc-700 mt-1">
+                    #${escapeHtml(item.entity_id || "—")}
+                </div>
+            </td>
+
+            <td class="px-5 py-4 align-top">
+                <div class="text-xs text-slate-200 max-w-[360px]">
+                    ${escapeHtml(localizedDescription(item))}
+                </div>
+            </td>
+
+            <td class="px-5 py-4 align-top text-right">
+                <button
+                    type="button"
+                    class="details-toggle inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/10 bg-white/[0.03] text-slate-300 hover:text-zinc-200 hover:bg-white/[0.07] text-[10px] font-black"
+                    data-details="${detailsId}"
+                >
+                    <i class="bi bi-eye"></i>
+                    ${escapeHtml(auditText("View"))}
+                </button>
+            </td>
+        `;
+
+        const detailsRow = document.createElement("tr");
+
+        detailsRow.className = "hidden";
+
+        detailsRow.id = detailsId;
+
+        detailsRow.innerHTML = `
+            <td colspan="7" class="px-5 pb-4">
+                ${renderDetails(item.details)}
+            </td>
+        `;
+
+        els.body.appendChild(tr);
+        els.body.appendChild(detailsRow);
+    });
+
+    document.querySelectorAll(".details-toggle").forEach(button => {
+        button.addEventListener("click", () => {
+            const target = document.getElementById(
+                button.dataset.details
+            );
+
+            if (!target) {
+                return;
+            }
+
+            const isHidden = target.classList.contains("hidden");
+
+            target.classList.toggle("hidden", !isHidden);
+
+            button.innerHTML = isHidden
+                ? `<i class="bi bi-eye-slash"></i> ${escapeHtml(auditText("Hide"))}`
+                : `<i class="bi bi-eye"></i> ${escapeHtml(auditText("View"))}`;
+        });
+    });
+}
+
+
+function buildQuery() {
+    const params = new URLSearchParams();
+
+    params.set("page", state.page);
+    params.set("per_page", state.perPage);
+
+    if (els.search.value.trim()) {
+        params.set("search", els.search.value.trim());
+    }
+
+    if (els.action.value) {
+        params.set("action", els.action.value);
+    }
+
+    if (els.user.value) {
+        params.set("user_id", els.user.value);
+    }
+
+    if (els.company.value) {
+        params.set("company_id", els.company.value);
+    }
+
+    if (els.product.value) {
+        params.set("software", els.product.value);
+    }
+
+    if (els.dateFrom.value) {
+        params.set("date_from", els.dateFrom.value);
+    }
+
+    if (els.dateTo.value) {
+        params.set("date_to", els.dateTo.value);
+    }
+
+    return params;
+}
+
+
+function setLoading(value) {
+    els.loading.classList.toggle("hidden", !value);
+
+    if (value) {
+        els.empty.classList.add("hidden");
+        els.table.classList.add("hidden");
+        els.pagination.classList.add("hidden");
+    }
+}
+
+
+function updatePagination(pagination) {
+    state.pages = pagination.pages;
+    state.total = pagination.total;
+
+    els.resultCount.textContent =
+        `${pagination.total} ${pagination.total === 1 ? "event" : "events"}`;
+
+    if (!pagination.total) {
+        els.pagination.classList.add("hidden");
+        return;
+    }
+
+    els.pagination.classList.remove("hidden");
+
+    const lang =
+        window.finflowI18n &&
+        typeof window.finflowI18n.getLanguage === "function"
+            ? window.finflowI18n.getLanguage()
+            : (localStorage.getItem("finflow-language") || "ru");
+
+    if (lang === "ru") {
+        els.paginationInfo.textContent =
+            `Страница ${pagination.page} из ${pagination.pages} · ${pagination.total} всего`;
+    } else {
+        els.paginationInfo.textContent =
+            `Page ${pagination.page} of ${pagination.pages} · ${pagination.total} total`;
+    }
+
+    els.pageInfo.textContent =
+        `${pagination.page} / ${pagination.pages}`;
+
+    els.prev.disabled = pagination.page <= 1;
+    els.next.disabled = pagination.page >= pagination.pages;
+}
+
+
+async function loadAuditLog() {
+    setLoading(true);
+
+    try {
+        const response = await fetch(
+            `/api/audit-log?${buildQuery().toString()}`,
+            {
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || data.status !== "ok") {
+            throw new Error(
+                data.message || "Failed to load audit log"
+            );
+        }
+
+        if (els.user.options.length === 1 && data.users) {
+            data.users.forEach(user => {
+                const option = document.createElement("option");
+                option.value = user.id;
+                option.textContent = user.username;
+                els.user.appendChild(option);
+            });
+        }
+
+        if (els.company.options.length === 1 && data.companies) {
+            data.companies.forEach(company => {
+                const option = document.createElement("option");
+                option.value = company.id;
+                option.textContent = company.name;
+                els.company.appendChild(option);
+            });
+        }
+
+        setLoading(false);
+
+        state.items = data.items || [];
+        state.page = data.pagination?.page || state.page;
+        state.pages = data.pagination?.pages || 1;
+        state.total = data.pagination?.total || 0;
+
+        updatePagination(data.pagination);
+
+        if (!data.items.length) {
+            els.empty.classList.remove("hidden");
+            els.table.classList.add("hidden");
+            return;
+        }
+
+        els.empty.classList.add("hidden");
+        els.table.classList.remove("hidden");
+
+        renderRows(data.items);
+
+    } catch (error) {
+        setLoading(false);
+
+        els.body.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-5 py-14 text-center">
+                    <i class="bi bi-exclamation-triangle text-2xl text-red-400"></i>
+                    <p class="text-sm text-red-300 mt-3">
+                        ${escapeHtml(error.message)}
+                    </p>
+                </td>
+            </tr>
+        `;
+
+        els.table.classList.remove("hidden");
+        els.pagination.classList.add("hidden");
+    }
+}
+
+
+els.apply.addEventListener("click", () => {
+    state.page = 1;
+    loadAuditLog();
+});
+
+
+window.addEventListener("finflow-language-changed", function () {
+    if (state.items && state.items.length) {
+        renderRows(state.items);
+    }
+
+    updatePagination({
+        page: state.page,
+        pages: state.pages,
+        total: state.total
+    });
+});
+
+
+els.reset.addEventListener("click", () => {
+    els.search.value = "";
+    els.action.value = "";
+    els.user.value = "";
+    els.company.value = "";
+    els.product.value = "";
+    els.dateFrom.value = "";
+    els.dateTo.value = "";
+
+    state.page = 1;
+
+    loadAuditLog();
+});
+
+
+els.prev.addEventListener("click", () => {
+    if (state.page > 1) {
+        state.page--;
+        loadAuditLog();
+    }
+});
+
+
+els.next.addEventListener("click", () => {
+    if (state.page < state.pages) {
+        state.page++;
+        loadAuditLog();
+    }
+});
+
+
+els.search.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+        state.page = 1;
+        loadAuditLog();
+    }
+});
+
+
+loadAuditLog();
+</script>
+
+</body>
+</html>

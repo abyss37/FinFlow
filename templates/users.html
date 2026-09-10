@@ -1,0 +1,1036 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Users — FinFlow</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        html {
+            background: #070b12;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 15% 10%, rgba(59,130,246,.10), transparent 28%),
+                radial-gradient(circle at 85% 20%, rgba(139,92,246,.08), transparent 25%),
+                #070b12;
+            color: #e5e7eb;
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, .68);
+            border: 1px solid rgba(148, 163, 184, .12);
+            box-shadow:
+                0 20px 60px rgba(0,0,0,.25),
+                inset 0 1px 0 rgba(255,255,255,.025);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .glass-soft {
+            background: rgba(15, 23, 42, .45);
+            border: 1px solid rgba(148, 163, 184, .10);
+        }
+
+        .input {
+            width: 100%;
+            border-radius: .75rem;
+            border: 1px solid rgba(148, 163, 184, .16);
+            background: rgba(2, 6, 23, .65);
+            color: #e5e7eb;
+            padding: .65rem .8rem;
+            outline: none;
+            transition: .15s ease;
+        }
+
+        .input:focus {
+            border-color: rgba(96,165,250,.65);
+            box-shadow: 0 0 0 3px rgba(59,130,246,.10);
+        }
+
+        select.input option {
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        .btn-primary {
+            border-radius: .75rem;
+            padding: .65rem 1rem;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: white;
+            font-weight: 600;
+            transition: .15s ease;
+            box-shadow: 0 8px 25px rgba(37,99,235,.20);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 30px rgba(37,99,235,.30);
+        }
+
+        .btn-secondary {
+            border-radius: .7rem;
+            padding: .55rem .8rem;
+            background: rgba(30,41,59,.75);
+            border: 1px solid rgba(148,163,184,.12);
+            color: #cbd5e1;
+            transition: .15s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(51,65,85,.8);
+            color: white;
+        }
+
+        .btn-danger {
+            border-radius: .7rem;
+            padding: .5rem .75rem;
+            background: rgba(239,68,68,.08);
+            border: 1px solid rgba(239,68,68,.16);
+            color: #fca5a5;
+            transition: .15s ease;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239,68,68,.14);
+            color: #fecaca;
+        }
+
+        .btn-success {
+            border-radius: .7rem;
+            padding: .5rem .75rem;
+            background: rgba(34,197,94,.08);
+            border: 1px solid rgba(34,197,94,.16);
+            color: #86efac;
+            transition: .15s ease;
+        }
+
+        .btn-success:hover {
+            background: rgba(34,197,94,.14);
+            color: #bbf7d0;
+        }
+
+        .role-admin {
+            color: #c4b5fd;
+            background: rgba(139,92,246,.12);
+            border-color: rgba(139,92,246,.22);
+        }
+
+        .role-manager {
+            color: #93c5fd;
+            background: rgba(59,130,246,.12);
+            border-color: rgba(59,130,246,.22);
+        }
+
+        .role-viewer {
+            color: #94a3b8;
+            background: rgba(100,116,139,.12);
+            border-color: rgba(100,116,139,.20);
+        }
+
+        .status-active {
+            color: #86efac;
+            background: rgba(34,197,94,.10);
+            border-color: rgba(34,197,94,.18);
+        }
+
+        .status-inactive {
+            color: #fca5a5;
+            background: rgba(239,68,68,.10);
+            border-color: rgba(239,68,68,.18);
+        }
+
+        .modal-backdrop {
+            background: rgba(2,6,23,.72);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .table-row {
+            transition: background .15s ease;
+        }
+
+        .table-row:hover {
+            background: rgba(30,41,59,.35);
+        }
+
+
+
+
+
+
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+<div class="max-w-7xl mx-auto px-5 py-8 lg:px-8">
+
+    <!-- Header -->
+    <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between mb-8 pr-24">
+
+        <div>
+            <div class="flex items-center gap-3">
+
+                <a
+                    href="{{ url_for('index') }}"
+                    class="text-slate-500 hover:text-slate-300 transition text-xl"
+                    title="Back to dashboard"
+                    aria-label="Back to dashboard"
+                >
+                    ←
+                </a>
+
+                <div>
+                    <div class="flex items-center gap-3 flex-wrap">
+
+                        <h1 class="text-3xl font-semibold tracking-tight text-white">
+                            Users
+                        </h1>
+
+                        <span class="px-2.5 py-1 rounded-full text-xs font-medium border border-violet-400/20 bg-violet-400/10 text-violet-300">
+                            Administrator
+                        </span>
+
+                    </div>
+
+                    <p class="mt-1 text-sm text-slate-400">
+                        Manage FinFlow users, roles and access.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+
+            <div class="glass rounded-xl px-4 py-2.5 text-sm">
+                <span class="text-slate-500">Users</span>
+                <span class="ml-2 font-semibold text-white">{{ users|length }}</span>
+            </div>
+
+            <a
+                href="{{ url_for('index') }}"
+                class="btn-secondary"
+            >
+                Dashboard
+            </a>
+
+        </div>
+    </div>
+
+
+    <!-- Create user -->
+    <section class="glass rounded-2xl p-6 mb-6">
+
+        <div class="flex items-start justify-between gap-4 mb-5">
+
+            <div>
+                <h2 class="text-lg font-semibold text-white">
+                    Create user
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Add a new account with an initial role and password.
+                </p>
+            </div>
+
+            <div class="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-300 border border-blue-400/10 text-xl">
+                +
+            </div>
+
+        </div>
+
+
+        <form
+            method="post"
+            action="{{ url_for('create_user') }}"
+            class="grid grid-cols-1 md:grid-cols-12 gap-4"
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="md:col-span-4">
+
+                <label class="block text-xs font-medium text-slate-400 mb-2">
+                    Username
+                </label>
+
+                <input
+                    class="input"
+                    type="text"
+                    name="username"
+                    maxlength="64"
+                    autocomplete="username"
+                    placeholder="username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="md:col-span-3">
+
+                <label class="block text-xs font-medium text-slate-400 mb-2">
+                    Password
+                </label>
+
+                <input
+                    class="input"
+                    type="password"
+                    name="password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    placeholder="Minimum 8 characters"
+                    required
+                >
+
+            </div>
+
+
+            <div class="md:col-span-3">
+
+                <label class="block text-xs font-medium text-slate-400 mb-2">
+                    Role
+                </label>
+
+                <select class="input" name="role">
+
+                    {% for role in valid_roles %}
+                        <option value="{{ role }}">
+                            {{ role|capitalize }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="md:col-span-2 flex items-end">
+
+                <button
+                    type="submit"
+                    class="btn-primary w-full"
+                >
+                    Create user
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- Users table -->
+    <section class="glass rounded-2xl overflow-hidden">
+
+        <div class="px-6 py-5 border-b border-slate-700/30">
+
+            <h2 class="text-lg font-semibold text-white">
+                User accounts
+            </h2>
+
+            <p class="text-sm text-slate-500 mt-1">
+                Username is the stable identity used in the audit log.
+            </p>
+
+        </div>
+
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full min-w-[1050px]">
+
+                <thead>
+
+                    <tr class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-700/30">
+
+                        <th class="px-6 py-4 font-medium">
+                            User
+                        </th>
+
+                        <th class="px-6 py-4 font-medium">
+                            Role
+                        </th>
+
+                        <th class="px-6 py-4 font-medium">
+                            Status
+                        </th>
+
+                        <th class="px-6 py-4 font-medium">
+                            Created
+                        </th>
+
+                        <th class="px-6 py-4 font-medium">
+                            Last login
+                        </th>
+
+                        <th class="px-6 py-4 font-medium text-right">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody class="divide-y divide-slate-800/50">
+
+                {% for user in users %}
+
+                    <tr class="table-row">
+
+                        <!-- User -->
+                        <td class="px-6 py-5">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="h-10 w-10 shrink-0 rounded-xl flex items-center justify-center bg-slate-800/80 border border-slate-700/50 text-sm font-semibold text-slate-300">
+                                    {{ user.username[:1]|upper }}
+                                </div>
+
+                                <div>
+
+                                    <div class="flex items-center gap-2">
+
+                                        <span class="font-medium text-white">
+                                            {{ user.username }}
+                                        </span>
+
+                                        {% if user.id == current_user.id %}
+
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-medium border border-blue-400/20 bg-blue-400/10 text-blue-300">
+                                                You
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="text-xs text-slate-600 mt-0.5">
+                                        ID #{{ user.id }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- Role -->
+                        <td class="px-6 py-5">
+
+                            <form
+                                method="post"
+                                action="{{ url_for('update_user', user_id=user.id) }}"
+                            >
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                <input
+                                    type="hidden"
+                                    name="is_active"
+                                    value="{{ '1' if user.is_active else '0' }}"
+                                >
+
+                                <select
+                                    name="role"
+                                    class="input !w-auto min-w-[125px] py-2 text-xs font-semibold
+                                        {% if user.role == 'admin' %}
+                                            role-admin
+                                        {% elif user.role == 'manager' %}
+                                            role-manager
+                                        {% else %}
+                                            role-viewer
+                                        {% endif %}"
+                                    onchange="this.form.submit()"
+                                    {% if user.id == current_user.id %}disabled{% endif %}
+                                >
+
+                                    {% for role in valid_roles %}
+
+                                        <option
+                                            value="{{ role }}"
+                                            {% if role == user.role %}selected{% endif %}
+                                        >
+                                            {{ role|capitalize }}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                                {% if user.id == current_user.id %}
+                                    <div class="text-[10px] text-slate-600 mt-1">
+                                        Your role cannot be changed here.
+                                    </div>
+                                {% endif %}
+
+                            </form>
+
+                        </td>
+
+
+                        <!-- Status -->
+                        <td class="px-6 py-5">
+
+                            <span
+                                class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium border
+                                {% if user.is_active %}
+                                    status-active
+                                {% else %}
+                                    status-inactive
+                                {% endif %}"
+                            >
+
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full
+                                    {% if user.is_active %}
+                                        bg-emerald-400
+                                    {% else %}
+                                        bg-red-400
+                                    {% endif %}"
+                                ></span>
+
+                                {% if user.is_active %}
+                                    Active
+                                {% else %}
+                                    Inactive
+                                {% endif %}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Created -->
+                        <td class="px-6 py-5 text-sm text-slate-400 whitespace-nowrap">
+
+                            {% if user.created_at %}
+                                {{ user.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Last login -->
+                        <td class="px-6 py-5 text-sm text-slate-400 whitespace-nowrap">
+
+                            {% if user.last_login %}
+                                {{ user.last_login.strftime('%Y-%m-%d %H:%M') }}
+                            {% else %}
+                                Never
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Actions -->
+                        <td class="px-6 py-5">
+
+                            <div class="flex items-center justify-end gap-2 flex-wrap">
+
+                                <button
+                                    type="button"
+                                    class="btn-secondary text-xs"
+                                    onclick="openPasswordModal({{ user.id }}, {{ user.username|tojson }})"
+                                >
+                                    <span class="mr-1">⌁</span>
+                                    Change password
+                                </button>
+
+
+                                <form
+                                    method="post"
+                                    action="{{ url_for('update_user', user_id=user.id) }}"
+                                >
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                    <input
+                                        type="hidden"
+                                        name="role"
+                                        value="{{ user.role }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="is_active"
+                                        value="{{ '0' if user.is_active else '1' }}"
+                                    >
+
+                                    {% if user.is_active %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn-danger text-xs"
+                                            {% if user.id == current_user.id %}disabled title="You cannot deactivate your own account."{% endif %}
+                                        >
+                                            Deactivate
+                                        </button>
+
+                                    {% else %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn-success text-xs"
+                                        >
+                                            Activate
+                                        </button>
+
+                                    {% endif %}
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="px-6 py-16 text-center text-slate-500"
+                        >
+                            No users found.
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- Password modal -->
+<div
+    id="password-modal"
+    class="hidden fixed inset-0 z-[90] items-center justify-center p-5 modal-backdrop"
+>
+
+    <div
+        class="glass rounded-2xl w-full max-w-md p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="password-modal-title"
+    >
+
+        <div class="flex items-start justify-between gap-4 mb-5">
+
+            <div>
+
+                <h2
+                    id="password-modal-title"
+                    class="text-lg font-semibold text-white"
+                >
+                    Change password
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Set a new password for
+                    <span
+                        id="password-modal-user"
+                        class="text-slate-300 font-medium"
+                    ></span>
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                onclick="closePasswordModal()"
+                class="text-slate-500 hover:text-slate-300 text-xl"
+                title="Close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form
+            id="password-form"
+            method="post"
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label class="block text-xs font-medium text-slate-400 mb-2">
+                New password
+            </label>
+
+            <input
+                id="password-input"
+                class="input"
+                type="password"
+                name="password"
+                minlength="8"
+                autocomplete="new-password"
+                placeholder="Minimum 8 characters"
+                required
+            >
+
+            <p class="text-[11px] text-slate-600 mt-2">
+                Password must contain at least 8 characters.
+            </p>
+
+
+            <div class="flex justify-end gap-2 mt-6">
+
+                <button
+                    type="button"
+                    class="btn-secondary"
+                    onclick="closePasswordModal()"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    Change password
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+(function () {
+    /*
+     * FinFlow Users page localization.
+     *
+     * Uses the same localStorage key as Dashboard:
+     *     finflow-language
+     *
+     * Default language: RU
+     */
+
+    const translations = {
+        ru: {
+            "Users": "Пользователи",
+            "Administrator": "Администратор",
+            "Manage FinFlow users, roles and access.": "Управление пользователями FinFlow, ролями и доступом.",
+            "Dashboard": "Панель управления",
+
+            "Create user": "Создать пользователя",
+            "Add a new account with an initial role and password.": "Добавьте новую учётную запись с начальной ролью и паролем.",
+            "Username": "Имя пользователя",
+            "Password": "Пароль",
+            "Role": "Роль",
+            "Minimum 8 characters": "Минимум 8 символов",
+            "username": "имя пользователя",
+
+            "User accounts": "Учётные записи",
+            "Username is the stable identity used in the audit log.": "Имя пользователя — постоянная идентификация, используемая в журнале аудита.",
+
+            "User": "Пользователь",
+            "Status": "Статус",
+            "Created": "Создан",
+            "Last login": "Последний вход",
+            "Actions": "Действия",
+
+            "You": "Вы",
+            "Active": "Активен",
+            "Inactive": "Неактивен",
+            "Never": "Никогда",
+
+            "Change password": "Изменить пароль",
+            "Activate": "Активировать",
+            "Deactivate": "Деактивировать",
+            "Cancel": "Отмена",
+            "Close": "Закрыть",
+            "New password": "Новый пароль",
+
+            "Password must contain at least 8 characters.": "Пароль должен содержать минимум 8 символов.",
+            "No users found.": "Пользователи не найдены.",
+
+            "Your role cannot be changed here.": "Вашу роль нельзя изменить здесь.",
+            "You cannot deactivate your own account.": "Вы не можете деактивировать собственную учётную запись.",
+
+            "Back to dashboard": "Вернуться на панель управления",
+
+            "Admin": "Администратор",
+            "Manager": "Менеджер",
+            "Viewer": "Наблюдатель"
+        }
+    };
+
+    const russianToEnglish = {};
+
+    Object.keys(translations.ru).forEach(function (english) {
+        russianToEnglish[translations.ru[english]] = english;
+    });
+
+
+    function getLang() {
+        return localStorage.getItem("finflow-language") || "ru";
+    }
+
+
+    function translate(value, lang) {
+        if (!value) return value;
+
+        const text = String(value);
+
+        if (lang === "ru") {
+
+            if (translations.ru[text]) {
+                return translations.ru[text];
+            }
+
+            const lower = text.toLowerCase();
+
+            const key = Object.keys(translations.ru).find(function (item) {
+                return item.toLowerCase() === lower;
+            });
+
+            return key ? translations.ru[key] : text;
+        }
+
+
+        if (lang === "en") {
+
+            if (russianToEnglish[text]) {
+                return russianToEnglish[text];
+            }
+
+            const lower = text.toLowerCase();
+
+            const key = Object.keys(russianToEnglish).find(function (item) {
+                return item.toLowerCase() === lower;
+            });
+
+            return key ? russianToEnglish[key] : text;
+        }
+
+
+        return text;
+    }
+
+
+    const originalTextNodes = new WeakMap();
+
+
+    function sourceText(node) {
+        if (!originalTextNodes.has(node)) {
+            originalTextNodes.set(node, node.nodeValue);
+        }
+
+        return originalTextNodes.get(node);
+    }
+
+
+    function translateDom(root, lang) {
+
+        if (!root) return;
+
+
+        const walker = document.createTreeWalker(
+            root,
+            NodeFilter.SHOW_TEXT
+        );
+
+
+        const nodes = [];
+        let node;
+
+        while ((node = walker.nextNode())) {
+            nodes.push(node);
+        }
+
+
+        nodes.forEach(function (textNode) {
+
+            const parent = textNode.parentElement;
+
+            if (!parent) return;
+
+            if (
+                parent.closest &&
+                parent.closest(
+                    "script, style, input, textarea, select, option"
+                )
+            ) {
+                return;
+            }
+
+
+            const original = sourceText(textNode);
+            const trimmed = original.trim();
+
+            if (!trimmed) return;
+
+
+            const translated = translate(trimmed, lang);
+
+            if (translated !== trimmed) {
+
+                textNode.nodeValue =
+                    original.replace(trimmed, translated);
+
+            } else {
+
+                textNode.nodeValue = original;
+
+            }
+
+        });
+
+
+        root.querySelectorAll(
+            "input, textarea, select, button, [title], [aria-label]"
+        ).forEach(function (el) {
+
+            [
+                "placeholder",
+                "title",
+                "aria-label"
+            ].forEach(function (attr) {
+
+                if (!el.hasAttribute(attr)) return;
+
+                const marker =
+                    "data-finflow-original-" + attr;
+
+
+                if (!el.hasAttribute(marker)) {
+
+                    el.setAttribute(
+                        marker,
+                        el.getAttribute(attr)
+                    );
+
+                }
+
+
+                const original =
+                    el.getAttribute(marker);
+
+                el.setAttribute(
+                    attr,
+                    translate(original, lang)
+                );
+
+            });
+
+        });
+
+    }
+
+    function applyLanguage(lang) {
+
+        document.documentElement.lang = lang;
+
+        translateDom(document.body, lang);
+
+
+    }
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            applyLanguage(getLang());
+        }
+    );
+
+})();
+</script>
+
+
+<script>
+function openPasswordModal(userId, username) {
+
+    const modal =
+        document.getElementById("password-modal");
+
+    const form =
+        document.getElementById("password-form");
+
+    const userLabel =
+        document.getElementById("password-modal-user");
+
+    const password =
+        document.getElementById("password-input");
+
+
+    form.action =
+        "{{ url_for('change_user_password', user_id=0) }}"
+            .replace("/0/password", "/" + userId + "/password");
+
+
+    userLabel.textContent = username;
+
+    password.value = "";
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+
+    setTimeout(function () {
+        password.focus();
+    }, 50);
+
+}
+
+
+function closePasswordModal() {
+
+    const modal =
+        document.getElementById("password-modal");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+
+}
+
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (event.key === "Escape") {
+            closePasswordModal();
+        }
+
+    }
+);
+
+
+document.getElementById("password-modal")
+    .addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === this) {
+                closePasswordModal();
+            }
+
+        }
+    );
+</script>
+
+</body>
+</html>

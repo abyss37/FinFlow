@@ -142,7 +142,6 @@
         </a>
 
         <div class="flex items-center gap-3">
-            <div id="finflow-language-switcher-slot" class="flex items-center"></div>
             <button onclick="handleSaveClick()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 border border-slate-700 cursor-pointer">
                 <i class="bi bi-floppy text-emerald-400"></i>
                 <span>Save to Registry</span>
@@ -1016,6 +1015,11 @@
                 items: descList
             };
 
+            function getCsrfToken(){
+                const input = document.querySelector('input[name="csrf_token"]');
+                return input ? input.value : "";
+            }
+
             const payload = {
                 company_name: companyName,
                 invoice_number: invNum,
@@ -1032,7 +1036,10 @@
             try {
                 const resp = await fetch(endpoint, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': getCsrfToken()
+                    },
                     body: JSON.stringify(payload)
                 });
 
@@ -1279,64 +1286,10 @@
         });
     }
 
-    function updateSwitcher(lang) {
-        const ru = document.getElementById("finflow-lang-ru");
-        const en = document.getElementById("finflow-lang-en");
-
-        if (!ru || !en) return;
-
-        ru.classList.toggle("bg-emerald-500", lang === "ru");
-        ru.classList.toggle("text-slate-950", lang === "ru");
-        ru.classList.toggle("text-slate-400", lang !== "ru");
-
-        en.classList.toggle("bg-emerald-500", lang === "en");
-        en.classList.toggle("text-slate-950", lang === "en");
-        en.classList.toggle("text-slate-400", lang !== "en");
-    }
-
     function applyLanguage(lang) {
         document.documentElement.lang = lang;
         translateDom(document.body, lang);
-        updateSwitcher(lang);
-    }
 
-    function addLanguageSwitcher() {
-        if (document.getElementById("finflow-language-switcher")) return;
-
-        const wrapper = document.createElement("div");
-        wrapper.id = "finflow-language-switcher";
-        wrapper.className =
-            "inline-flex items-center gap-1 p-1 rounded-xl bg-slate-900/95 border border-slate-700 shadow-xl backdrop-blur";
-
-        wrapper.innerHTML = `
-            <button id="finflow-lang-ru"
-                    type="button"
-                    class="px-2.5 py-1.5 rounded-lg text-[11px] font-black transition">
-                RU
-            </button>
-            <button id="finflow-lang-en"
-                    type="button"
-                    class="px-2.5 py-1.5 rounded-lg text-[11px] font-black transition">
-                EN
-            </button>
-        `;
-
-        const slot = document.getElementById("finflow-language-switcher-slot");
-        if (slot) {
-            slot.appendChild(wrapper);
-        } else {
-            document.body.appendChild(wrapper);
-        }
-
-        document.getElementById("finflow-lang-ru")
-            .addEventListener("click", function () {
-                setLang("ru");
-            });
-
-        document.getElementById("finflow-lang-en")
-            .addEventListener("click", function () {
-                setLang("en");
-            });
     }
 
     const originalAlert = window.alert;
@@ -1375,7 +1328,6 @@
     });
 
     document.addEventListener("DOMContentLoaded", function () {
-        addLanguageSwitcher();
         applyLanguage(getLang());
 
         observer.observe(document.body, {
