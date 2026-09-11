@@ -1,12 +1,40 @@
-# FinFlow
+# FinFlow 💼
+
+<p align="center">
+  <img src="static/finflow-logo.png" alt="FinFlow" width="220">
+</p>
+
+<p align="center">
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" alt="Python">
+  </a>
+  <a href="https://flask.palletsprojects.com/">
+    <img src="https://img.shields.io/badge/Framework-Flask-green.svg" alt="Flask">
+  </a>
+  <a href="https://www.postgresql.org/">
+    <img src="https://img.shields.io/badge/Database-PostgreSQL%2017-blue.svg" alt="PostgreSQL">
+  </a>
+  <a href="https://alembic.sqlalchemy.org/">
+    <img src="https://img.shields.io/badge/Migrations-Alembic-orange.svg" alt="Alembic">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg" alt="License">
+  </a>
+</p>
 
 Financial control and accounting management platform for companies, invoices, budgets, payments and financial analytics.
 
 **Stack:** Flask · PostgreSQL · Jinja2 · Tailwind CSS · JavaScript
 
+🌐 **Live application:** https://finflow.lexxkato.win/
+
+<p align="center">
+  <img src="https://finflow.lexxkato.win/finflow-preview.png" alt="FinFlow Dashboard Preview">
+</p>
+
 ---
 
-## Overview
+## ✨ Overview
 
 **FinFlow** is a web-based financial control platform focused on practical management of company budgets, outgoing invoices, payments and financial exposure.
 
@@ -29,9 +57,9 @@ The project is evolving toward a broader financial platform with multi-currency 
 
 ---
 
-## Current Features
+## 🚀 Current Features
 
-### Dashboard
+### 📊 Dashboard
 
 The Dashboard is the operational overview of FinFlow.
 
@@ -50,7 +78,7 @@ It provides:
 
 Detailed analytics are intentionally separated into the dedicated `/analytics` page.
 
-### Financial Analytics
+### 📈 Financial Analytics
 
 Available at:
 
@@ -72,7 +100,7 @@ Current analytics include:
 - company filters;
 - product filters.
 
-### Invoice Management
+### 🧾 Invoice Management
 
 FinFlow supports the outgoing invoice lifecycle:
 
@@ -87,7 +115,7 @@ FinFlow supports the outgoing invoice lifecycle:
 - invoice totals;
 - outstanding exposure calculation.
 
-### Budget Management
+### 💰 Budget Management
 
 Current functionality includes:
 
@@ -99,7 +127,7 @@ Current functionality includes:
 - ALPHA / BETA separation;
 - budget health visualization.
 
-### Notifications
+### 🔔 Notifications
 
 The notification center provides:
 
@@ -109,7 +137,7 @@ The notification center provides:
 - localized notification text;
 - notification deduplication.
 
-### Audit Log
+### 📝 Audit Log
 
 The Audit Log provides visibility into:
 
@@ -119,7 +147,7 @@ The Audit Log provides visibility into:
 - timestamps;
 - audit information.
 
-### User Management
+### 👤 User Management
 
 FinFlow supports:
 
@@ -130,7 +158,7 @@ FinFlow supports:
 - user management;
 - audit attribution.
 
-### Document Generation
+### 📄 Document Generation
 
 Document-generation functionality is available at:
 
@@ -140,7 +168,7 @@ Document-generation functionality is available at:
 
 ---
 
-## Authentication & Security
+## 🔐 Authentication & Security
 
 FinFlow uses authenticated sessions and protected application routes.
 
@@ -159,7 +187,7 @@ Unauthenticated users receive the public landing page. Authenticated users recei
 
 ---
 
-## Internationalization
+## 🌍 Internationalization
 
 FinFlow currently supports:
 
@@ -187,7 +215,7 @@ The shared i18n layer provides:
 
 ---
 
-## UI
+## 🎨 UI
 
 FinFlow uses a modern responsive interface built around:
 
@@ -205,7 +233,7 @@ The interface is being progressively refined toward a consistent **FinFlow Desig
 
 ---
 
-## Tailwind CSS
+## 🌬️ Tailwind CSS
 
 FinFlow no longer uses the Tailwind CDN in production.
 
@@ -235,7 +263,7 @@ The generated CSS should be rebuilt whenever Tailwind classes are changed or add
 
 ---
 
-## Database
+## 🗄️ Database
 
 Production database:
 
@@ -249,7 +277,7 @@ PostgreSQL is the authoritative production database. SQLite remains useful for l
 
 ---
 
-## Database Migrations
+## 🔄 Database Migrations
 
 Schema changes are managed with **Flask-Migrate / Alembic**.
 
@@ -285,7 +313,7 @@ Always verify the database state after migrations.
 
 ---
 
-## Technology Stack
+## 🛠️ Technology Stack
 
 ### Backend
 
@@ -296,7 +324,7 @@ Always verify the database state after migrations.
 - Alembic
 - Gunicorn
 
-### Database
+### 🗄️ Database
 
 - PostgreSQL 17
 - SQLite for development/testing workflows
@@ -319,7 +347,7 @@ Always verify the database state after migrations.
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 FinFlow/
@@ -359,7 +387,7 @@ FinFlow/
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 Production configuration should be provided through environment variables or the deployment environment.
 
@@ -375,7 +403,7 @@ Never commit production secrets, passwords, tokens or private credentials to Git
 
 ---
 
-## Local Development
+## 💻 Local Development
 
 Clone the repository:
 
@@ -413,7 +441,7 @@ flask run
 
 ---
 
-## Production Deployment
+## 🚀 Production Deployment
 
 Current production deployment:
 
@@ -451,7 +479,7 @@ journalctl -u accounting-app -n 100 --no-pager
 
 ---
 
-## Database Maintenance
+## 🗄️ Database Maintenance
 
 Before destructive or schema-changing database operations:
 
@@ -470,7 +498,7 @@ flask db heads
 
 ---
 
-## Demo / Seed Data
+## 🧪 Demo / Seed Data
 
 Development/demo data may be created using the project's available seed functionality.
 
@@ -480,7 +508,7 @@ When preparing production, verify that no demo/test records are present unless e
 
 ---
 
-## SQLite Migration / Development
+## 🔧 SQLite Migration / Development
 
 SQLite may be used for local development and migration/testing workflows.
 
@@ -497,7 +525,7 @@ When moving between database engines, verify:
 
 ---
 
-## Testing
+## 🧪 Testing
 
 Before committing changes:
 
@@ -521,7 +549,7 @@ For application changes, verify at minimum:
 
 ---
 
-## Authentication Smoke Test
+## 🔐 Authentication Smoke Test
 
 ### Anonymous
 
@@ -549,9 +577,9 @@ according to the authenticated user's permissions.
 
 ---
 
-## Roadmap
+## 🗺️ Roadmap
 
-### Phase 1 — Product Polish
+### 🧹 Phase 1 — Product Polish
 
 - [x] PostgreSQL production database
 - [x] Operational Dashboard
@@ -567,7 +595,7 @@ according to the authenticated user's permissions.
 - [ ] Complete Ukrainian / English translation review
 - [ ] Multi-currency foundation
 
-### Phase 2 — Financial Platform
+### 💰 Phase 2 — Financial Platform
 
 - [x] Outgoing invoice lifecycle
 - [x] Payment tracking
@@ -582,7 +610,7 @@ according to the authenticated user's permissions.
 - [ ] Forecasting
 - [ ] Plan vs Actual reporting
 
-### Phase 3 — CRM
+### 🤝 Phase 3 — CRM
 
 - [ ] Companies / counterparties
 - [ ] Contacts
@@ -597,7 +625,7 @@ according to the authenticated user's permissions.
 
 The goal is to make CRM a natural business layer around the existing FinFlow financial core.
 
-### Phase 4 — External Integrations
+### 🔌 Phase 4 — External Integrations
 
 - [ ] 1C integration
 - [ ] M.E.Doc integration
@@ -609,7 +637,7 @@ The goal is to make CRM a natural business layer around the existing FinFlow fin
 
 The integration architecture should avoid coupling the core financial model directly to one external accounting system.
 
-### Phase 5 — Production Packaging
+### 🐳 Phase 5 — Production Packaging
 
 The final deployment target is a reproducible containerized installation.
 
@@ -634,7 +662,7 @@ Target concept:
 docker compose up -d
 ```
 
-### Phase 6 — Mobile Application
+### 📱 Phase 6 — Mobile Application
 
 The mobile application is planned as a client of the FinFlow backend, not as a separate financial system.
 
@@ -669,7 +697,7 @@ Mobile development should start after the core financial model and API boundarie
 
 ---
 
-## Git Hygiene
+## 🧹 Git Hygiene
 
 Before committing:
 
@@ -712,7 +740,7 @@ production dumps
 
 ---
 
-## Deployment Checklist
+## ✅ Deployment Checklist
 
 Before deploying:
 
@@ -737,7 +765,7 @@ Before deploying:
 
 ---
 
-## Current Status
+## 📌 Current Status
 
 FinFlow currently has a working production-oriented foundation with:
 
@@ -774,6 +802,6 @@ Mobile client
 
 ---
 
-## License
+## 📄 License
 
-License information will be defined as the project matures.
+FinFlow is released under the [MIT License](LICENSE).
