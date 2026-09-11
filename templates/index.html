@@ -1931,249 +1931,7 @@ input:focus-visible {
     <!-- =======================================================
          Financial Analytics
          ======================================================= -->
-    <section id="finflowAnalytics"
-         class="analytics-dashboard rounded-3xl border border-slate-800/80 bg-slate-950/35 p-4 sm:p-5 lg:p-6 space-y-5">
 
-    <!-- Analytics header -->
-    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-        <div>
-            <div class="ff-section-label">Financial Analytics</div>
-            <h2 class="ff-section-title mt-1">Financial control dashboard</h2>
-            <p class="ff-section-description mt-1">
-                A compact view of budget utilization, invoice exposure and spending trends.
-            </p>
-        </div>
-
-        <div class="inline-flex items-center gap-2 self-start lg:self-auto
-                    px-3 py-2 rounded-xl border border-violet-400/15
-                    bg-violet-400/5 text-xs font-bold text-violet-300">
-            <i class="bi bi-bar-chart-line"></i>
-            Live dashboard
-        </div>
-    </div>
-
-    <!-- Main utilization -->
-    <article class="analytics-card glass rounded-2xl p-5 sm:p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-5">
-
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 rounded-xl bg-violet-400/10
-                                border border-violet-400/15
-                                text-violet-300 flex items-center justify-center">
-                        <i class="bi bi-speedometer2"></i>
-                    </div>
-
-                    <div>
-                        <div class="text-xs font-black uppercase tracking-wider text-slate-500">
-                            Overall utilization
-                        </div>
-                        <div class="text-xs text-slate-600 mt-0.5">
-                            Invoiced amount against total budget
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-5 flex items-end gap-3">
-                    <div class="text-4xl sm:text-5xl font-black tracking-tight
-                                text-violet-300"
-                         id="analyticsUtilizationValue">
-                        {{ "%.1f"|format(metrics.utilization) }}%
-                    </div>
-
-                    <div class="pb-1 text-xs text-slate-500">
-                        of total budget
-                    </div>
-                </div>
-
-                <div class="mt-4 h-2 rounded-full bg-slate-800/80 overflow-hidden">
-                    <div id="analyticsUtilizationProgress"
-                         class="h-full rounded-full bg-violet-400 transition-all duration-500"
-                         style="width: {{ [metrics.utilization, 100]|min }}%;">
-                    </div>
-                </div>
-            </div>
-
-            <div class="shrink-0 w-full sm:w-48">
-                <div class="rounded-2xl border border-slate-800 bg-slate-950/45 p-4">
-                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-600">
-                        Exposure
-                    </div>
-
-                    <div class="mt-2 text-xl font-black text-slate-100">
-                        €{{ "%.2f"|format(metrics.total_spent) }}
-                    </div>
-
-                    <div class="mt-1 text-xs text-slate-500">
-                        invoiced of €{{ "%.2f"|format(metrics.total_budget) }}
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </article>
-
-    <!-- Unified KPI strip -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-
-        <article class="analytics-card glass rounded-2xl p-4">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-emerald-400/10
-                            border border-emerald-400/15
-                            text-emerald-300 flex items-center justify-center">
-                    <i class="bi bi-wallet2"></i>
-                </div>
-
-                <div class="min-w-0">
-                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-600">
-                        Budget
-                    </div>
-                    <div class="mt-1 text-xl font-black text-slate-100">
-                        €{{ "%.2f"|format(metrics.total_budget) }}
-                    </div>
-                </div>
-            </div>
-        </article>
-
-        <article class="analytics-card glass rounded-2xl p-4">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-cyan-400/10
-                            border border-cyan-400/15
-                            text-cyan-300 flex items-center justify-center">
-                    <i class="bi bi-receipt"></i>
-                </div>
-
-                <div class="min-w-0">
-                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-600">
-                        Invoiced
-                    </div>
-                    <div class="mt-1 text-xl font-black text-slate-100">
-                        €{{ "%.2f"|format(metrics.total_spent) }}
-                    </div>
-                </div>
-            </div>
-        </article>
-
-        <article class="analytics-card glass rounded-2xl p-4">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl
-                            {{ 'bg-rose-400/10 border border-rose-400/15 text-rose-300'
-                               if metrics.remaining < 0
-                               else 'bg-emerald-400/10 border border-emerald-400/15 text-emerald-300' }}">
-                    <i class="bi {{ 'bi-exclamation-triangle'
-                                   if metrics.remaining < 0
-                                   else 'bi-piggy-bank' }}"></i>
-                </div>
-
-                <div class="min-w-0">
-                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-600">
-                        Remaining
-                    </div>
-                    <div class="mt-1 text-xl font-black
-                                {{ 'text-rose-300' if metrics.remaining < 0 else 'text-emerald-300' }}">
-                        €{{ "%.2f"|format(metrics.remaining) }}
-                    </div>
-                </div>
-            </div>
-        </article>
-
-    </div>
-
-    <!-- Company / product analytics -->
-    <div class="grid lg:grid-cols-2 gap-4">
-
-        <article class="analytics-card glass rounded-2xl p-5">
-            <div class="flex items-start justify-between gap-3 mb-5">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-400/10
-                                    border border-emerald-400/15
-                                    text-emerald-300 flex items-center justify-center">
-                            <i class="bi bi-buildings"></i>
-                        </div>
-
-                        <h3 class="text-sm font-black text-slate-100">
-                            Spend by company
-                        </h3>
-                    </div>
-
-                    <p class="text-xs text-slate-500 mt-2">
-                        Active invoiced amount by company.
-                    </p>
-                </div>
-
-                <span class="text-[10px] font-black uppercase tracking-wider
-                             text-emerald-300/70">
-                    Companies
-                </span>
-            </div>
-
-            <div id="analyticsCompanyBars" class="space-y-4"></div>
-        </article>
-
-        <article class="analytics-card glass rounded-2xl p-5">
-            <div class="flex items-start justify-between gap-3 mb-5">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-cyan-400/10
-                                    border border-cyan-400/15
-                                    text-cyan-300 flex items-center justify-center">
-                            <i class="bi bi-box-seam"></i>
-                        </div>
-
-                        <h3 class="text-sm font-black text-slate-100">
-                            Spend by product
-                        </h3>
-                    </div>
-
-                    <p class="text-xs text-slate-500 mt-2">
-                        Active invoiced amount by product.
-                    </p>
-                </div>
-
-                <span class="text-[10px] font-black uppercase tracking-wider
-                             text-cyan-300/70">
-                    ALPHA · BETA
-                </span>
-            </div>
-
-            <div id="analyticsSoftwareBars" class="space-y-4"></div>
-        </article>
-
-    </div>
-
-    <!-- Monthly spending -->
-    <article class="analytics-card glass rounded-2xl p-5 sm:p-6">
-
-        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
-            <div>
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-violet-400/10
-                                border border-violet-400/15
-                                text-violet-300 flex items-center justify-center">
-                        <i class="bi bi-graph-up"></i>
-                    </div>
-
-                    <h3 class="text-sm font-black text-slate-100">
-                        Monthly spending
-                    </h3>
-                </div>
-
-                <p class="text-xs text-slate-500 mt-2">
-                    Active invoiced amount grouped by invoice month.
-                </p>
-            </div>
-
-            <span class="text-[10px] font-black uppercase tracking-wider text-slate-600">
-                Timeline
-            </span>
-        </div>
-
-        <div id="analyticsMonthlyChart" class="analytics-month-chart"></div>
-
-    </article>
-
-</section>
 
 <section class="grid lg:grid-cols-2 gap-4">
         {% for software in ['ALPHA','BETA'] %}
@@ -2518,19 +2276,19 @@ input:focus-visible {
   </div>
 </div>
 
-<div id="companyInvoicesModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm items-center justify-center p-4"><div class="glass w-full max-w-4xl rounded-2xl overflow-hidden"><div class="p-5 border-b border-slate-800 flex justify-between"><div><h3 id="modalCompanyName" class="font-black text-lg">Company</h3><p id="modalSubTitle" class="text-xs text-slate-500 mt-1"></p></div><button onclick="closeCompanyInvoicesModal()" class="text-slate-500 hover:text-white"><i class="bi bi-x-lg"></i></button></div><div class="p-4 max-h-[65vh] overflow-auto"><table class="w-full text-sm"><thead class="text-[10px] uppercase text-slate-500"><tr><th class="text-left p-2">Invoice</th><th class="text-left p-2">Date</th><th class="text-right p-2">Amount</th><th class="p-2"></th></tr></thead><tbody id="modalInvoicesTbody" class="divide-y divide-slate-800"></tbody></table></div><div class="p-4 border-t border-slate-800">
+<div id="companyInvoicesModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm items-center justify-center p-4"><div class="glass w-full max-w-4xl rounded-2xl overflow-hidden"><div class="p-5 border-b border-slate-800 flex justify-between"><div><h3 id="modalCompanyName" class="font-black text-lg" data-i18n="Company">Company</h3><p id="modalSubTitle" class="text-xs text-slate-500 mt-1"></p></div><button onclick="closeCompanyInvoicesModal()" class="text-slate-500 hover:text-white"><i class="bi bi-x-lg"></i></button></div><div class="p-4 max-h-[65vh] overflow-auto"><table class="w-full text-sm"><thead class="text-[10px] uppercase text-slate-500"><tr><th class="text-left p-2" data-i18n="Invoice">Invoice</th><th class="text-left p-2" data-i18n="Date">Date</th><th class="text-right p-2" data-i18n="Amount">Amount</th><th class="p-2"></th></tr></thead><tbody id="modalInvoicesTbody" class="divide-y divide-slate-800"></tbody></table></div><div class="p-4 border-t border-slate-800">
   <div data-payment-summary>
     <div class="grid grid-cols-3 gap-3 text-xs">
       <div>
-        <div class="text-slate-500">Invoiced</div>
+        <div class="text-slate-500" data-i18n="Invoiced">Invoiced</div>
         <div class="mt-1 font-black text-white">€0.00</div>
       </div>
       <div>
-        <div class="text-slate-500">Paid</div>
+        <div class="text-slate-500" data-i18n="Paid">Paid</div>
         <div class="mt-1 font-black text-emerald-300">€0.00</div>
       </div>
       <div>
-        <div class="text-slate-500">Outstanding</div>
+        <div class="text-slate-500" data-i18n="Outstanding">Outstanding</div>
         <div class="mt-1 font-black text-amber-300">€0.00</div>
       </div>
     </div>
@@ -2539,19 +2297,7 @@ input:focus-visible {
 </div></div></div>
 
 
-<script id="finflowAnalyticsInvoiceData" type="application/json">
-[
-{% for inv in invoices %}
-    {
-        "company": {{ inv.company.name|tojson }},
-        "software": {{ inv.software|tojson }},
-        "amount": {{ inv.amount_eur|float|tojson }},
-        "date": {{ (inv.invoice_date.isoformat() if inv.invoice_date else "")|tojson }},
-        "status": {{ inv.status|tojson }}
-    }{% if not loop.last %},{% endif %}
-{% endfor %}
-]
-</script>
+
 
 <script>
 let allInvoices = [{% for inv in invoices %}{id:{{ inv.id }},company_id:{{ inv.company_id }},invoice_number:{{ (inv.invoice_number or '—')|tojson }},invoice_date:{{ (inv.invoice_date or '—')|tojson }},completion_date:{{ (inv.completion_date.isoformat() if inv.completion_date else '')|tojson }},software:{{ inv.software|tojson }},amount:{{ inv.amount_eur }},paid_amount:{{ inv.paid_amount_eur or 0 }},payment_status:{{ (inv.payment_status or 'UNPAID')|tojson }},contract_details:{{ ((inv.contract_details|parse_details) or '—')|tojson }},status:{{ inv.status|tojson }},cancelled_at:{{ (inv.cancelled_at.isoformat() if inv.cancelled_at else '')|tojson }},cancellation_reason:{{ (inv.cancellation_reason or '')|tojson }}}{% if not loop.last %},{% endif %}{% endfor %}];
@@ -2563,73 +2309,44 @@ let currentModalSoftware='ALPHA';
 let finflowNotifications = [];
 let notificationPollTimer = null;
 
-const notificationUiText = {
-    ru: {
-        title: "Уведомления",
-        subtitle: "Последние системные события",
-        readAll: "Прочитать все",
-        allClear: "Всё чисто",
-        noNotifications: "Нет активных уведомлений.",
-        markRead: "Отметить прочитанным",
-        critical: "Критическое",
-        warning: "Предупреждение",
-        info: "Информация",
-        overdue: "Просроченный счёт",
-        budgetWarning: "Предупреждение по бюджету",
-        budgetCritical: "Критический уровень бюджета",
-        budgetExceeded: "Бюджет превышен",
-        contractExpiring: "Истекает договор",
-        justNow: "только что",
-        minutes: "мин назад",
-        hours: "ч назад",
-        days: "дн назад"
-    },
-    en: {
-        title: "Notifications",
-        subtitle: "Recent system alerts",
-        readAll: "Mark all as read",
-        allClear: "All clear",
-        noNotifications: "No active notifications.",
-        markRead: "Mark as read",
-        critical: "Critical",
-        warning: "Warning",
-        info: "Information",
-        overdue: "Overdue invoice",
-        budgetWarning: "Budget warning",
-        budgetCritical: "Critical budget level",
-        budgetExceeded: "Budget exceeded",
-        contractExpiring: "Contract expiring",
-        justNow: "just now",
-        minutes: "min ago",
-        hours: "h ago",
-        days: "d ago"
+function notificationText(key){
+    const t = (value) =>
+        window.finflowI18n &&
+        typeof window.finflowI18n.translate === "function"
+            ? window.finflowI18n.translate(value)
+            : value;
+
+    if (key !== undefined) {
+        return t(key);
     }
-};
-
-function notificationLang(){
-    try {
-        return (typeof getLang === "function" ? getLang() : "en") === "ru"
-            ? "ru"
-            : "en";
-    } catch (_) {
-        return "en";
-    }
-}
-
-function notificationText(){
-    return notificationUiText[notificationLang()];
-}
-
-function notificationTypeLabel(type){
-    const t = notificationText();
 
     return {
-        OVERDUE_INVOICE: t.overdue,
-        BUDGET_WARNING: t.budgetWarning,
-        BUDGET_CRITICAL: t.budgetCritical,
-        BUDGET_EXCEEDED: t.budgetExceeded,
-        CONTRACT_EXPIRING: t.contractExpiring
-    }[type] || t.info;
+        title: t("Notifications"),
+        subtitle: t("Recent system alerts"),
+        readAll: t("Mark all as read"),
+        markRead: t("Mark as read"),
+        allClear: t("All clear"),
+        noNotifications: t("No active notifications."),
+        critical: t("Critical"),
+        warning: t("Warning"),
+        info: t("Info"),
+        justNow: t("Just now"),
+        minutes: t("minutes"),
+        hours: t("hours"),
+        days: t("days")
+    };
+}
+
+
+
+function notificationTypeLabel(type){
+    return {
+        OVERDUE_INVOICE: notificationText("Overdue invoice"),
+        BUDGET_WARNING: notificationText("Budget warning"),
+        BUDGET_CRITICAL: notificationText("Critical budget level"),
+        BUDGET_EXCEEDED: notificationText("Budget exceeded"),
+        CONTRACT_EXPIRING: notificationText("Contract expiring")
+    }[type] || notificationText("Information");
 }
 
 function notificationTime(value){
@@ -3027,7 +2744,7 @@ document.getElementById('quickAddInvoiceForm')?.addEventListener('submit', async
 
   if(button){
     button.disabled = true;
-    button.textContent = budgetHealthText('Saving...', 'Сохранение...');
+    button.textContent = budgetHealthText('Saving...');
   }
 
   try{
@@ -3041,7 +2758,7 @@ document.getElementById('quickAddInvoiceForm')?.addEventListener('submit', async
       return;
     }
 
-    let message = budgetHealthText('Could not save invoice.', 'Не удалось сохранить счёт.');
+    let message = budgetHealthText('Could not save invoice.');
 
     try{
       const data = await response.json();
@@ -3055,7 +2772,7 @@ document.getElementById('quickAddInvoiceForm')?.addEventListener('submit', async
     alert(message);
   }catch(err){
     console.error(err);
-    alert(budgetHealthText('Could not save invoice.', 'Не удалось сохранить счёт.'));
+    alert(budgetHealthText('Could not save invoice.'));
   }finally{
     if(button){
       button.disabled = false;
@@ -3314,12 +3031,18 @@ async function updateInvoicePayment(id){
   const amount = Number(item.amount || 0);
   const currentDue = Math.max(amount - currentPaid, 0);
 
+  const t = (key) =>
+    window.finflowI18n &&
+    typeof window.finflowI18n.translate === 'function'
+      ? window.finflowI18n.translate(key)
+      : key;
+
   const value = prompt(
-    `Paid amount for invoice #${item.invoice_number}\n` +
-    `Total: €${amount.toFixed(2)}\n` +
-    `Currently paid: €${currentPaid.toFixed(2)}\n` +
-    `Remaining: €${currentDue.toFixed(2)}\n\n` +
-    `Enter total paid amount:`,
+    `${t('Paid amount for invoice')} #${item.invoice_number}\n` +
+    `${t('Total')}: €${amount.toFixed(2)}\n` +
+    `${t('Currently paid')}: €${currentPaid.toFixed(2)}\n` +
+    `${t('Remaining')}: €${currentDue.toFixed(2)}\n\n` +
+    `${t('Enter total paid amount')}:`,
     currentPaid.toFixed(2)
   );
 
@@ -3328,12 +3051,14 @@ async function updateInvoicePayment(id){
   const paid = Number(String(value).replace(',', '.'));
 
   if(!Number.isFinite(paid) || paid < 0){
-    alert('Please enter a valid non-negative amount.');
+    alert(t('Please enter a valid non-negative amount.'));
     return;
   }
 
   if(paid > amount){
-    alert(`Paid amount cannot exceed invoice total (€${amount.toFixed(2)}).`);
+    alert(
+      `${t('Paid amount cannot exceed invoice total')} (€${amount.toFixed(2)}).`
+    );
     return;
   }
 
@@ -3408,11 +3133,17 @@ function paymentBadge(item){
   const due = Math.max(amount - paid, 0);
   const status = item.payment_status || 'UNPAID';
 
+  const t = (key) =>
+    window.finflowI18n &&
+    typeof window.finflowI18n.translate === 'function'
+      ? window.finflowI18n.translate(key)
+      : key;
+
   if(status === 'PAID'){
     return `
       <div class="mt-1 flex items-center justify-end gap-2 text-[10px]">
         <span class="px-2 py-0.5 rounded-md bg-emerald-400/10 text-emerald-300 font-black">
-          PAID
+          ${t('PAID')}
         </span>
         <span class="text-emerald-300/70">€${paid.toFixed(2)}</span>
       </div>`;
@@ -3423,14 +3154,14 @@ function paymentBadge(item){
       <div class="mt-1 text-[10px]">
         <div class="flex items-center justify-end gap-2">
           <span class="px-2 py-0.5 rounded-md bg-amber-400/10 text-amber-300 font-black">
-            PARTIAL
+            ${t('PARTIAL')}
           </span>
           <span class="text-slate-400">
-            €${paid.toFixed(2)} paid
+            €${paid.toFixed(2)} ${t('paid')}
           </span>
         </div>
         <div class="text-right text-slate-500 mt-0.5">
-          €${due.toFixed(2)} due
+          €${due.toFixed(2)} ${t('due')}
         </div>
       </div>`;
   }
@@ -3439,11 +3170,11 @@ function paymentBadge(item){
     <div class="mt-1 text-[10px]">
       <div class="flex items-center justify-end gap-2">
         <span class="px-2 py-0.5 rounded-md bg-slate-400/10 text-slate-400 font-black">
-          UNPAID
+          ${t('UNPAID')}
         </span>
       </div>
       <div class="text-right text-slate-500 mt-0.5">
-        €${due.toFixed(2)} due
+        €${due.toFixed(2)} ${t('due')}
       </div>
     </div>`;
 }
@@ -3456,8 +3187,14 @@ function openCompanyInvoicesModal(id){
         company=card.dataset.companyTitle,
         rows=allInvoices.filter(x=>x.company_id===id&&x.software===sw);
 
+  const t = (key) =>
+    window.finflowI18n &&
+    typeof window.finflowI18n.translate === 'function'
+      ? window.finflowI18n.translate(key)
+      : key;
+
   document.getElementById('modalCompanyName').textContent=company;
-  document.getElementById('modalSubTitle').textContent='Invoices · '+sw;
+  document.getElementById('modalSubTitle').textContent=t('Invoices')+' · '+sw;
 
   let total=0;
   let paidTotal=0;
@@ -3480,17 +3217,17 @@ function openCompanyInvoicesModal(id){
     const overdueDaysCount=overdueDays(x);
 
     const statusBadge=cancelled
-      ? '<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">CANCELLED</span>'
+        ? `<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">${t('CANCELLED')}</span>`
       : overdue
         ? `<div class="flex flex-col items-end gap-1">
             <span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">
-              OVERDUE
+              ${t('OVERDUE')}
             </span>
             <span class="text-[10px] text-rose-300/70">
-              ${overdueDaysCount} day${overdueDaysCount === 1 ? '' : 's'}
+              ${overdueDaysCount} ${t(overdueDaysCount === 1 ? 'day' : 'days')}
             </span>
           </div>`
-        : '<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">ISSUED</span>';
+          : `<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">${t('ISSUED')}</span>`;
 
     const action=cancelled
       ? statusBadge
@@ -3499,14 +3236,14 @@ function openCompanyInvoicesModal(id){
           <button
             onclick="updateInvoicePayment(${x.id})"
             class="text-slate-500 hover:text-emerald-300 p-2 transition"
-            title="Update payment"
+            title="${t('Update payment')}"
           >
             <i class="bi bi-cash-coin"></i>
           </button>
           <button
             onclick="cancelInvoice(${x.id},'modal')"
             class="text-slate-600 hover:text-rose-400 p-2 transition"
-            title="Cancel invoice"
+            title="${t('Cancel invoice')}"
           >
             <i class="bi bi-x-circle"></i>
           </button>
@@ -3516,7 +3253,7 @@ function openCompanyInvoicesModal(id){
       ? statusBadge
       : overdue
         ? statusBadge
-        : '<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">ISSUED</span>';
+          : `<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">${t('ISSUED')}</span>`;
 
     const reason=cancelled&&x.cancellation_reason
       ? `<div class="text-[10px] text-rose-300/70 mt-1">${escapeHtml(x.cancellation_reason)}</div>`
@@ -3550,15 +3287,15 @@ function openCompanyInvoicesModal(id){
     footer.innerHTML=`
       <div class="grid grid-cols-3 gap-3 text-xs">
         <div>
-          <div class="text-slate-500">Invoiced</div>
+          <div class="text-slate-500">${t('Invoiced')}</div>
           <div class="mt-1 font-black text-white">${euro(total)}</div>
         </div>
         <div>
-          <div class="text-slate-500">Paid</div>
+          <div class="text-slate-500">${t('Paid')}</div>
           <div class="mt-1 font-black text-emerald-300">${euro(paidTotal)}</div>
         </div>
         <div>
-          <div class="text-slate-500">Outstanding</div>
+          <div class="text-slate-500">${t('Outstanding')}</div>
           <div class="mt-1 font-black ${dueTotal>0?'text-amber-300':'text-emerald-300'}">${euro(dueTotal)}</div>
         </div>
       </div>`;
@@ -3566,8 +3303,12 @@ function openCompanyInvoicesModal(id){
 
   document.getElementById('companyInvoicesModal').classList.remove('hidden');
   document.getElementById('companyInvoicesModal').classList.add('flex');
+  }
+function closeCompanyInvoicesModal(){
+  const m=document.getElementById('companyInvoicesModal');
+  m.classList.add('hidden');
+  m.classList.remove('flex');
 }
-function closeCompanyInvoicesModal(){const m=document.getElementById('companyInvoicesModal');m.classList.add('hidden');m.classList.remove('flex');}
 document.getElementById('companyCardSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('.company-card').forEach(c=>c.style.display=c.dataset.companyName.includes(q)?'':'none');});
 document.getElementById('tableSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#mainInvoicesTbody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCompanyInvoicesModal();});
@@ -3630,823 +3371,6 @@ function updateProductCardMetrics(){
   }
 }
 
-
-document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.company-card').forEach(c=>{const sw=c.querySelector('.sw-select')?.value;if(sw)switchSoftware(c.dataset.companyId,sw)});updateSummaryCards();updateProductCardMetrics();renderFinFlowAnalytics();});
-
-  function openBudgetHealthModal(software){
-    const selected=canonicalSoftwareForUi(software);
-    const productEl=document.getElementById('budgetHealthModalProduct');
-    const descriptionEl=document.getElementById('budgetHealthModalDescription');
-    const iconEl=document.getElementById('budgetHealthModalIcon');
-
-    if(productEl){
-      productEl.textContent=selected || budgetHealthText('Budget overview','Обзор бюджета');
-      productEl.className=
-        'text-xs font-black uppercase tracking-wider '+
-        (selected==='BETA' ? 'text-cyan-400' : 'text-emerald-400');
-    }
-
-    if(descriptionEl){
-      descriptionEl.textContent=selected
-        ? budgetHealthText(
-            'Only '+selected+' companies and invoices',
-            'Только компании и счета '+selected
-          )
-        : budgetHealthText(
-            'Selected product budget and invoice overview',
-            'Обзор бюджета и счетов выбранного продукта'
-          );
-    }
-
-    if(iconEl){
-      iconEl.className=
-        'w-11 h-11 rounded-xl flex items-center justify-center shrink-0 '+
-        (selected==='BETA'
-          ? 'bg-cyan-400/10 border border-cyan-400/20 text-cyan-300'
-          : 'bg-emerald-400/10 border border-emerald-400/20 text-emerald-300');
-
-      iconEl.innerHTML=
-        '<i class="bi '+(selected==='BETA' ? 'bi-box-seam' : 'bi-layers')+'"></i>';
-    }
-
-    renderBudgetHealth(selected);
-    const m=document.getElementById('budgetHealthModal');
-    m.classList.remove('hidden');
-    m.classList.add('flex');
-  }
-
-  function closeBudgetHealthModal(){
-    const m=document.getElementById('budgetHealthModal');
-    m.classList.add('hidden');
-    m.classList.remove('flex');
-  }
-
-  function canonicalSoftwareForUi(value){
-    const v=String(value||'').trim().toUpperCase();
-    if(v==='ALPHA')return 'ALPHA';
-    if(v==='BETA')return 'BETA';
-    return v;
-  }
-
-  function budgetHealthText(en, ru){
-    return (localStorage.getItem('finflow-language') || 'ru') === 'ru'
-      ? ru
-      : en;
-  }
-
-  function renderBudgetHealth(selectedSoftware){
-    const tbody=document.getElementById('budgetHealthTbody');
-    const selected = selectedSoftware
-      ? canonicalSoftwareForUi(selectedSoftware)
-      : null;
-    if(!tbody)return;
-
-    let totalBudget=0;
-    let totalSpent=0;
-    let totalRemaining=0;
-    const companies=new Set();
-    let html='';
-
-    document.querySelectorAll('.company-card').forEach(card=>{
-      const companyId=Number(card.dataset.companyId);
-      const companyName=card.dataset.companyTitle || '—';
-
-      const companyInvoices=allInvoices.filter(
-        x=>x.company_id===companyId
-      );
-
-      const softwareRows=[
-        {
-          software:'ALPHA',
-          budget:Number(card.dataset.alphaBudget||0)
-        },
-        {
-          software:'BETA',
-          budget:Number(card.dataset.betaBudget||0)
-        }
-      ].filter(row => !selected || row.software === selected);
-
-      /*
-       * Preserve legacy / historical invoice products that are not
-       * currently represented by an ALPHA/BETA budget.
-       */
-      const knownSoftware=new Set(['ALPHA','BETA']);
-
-      companyInvoices.forEach(inv=>{
-        const canonical=canonicalSoftwareForUi(inv.software);
-
-        if(selected && canonical !== selected)return;
-
-        if(!knownSoftware.has(canonical)){
-          softwareRows.push({
-            software:inv.software || 'LEGACY',
-            budget:0,
-            legacy:true
-          });
-          knownSoftware.add(canonical);
-        }
-      });
-
-      softwareRows.forEach(row=>{
-        const software=row.software;
-        const canonical=canonicalSoftwareForUi(software);
-        const budget=Number(row.budget||0);
-
-        const productInvoices=companyInvoices.filter(
-          x=>canonicalSoftwareForUi(x.software)===canonical
-        );
-
-        const activeInvoices=productInvoices.filter(
-          x=>x.status!=='CANCELLED'
-        );
-
-        const spent=activeInvoices.reduce(
-          (sum,x)=>sum+Number(x.amount||0),0
-        );
-
-        /*
-         * Legacy products have no budget in the current budget model.
-         * Their invoice history is still displayed, but they do not
-         * artificially create budget/remaining values.
-         */
-        const remaining=budget-spent;
-
-        const hasData =
-          budget>0 ||
-          productInvoices.length>0 ||
-          card.dataset[
-            'has'+software.charAt(0)+software.slice(1).toLowerCase()
-          ] === '1';
-
-        if(!hasData)return;
-
-        companies.add(companyId);
-
-        /*
-         * Only ALPHA/BETA budgets participate in budget totals.
-         * Legacy invoice amounts are shown in history but are not
-         * added to the current budget utilization totals.
-         */
-        if(!row.legacy){
-          totalBudget+=budget;
-          totalSpent+=spent;
-          totalRemaining+=remaining;
-        }
-
-        const pct=budget>0 ? (spent/budget*100) : 0;
-
-        const remainingClass=
-          row.legacy ? 'text-slate-400' :
-          remaining<0 ? 'text-rose-400' :
-          pct>=85 ? 'text-amber-300' :
-          'text-emerald-300';
-
-        const invoiceHtml=productInvoices.length
-          ? productInvoices.map(x=>{
-              const cancelled=x.status==='CANCELLED';
-
-              const reason=x.cancellation_reason
-                ? `<div class="text-[9px] text-slate-600 mt-0.5">${escapeHtml(x.cancellation_reason)}</div>`
-                : '';
-
-              return `<div class="mb-1 ${
-                cancelled
-                  ? 'text-slate-600 line-through'
-                  : 'text-slate-300'
-              }">
-                <span class="font-bold">#${escapeHtml(x.invoice_number)}</span>
-                <span class="ml-1">${euro(x.amount)}</span>
-                ${
-                  cancelled
-                    ? '<span class="ml-1 text-[9px] text-rose-400 no-underline">CANCELLED</span>'
-                    : ''
-                }
-                ${reason}
-              </div>`;
-            }).join('')
-          : '<span class="text-slate-600">—</span>';
-
-        let status;
-
-        if(row.legacy){
-          status=budgetHealthText('<span class="px-2 py-1 rounded-md bg-slate-400/10 text-slate-400 text-[10px] font-black">HISTORY</span>','<span class="px-2 py-1 rounded-md bg-slate-400/10 text-slate-400 text-[10px] font-black">ИСТОРИЯ</span>');
-        }else if(remaining<0){
-          status=budgetHealthText('<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">OVER BUDGET</span>','<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">ПРЕВЫШЕНИЕ БЮДЖЕТА</span>');
-        }else if(pct>=85){
-          status=budgetHealthText('<span class="px-2 py-1 rounded-md bg-amber-400/10 text-amber-300 text-[10px] font-black">HIGH USAGE</span>','<span class="px-2 py-1 rounded-md bg-amber-400/10 text-amber-300 text-[10px] font-black">ВЫСОКАЯ ЗАГРУЗКА</span>');
-        }else{
-          status=budgetHealthText('<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">HEALTHY</span>','<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">В НОРМЕ</span>');
-        }
-
-        const productBadgeClass=
-          canonical==='ALPHA'
-            ? 'bg-emerald-400/10 text-emerald-300'
-            : canonical==='BETA'
-              ? 'bg-cyan-400/10 text-cyan-300'
-              : 'bg-slate-400/10 text-slate-300';
-
-        html += `
-          <tr class="hover:bg-slate-800/30">
-            <td class="px-4 py-3 font-black">${escapeHtml(companyName)}</td>
-
-            <td class="px-4 py-3">
-              <span class="px-2 py-1 rounded-md text-[10px] font-black ${productBadgeClass}">
-                ${escapeHtml(software)}
-              </span>
-            </td>
-
-            <td class="px-4 py-3 text-right font-bold">
-              ${row.legacy ? '<span class="text-slate-600">—</span>' : euro(budget)}
-            </td>
-
-            <td class="px-4 py-3 text-right font-bold">
-              ${euro(spent)}
-            </td>
-
-            <td class="px-4 py-3 text-right font-black ${remainingClass}">
-              ${row.legacy ? '<span class="text-slate-600">—</span>' : euro(remaining)}
-            </td>
-
-            <td class="px-4 py-3 text-xs">
-              ${invoiceHtml}
-            </td>
-
-            <td class="px-4 py-3">
-              ${status}
-            </td>
-          </tr>`;
-      });
-    });
-
-    if(!html){
-      html='<tr><td colspan="7" class="px-4 py-12 text-center text-slate-600">'+budgetHealthText('No budget data','Нет данных по бюджету')+'</td></tr>';
-    }
-
-    tbody.innerHTML=html;
-
-    document.getElementById('budgetHealthCompanies').textContent=companies.size;
-    document.getElementById('budgetHealthTotalBudget').textContent=euro(totalBudget);
-    document.getElementById('budgetHealthTotalSpent').textContent=euro(totalSpent);
-
-    const totalRemainingEl=document.getElementById('budgetHealthTotalRemaining');
-
-    totalRemainingEl.textContent=euro(totalRemaining);
-
-    totalRemainingEl.className=
-      'text-2xl font-black mt-1 '+
-      (totalRemaining<0 ? 'text-rose-400' : 'text-emerald-300');
-  }
-
-  async function exportBudgetHealthPng(){
-    const target=document.getElementById('budgetHealthExport');
-
-    if(!target || typeof html2canvas==='undefined'){
-      alert('PNG export is unavailable.');
-      return;
-    }
-
-    try{
-      const canvas=await html2canvas(target,{
-        backgroundColor:'#020617',
-        scale:2,
-        useCORS:true,
-        logging:false
-      });
-
-      const link=document.createElement('a');
-
-      const stamp=new Date().toISOString()
-        .replace(/[:.]/g,'-')
-        .replace('T','_')
-        .replace('Z','');
-
-      link.download='finflow_budget_health_'+stamp+'.png';
-      link.href=canvas.toDataURL('image/png');
-      link.click();
-
-    }catch(err){
-      console.error(err);
-      alert('Could not save PNG.');
-    }
-  }
-
-  document.querySelectorAll('#product-ALPHA, #product-BETA').forEach(card=>{
-    card.style.cursor='pointer';
-    card.title='Click to view full budget overview';
-
-    card.addEventListener('click',function(e){
-      if(e.target.closest('button,a,input,select,textarea'))return;
-      openBudgetHealthModal(
-        card.id === 'product-ALPHA' ? 'ALPHA' :
-        card.id === 'product-BETA' ? 'BETA' :
-        null
-      );
-    });
-  });
-
-  document.getElementById('budgetHealthModal')?.addEventListener('click',function(e){
-    if(e.target===this)closeBudgetHealthModal();
-  });
-
-</script>
-
-<script>
-(function () {
-    const translations = {
-        ru: {
-            "FinFlow — Financial Control": "FinFlow — Финансовый контроль",
-            "FinFlow": "FinFlow",
-            "Control": "Контроль",
-            "Financial control platform": "Платформа финансового контроля",
-            "Financial overview": "Финансовый обзор",
-
-            "Financial control for contracts, invoices & budgets": "Финансовый контроль договоров, счетов и бюджетов",
-            "Know where your budget stands.": "Контролируйте состояние бюджета.",
-            "Track contract budgets, invoices and remaining spend in one place — with early warnings before a budget becomes a problem.": "Контролируйте бюджеты договоров, счета и остаток средств в одном месте — с ранними предупреждениями о рисках.",
-
-            "Add invoice": "Добавить счёт",
-            "Create invoice": "Создать счёт",
-            "Create invoice PDF": "Создать счёт PDF",
-
-            "Notifications": "Уведомления",
-            "Recent system alerts": "Последние системные события",
-            "Mark all as read": "Прочитать все",
-            "All clear": "Всё чисто",
-            "No active notifications.": "Нет активных уведомлений.",
-            "Mark as read": "Отметить прочитанным",
-
-            "Analytics": "Аналитика",
-            "Audit Log": "Журнал аудита",
-
-            "Total budget": "Общий бюджет",
-            "All active products": "Все активные продукты",
-            "Invoiced": "Выставлено счетов",
-            "Recorded spend": "Учтённые расходы",
-            "Remaining": "Остаток",
-            "Available budget": "Доступный бюджет",
-            "Utilization": "Использование",
-            "Budget consumed": "Использовано бюджета",
-
-            "Attention needed": "Требуется внимание",
-            "Issues that may affect contract or budget control.": "Проблемы, которые могут повлиять на контроль договоров или бюджета.",
-            "Everything looks healthy": "Всё в порядке",
-            "No budgets above 80% and no contracts ending within 30 days.": "Нет бюджетов выше 80% и договоров, заканчивающихся в ближайшие 30 дней.",
-
-            "Financial Analytics": "Финансовая аналитика",
-            "FINANCIAL ANALYTICS": "ФИНАНСОВАЯ АНАЛИТИКА",
-            "Financial control dashboard": "Панель финансового контроля",
-            "A compact view of budget utilization, invoice exposure and spending trends.": "Компактный обзор использования бюджета, выставленных счетов и динамики расходов.",
-            "Live dashboard": "Данные в реальном времени",
-            "Overall utilization": "Общее использование",
-            "Invoiced amount against total budget": "Выставленная сумма относительно общего бюджета",
-            "of total budget": "от общего бюджета",
-            "Exposure": "Объём обязательств",
-
-            "Budget": "Бюджет",
-            "Budget utilization": "Использование бюджета",
-            "Budget health": "Состояние бюджета",
-            "Budget overview": "Обзор бюджета",
-            "Selected product budget and invoice overview": "Обзор бюджета и счетов выбранного продукта",
-            "Remaining budget by company": "Остаток бюджета по компаниям",
-            "Click for detailed overview": "Нажмите для подробного обзора",
-            "Click to view full budget overview": "Нажмите, чтобы посмотреть полный обзор бюджета",
-            "View details": "Подробнее",
-
-            "Budget exceeded": "Бюджет превышен",
-            "Budget attention": "Бюджет требует внимания",
-            "Budget almost exhausted": "Бюджет почти исчерпан",
-            "USED": "ИСПОЛЬЗОВАНО",
-            "Used": "Использовано",
-            "% used": "% использовано",
-
-            "Spend by company": "Сумма счетов по компаниям",
-            "Active invoiced amount by company.": "Сумма активных счетов по компаниям.",
-            "Companies": "Компании",
-
-            "Spend by product": "Сумма счетов по продуктам",
-            "Active invoiced amount by product.": "Сумма активных счетов по продуктам.",
-            "ALPHA · BETA": "ALPHA · BETA",
-
-            "Monthly spending": "Сумма счетов по месяцам",
-            "Active invoiced amount grouped by invoice month.": "Сумма активных счетов в разрезе месяцев выставления.",
-            "Invoice activity by date": "Динамика выставленных счетов",
-            "Timeline": "Динамика",
-            "No active invoice spending yet.": "Активных выставленных счетов пока нет.",
-
-            "Workspace": "Рабочая область",
-            "Companies & contracts": "Компании и договоры",
-            "Set budgets, review spend and spot risk at a glance.": "Устанавливайте бюджеты, контролируйте расходы и сразу замечайте риски.",
-            "Search companies...": "Поиск компаний...",
-            "Click to view invoices": "Нажмите, чтобы посмотреть счета",
-            "Contract budget (€)": "Бюджет договора (€)",
-            "Contract end": "Окончание договора",
-            "Save": "Сохранить",
-
-            "No companies yet. Create your first invoice to get started.": "Компаний пока нет. Создайте первый счёт, чтобы начать.",
-
-            "Invoice registry": "Реестр счетов",
-            "Recent invoices": "Последние счета",
-            "Search invoices...": "Поиск счетов...",
-            "Invoice": "Счёт",
-            "Invoices": "Счета",
-            "Date": "Дата",
-            "Company": "Компания",
-            "Product": "Продукт",
-            "Amount": "Сумма",
-            "Status": "Статус",
-
-            "ISSUED": "ВЫСТАВЛЕН",
-            "Issued": "Выставлен",
-            "CANCELLED": "АННУЛИРОВАН",
-            "Cancelled": "Аннулирован",
-            "PAID": "ОПЛАЧЕН",
-            "PARTIAL": "ЧАСТИЧНО",
-            "UNPAID": "НЕ ОПЛАЧЕН",
-            "OVERDUE": "ПРОСРОЧЕН",
-            "HISTORY": "ИСТОРИЯ",
-            "OVER BUDGET": "ПРЕВЫШЕНИЕ БЮДЖЕТА",
-            "HIGH USAGE": "ВЫСОКАЯ ЗАГРУЗКА",
-            "HEALTHY": "В НОРМЕ",
-
-            "Paid": "Оплачено",
-            "Outstanding": "К оплате",
-            "No invoices yet.": "Счетов пока нет.",
-            "No invoices": "Счетов нет",
-            "Total:": "Итого:",
-            "No data yet": "Данных пока нет",
-            "No budget data": "Нет данных по бюджету",
-
-            "Invoices · ": "Счета · ",
-
-            "Quickly add an invoice directly to the registry": "Быстро добавьте счёт непосредственно в реестр",
-            "Company name": "Название компании",
-            "Software Product": "Программный продукт",
-            "Invoice number": "Номер счёта",
-            "Invoice date": "Дата счёта",
-            "Completion date": "Дата окончания",
-            "Amount (€)": "Сумма (€)",
-            "Save to Registry": "Сохранить в реестр",
-
-            "Edit invoice": "Редактировать счёт",
-            "Cancel invoice": "Аннулировать счёт",
-            "Update payment": "Обновить оплату",
-            "Cancel": "Аннулировать",
-            "Close": "Закрыть",
-            "Edit": "Редактировать",
-
-            "Cancellation reason:": "Причина аннулирования:",
-            "Cancellation reason is required.": "Необходимо указать причину аннулирования.",
-            "Cancel this invoice? It will remain in the registry as CANCELLED.": "Аннулировать этот счёт? Он останется в реестре со статусом «АННУЛИРОВАН».",
-            "Cancelled invoices cannot be edited": "Аннулированные счета нельзя редактировать",
-            "Cancelled invoices cannot be edited.": "Аннулированные счета нельзя редактировать.",
-            "Cancelled invoices remain in history but are excluded from active spend and remaining budget.": "Аннулированные счета остаются в истории, но не учитываются в активных расходах и остатке бюджета.",
-
-            "Cancellation failed": "Не удалось аннулировать счёт",
-            "Payment update failed": "Не удалось обновить оплату",
-            "Save failed": "Не удалось сохранить",
-            "Save failed.": "Не удалось сохранить.",
-            "Could not save invoice.": "Не удалось сохранить счёт.",
-            "PNG export is unavailable.": "Экспорт PNG недоступен.",
-            "Could not save PNG.": "Не удалось сохранить PNG.",
-
-            "Save PNG": "Сохранить PNG",
-            "Active invoiced": "Активно выставлено",
-
-            "Invoice Generator": "Генератор счетов",
-            "Client / Company Name": "Название клиента / компании",
-            "Payment Terms": "Условия оплаты",
-            "Notes": "Примечания",
-            "Terms": "Условия",
-            "Generate": "Создать",
-            "Draft": "Черновик",
-            "Notes - any relevant information not already covered": "Примечания — дополнительная информация",
-            "Terms - late fees, payment methods, delivery schedules": "Условия — штрафы, способы оплаты, сроки поставки",
-            "Search in archive...": "Поиск в архиве..."
-        }
-    };
-
-    const originalToRussian = translations.ru;
-    const russianToEnglish = {};
-
-    Object.keys(originalToRussian).forEach(function (english) {
-        russianToEnglish[originalToRussian[english]] = english;
-    });
-
-    function getLang() {
-        return localStorage.getItem("finflow-language") || "ru";
-    }
-
-    function setLang(lang) {
-        localStorage.setItem("finflow-language", lang);
-        applyLanguage(lang);
-
-        // Keep dynamic Notification Center content synchronized
-        // with the global RU/EN language switcher.
-        if (typeof renderNotificationCenter === "function") {
-            renderNotificationCenter();
-        }
-    }
-
-    const originalTextNodes = new WeakMap();
-
-    function sourceText(node) {
-        if (!originalTextNodes.has(node)) {
-            originalTextNodes.set(node, node.nodeValue);
-        }
-        return originalTextNodes.get(node);
-    }
-
-    function translate(value, lang) {
-        if (!value) return value;
-
-        const text = String(value);
-
-        // Exact English -> Russian
-        if (lang === "ru") {
-            if (originalToRussian[text]) {
-                return originalToRussian[text];
-            }
-
-            // Case-insensitive lookup for headings / labels
-            const lower = text.toLowerCase();
-            const englishKey = Object.keys(originalToRussian).find(function (key) {
-                return key.toLowerCase() === lower;
-            });
-
-            if (englishKey) {
-                return originalToRussian[englishKey];
-            }
-
-            // Russian status / helper fallbacks
-            return text;
-        }
-
-        // Exact Russian -> English
-        if (lang === "en") {
-            if (russianToEnglish[text]) {
-                return russianToEnglish[text];
-            }
-
-            // Case-insensitive reverse lookup
-            const lower = text.toLowerCase();
-            const russianKey = Object.keys(russianToEnglish).find(function (key) {
-                return key.toLowerCase() === lower;
-            });
-
-            if (russianKey) {
-                return russianToEnglish[russianKey];
-            }
-
-            return text;
-        }
-
-        return text;
-    }
-
-    function translateSmart(value, lang) {
-        let result = translate(value, lang);
-
-        if (lang === "ru") {
-            // Statuses / compact dynamic labels
-            result = result.replace(/\bISSUED\b/gi, "ВЫСТАВЛЕН");
-            result = result.replace(/\bCANCELLED\b/gi, "АННУЛИРОВАН");
-            result = result.replace(/\bPAID\b/gi, "ОПЛАЧЕН");
-            result = result.replace(/\bPARTIAL\b/gi, "ЧАСТИЧНО");
-            result = result.replace(/\bUNPAID\b/gi, "НЕ ОПЛАЧЕН");
-            result = result.replace(/\bOVERDUE\b/gi, "ПРОСРОЧЕН");
-            result = result.replace(/\bHISTORY\b/gi, "ИСТОРИЯ");
-            result = result.replace(/\bHEALTHY\b/gi, "В НОРМЕ");
-            result = result.replace(/\bHIGH USAGE\b/gi, "ВЫСОКАЯ ЗАГРУЗКА");
-            result = result.replace(/\bOVER BUDGET\b/gi, "ПРЕВЫШЕНИЕ БЮДЖЕТА");
-            result = result.replace(/\bused\b/gi, "использовано");
-            result = result.replace(/\balerts\b/gi, "предупреждений");
-
-            // Dynamic budget warning
-            result = result.replace(
-                /Budget exceeded by €([\d,.]+)/gi,
-                "Бюджет превышен на €$1"
-            );
-
-            // Dynamic utilization text
-            result = result.replace(
-                /([\d.]+)% of the budget has been invoiced\. €([\d,.]+) remains\./gi,
-                "Выставлено $1% бюджета. Остаток: €$2."
-            );
-
-            // Contract countdown
-            result = result.replace(
-                /Contract ends in (\d+) day(?:s)?/gi,
-                "До окончания договора $1 дн"
-            );
-
-        } else if (lang === "en") {
-            // Russian statuses / compact dynamic labels
-            result = result.replace(/\bВЫСТАВЛЕН\b/gi, "ISSUED");
-            result = result.replace(/\bАННУЛИРОВАН\b/gi, "CANCELLED");
-            result = result.replace(/\bОПЛАЧЕН\b/gi, "PAID");
-            result = result.replace(/\bЧАСТИЧНО\b/gi, "PARTIAL");
-            result = result.replace(/\bНЕ ОПЛАЧЕН\b/gi, "UNPAID");
-            result = result.replace(/\bПРОСРОЧЕН\b/gi, "OVERDUE");
-            result = result.replace(/\bИСТОРИЯ\b/gi, "HISTORY");
-            result = result.replace(/\bВ НОРМЕ\b/gi, "HEALTHY");
-            result = result.replace(/\bВЫСОКАЯ ЗАГРУЗКА\b/gi, "HIGH USAGE");
-            result = result.replace(/\bПРЕВЫШЕНИЕ БЮДЖЕТА\b/gi, "OVER BUDGET");
-            result = result.replace(/\bИСПОЛЬЗОВАНО\b/gi, "used");
-            result = result.replace(/\bПРЕДУПРЕЖДЕНИЙ\b/gi, "alerts");
-
-            // Dynamic budget warning
-            result = result.replace(
-                /Бюджет превышен на €([\d,.]+)/gi,
-                "Budget exceeded by €$1"
-            );
-
-            // Dynamic utilization text
-            result = result.replace(
-                /Выставлено ([\d.]+)% бюджета\. Остаток: €([\d,.]+)\./gi,
-                "$1% of the budget has been invoiced. €$2 remains."
-            );
-
-            // Contract countdown
-            result = result.replace(
-                /До окончания договора (\d+) дн/gi,
-                "Contract ends in $1 day"
-            );
-        }
-
-        return result;
-    }
-
-    function isProtected(node) {
-        return !!(
-            node.closest &&
-            node.closest(
-                '[data-finflow-no-i18n], .invoice-document, #invoiceDocument, .print-invoice'
-            )
-        );
-    }
-
-    function translateDom(root, lang) {
-        if (!root) return;
-
-        const walker = document.createTreeWalker(
-            root,
-            NodeFilter.SHOW_TEXT
-        );
-
-        const nodes = [];
-        let node;
-
-        while ((node = walker.nextNode())) {
-            nodes.push(node);
-        }
-
-        nodes.forEach(function (textNode) {
-            if (isProtected(textNode.parentElement)) return;
-
-            const original = sourceText(textNode);
-            const trimmed = original.trim();
-
-            if (!trimmed) return;
-
-            const translated = translateSmart(trimmed, lang);
-
-            if (translated !== trimmed) {
-                textNode.nodeValue =
-                    original.replace(trimmed, translated);
-            } else {
-                textNode.nodeValue = original;
-            }
-        });
-
-        root.querySelectorAll &&
-        root.querySelectorAll(
-            "input, textarea, select, button, [title], [aria-label]"
-        ).forEach(function (el) {
-            if (el.closest &&
-                el.closest('[data-finflow-no-i18n], .invoice-document, #invoiceDocument, .print-invoice')) {
-                return;
-            }
-
-            ["placeholder", "title", "aria-label"].forEach(function (attr) {
-                if (!el.hasAttribute(attr)) return;
-
-                const marker = "data-finflow-original-" + attr;
-
-                if (!el.hasAttribute(marker)) {
-                    el.setAttribute(marker, el.getAttribute(attr));
-                }
-
-                const original = el.getAttribute(marker);
-                el.setAttribute(attr, translateSmart(original, lang));
-            });
-        });
-    }
-
-    function updateSwitcher(lang) {
-        const button = document.getElementById("finflow-lang-button");
-        if (!button) return;
-
-        button.textContent = lang === "ru" ? "RU" : "EN";
-        button.setAttribute(
-            "aria-label",
-            lang === "ru"
-                ? "Switch language to English"
-                : "Переключить язык на русский"
-        );
-        button.title =
-            lang === "ru"
-                ? "Switch to English"
-                : "Переключить на русский";
-    }
-
-    function applyLanguage(lang) {
-        document.documentElement.lang = lang;
-        translateDom(document.body, lang);
-        updateSwitcher(lang);
-
-        // Keep dynamic UI synchronized with the global language switcher.
-        if (typeof renderNotificationCenter === "function") {
-            renderNotificationCenter();
-        }
-
-        if (typeof updateSummaryCards === "function") {
-            updateSummaryCards();
-        }
-
-        if (typeof updateProductCardMetrics === "function") {
-            updateProductCardMetrics();
-        }
-    }
-
-    function addLanguageSwitcher() {
-        if (document.getElementById("finflow-lang-button")) return;
-
-        const button = document.createElement("button");
-        button.id = "finflow-lang-button";
-        button.type = "button";
-        button.className =
-            "inline-flex items-center justify-center min-w-[42px] h-[42px] px-2.5 rounded-xl border border-slate-700/70 bg-slate-900/60 text-slate-300 text-[11px] font-black transition hover:border-emerald-400/35 hover:bg-slate-900/90 hover:text-white";
-
-        button.addEventListener("click", function () {
-            setLang(getLang() === "ru" ? "en" : "ru");
-        });
-
-        const userMenu = document.getElementById("ff-user-menu");
-
-        if (userMenu && userMenu.parentElement) {
-            userMenu.parentElement.insertBefore(button, userMenu);
-        } else {
-            document.body.appendChild(button);
-        }
-
-        updateSwitcher(getLang());
-    }
-
-    const originalAlert = window.alert;
-    const originalConfirm = window.confirm;
-    const originalPrompt = window.prompt;
-
-    window.alert = function (message) {
-        return originalAlert(
-            translateSmart(String(message), getLang())
-        );
-    };
-
-    window.confirm = function (message) {
-        return originalConfirm(
-            translateSmart(String(message), getLang())
-        );
-    };
-
-    window.prompt = function (message, defaultValue) {
-        return originalPrompt(
-            translateSmart(String(message), getLang()),
-            defaultValue
-        );
-    };
-
-    const observer = new MutationObserver(function (mutations) {
-        const lang = getLang();
-
-        mutations.forEach(function (mutation) {
-            mutation.addedNodes.forEach(function (node) {
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                    translateDom(node, lang);
-                }
-            });
-        });
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        addLanguageSwitcher();
-        applyLanguage(getLang());
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    });
-})();
 
 /* ============================================================
    FinFlow Financial Analytics
@@ -4753,8 +3677,326 @@ function renderFinFlowAnalytics(){
     renderAnalyticsMonthly();
 }
 
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.company-card').forEach(c=>{const sw=c.querySelector('.sw-select')?.value;if(sw)switchSoftware(c.dataset.companyId,sw)});updateSummaryCards();updateProductCardMetrics();});
+
+  function openBudgetHealthModal(software){
+    const selected=canonicalSoftwareForUi(software);
+    const productEl=document.getElementById('budgetHealthModalProduct');
+    const descriptionEl=document.getElementById('budgetHealthModalDescription');
+    const iconEl=document.getElementById('budgetHealthModalIcon');
+
+    if(productEl){
+      productEl.textContent=selected || budgetHealthText('Budget overview');
+      productEl.className=
+        'text-xs font-black uppercase tracking-wider '+
+        (selected==='BETA' ? 'text-cyan-400' : 'text-emerald-400');
+    }
+
+    if(descriptionEl){
+      descriptionEl.textContent=selected
+        ? budgetHealthText(
+            'Only '+selected+' companies and invoices'
+          )
+        : budgetHealthText(
+            'Selected product budget and invoice overview'
+          );
+    }
+
+    if(iconEl){
+      iconEl.className=
+        'w-11 h-11 rounded-xl flex items-center justify-center shrink-0 '+
+        (selected==='BETA'
+          ? 'bg-cyan-400/10 border border-cyan-400/20 text-cyan-300'
+          : 'bg-emerald-400/10 border border-emerald-400/20 text-emerald-300');
+
+      iconEl.innerHTML=
+        '<i class="bi '+(selected==='BETA' ? 'bi-box-seam' : 'bi-layers')+'"></i>';
+    }
+
+    renderBudgetHealth(selected);
+    const m=document.getElementById('budgetHealthModal');
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+  }
+
+  function closeBudgetHealthModal(){
+    const m=document.getElementById('budgetHealthModal');
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+  }
+
+  function canonicalSoftwareForUi(value){
+    const v=String(value||'').trim().toUpperCase();
+    if(v==='ALPHA')return 'ALPHA';
+    if(v==='BETA')return 'BETA';
+    return v;
+  }
+
+  function budgetHealthText(text){
+    return typeof translate === 'function'
+      ? translate(text)
+      : text;
+  }
+
+  function renderBudgetHealth(selectedSoftware){
+    const tbody=document.getElementById('budgetHealthTbody');
+    const selected = selectedSoftware
+      ? canonicalSoftwareForUi(selectedSoftware)
+      : null;
+    if(!tbody)return;
+
+    let totalBudget=0;
+    let totalSpent=0;
+    let totalRemaining=0;
+    const companies=new Set();
+    let html='';
+
+    document.querySelectorAll('.company-card').forEach(card=>{
+      const companyId=Number(card.dataset.companyId);
+      const companyName=card.dataset.companyTitle || '—';
+
+      const companyInvoices=allInvoices.filter(
+        x=>x.company_id===companyId
+      );
+
+      const softwareRows=[
+        {
+          software:'ALPHA',
+          budget:Number(card.dataset.alphaBudget||0)
+        },
+        {
+          software:'BETA',
+          budget:Number(card.dataset.betaBudget||0)
+        }
+      ].filter(row => !selected || row.software === selected);
+
+      /*
+       * Preserve legacy / historical invoice products that are not
+       * currently represented by an ALPHA/BETA budget.
+       */
+      const knownSoftware=new Set(['ALPHA','BETA']);
+
+      companyInvoices.forEach(inv=>{
+        const canonical=canonicalSoftwareForUi(inv.software);
+
+        if(selected && canonical !== selected)return;
+
+        if(!knownSoftware.has(canonical)){
+          softwareRows.push({
+            software:inv.software || 'LEGACY',
+            budget:0,
+            legacy:true
+          });
+          knownSoftware.add(canonical);
+        }
+      });
+
+      softwareRows.forEach(row=>{
+        const software=row.software;
+        const canonical=canonicalSoftwareForUi(software);
+        const budget=Number(row.budget||0);
+
+        const productInvoices=companyInvoices.filter(
+          x=>canonicalSoftwareForUi(x.software)===canonical
+        );
+
+        const activeInvoices=productInvoices.filter(
+          x=>x.status!=='CANCELLED'
+        );
+
+        const spent=activeInvoices.reduce(
+          (sum,x)=>sum+Number(x.amount||0),0
+        );
+
+        /*
+         * Legacy products have no budget in the current budget model.
+         * Their invoice history is still displayed, but they do not
+         * artificially create budget/remaining values.
+         */
+        const remaining=budget-spent;
+
+        const hasData =
+          budget>0 ||
+          productInvoices.length>0 ||
+          card.dataset[
+            'has'+software.charAt(0)+software.slice(1).toLowerCase()
+          ] === '1';
+
+        if(!hasData)return;
+
+        companies.add(companyId);
+
+        /*
+         * Only ALPHA/BETA budgets participate in budget totals.
+         * Legacy invoice amounts are shown in history but are not
+         * added to the current budget utilization totals.
+         */
+        if(!row.legacy){
+          totalBudget+=budget;
+          totalSpent+=spent;
+          totalRemaining+=remaining;
+        }
+
+        const pct=budget>0 ? (spent/budget*100) : 0;
+
+        const remainingClass=
+          row.legacy ? 'text-slate-400' :
+          remaining<0 ? 'text-rose-400' :
+          pct>=85 ? 'text-amber-300' :
+          'text-emerald-300';
+
+        const invoiceHtml=productInvoices.length
+          ? productInvoices.map(x=>{
+              const cancelled=x.status==='CANCELLED';
+
+              const reason=x.cancellation_reason
+                ? `<div class="text-[9px] text-slate-600 mt-0.5">${escapeHtml(x.cancellation_reason)}</div>`
+                : '';
+
+              return `<div class="mb-1 ${
+                cancelled
+                  ? 'text-slate-600 line-through'
+                  : 'text-slate-300'
+              }">
+                <span class="font-bold">#${escapeHtml(x.invoice_number)}</span>
+                <span class="ml-1">${euro(x.amount)}</span>
+                ${
+                  cancelled
+                    ? '<span class="ml-1 text-[9px] text-rose-400 no-underline">CANCELLED</span>'
+                    : ''
+                }
+                ${reason}
+              </div>`;
+            }).join('')
+          : '<span class="text-slate-600">—</span>';
+
+        let status;
+
+        if(row.legacy){
+          status='<span class="px-2 py-1 rounded-md bg-slate-400/10 text-slate-400 text-[10px] font-black">HISTORY</span>';
+        }else if(remaining<0){
+          status='<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">OVER BUDGET</span>';
+        }else if(pct>=85){
+          status='<span class="px-2 py-1 rounded-md bg-amber-400/10 text-amber-300 text-[10px] font-black">HIGH USAGE</span>';
+        }else{
+          status='<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">HEALTHY</span>';
+        }
+
+        const productBadgeClass=
+          canonical==='ALPHA'
+            ? 'bg-emerald-400/10 text-emerald-300'
+            : canonical==='BETA'
+              ? 'bg-cyan-400/10 text-cyan-300'
+              : 'bg-slate-400/10 text-slate-300';
+
+        html += `
+          <tr class="hover:bg-slate-800/30">
+            <td class="px-4 py-3 font-black">${escapeHtml(companyName)}</td>
+
+            <td class="px-4 py-3">
+              <span class="px-2 py-1 rounded-md text-[10px] font-black ${productBadgeClass}">
+                ${escapeHtml(software)}
+              </span>
+            </td>
+
+            <td class="px-4 py-3 text-right font-bold">
+              ${row.legacy ? '<span class="text-slate-600">—</span>' : euro(budget)}
+            </td>
+
+            <td class="px-4 py-3 text-right font-bold">
+              ${euro(spent)}
+            </td>
+
+            <td class="px-4 py-3 text-right font-black ${remainingClass}">
+              ${row.legacy ? '<span class="text-slate-600">—</span>' : euro(remaining)}
+            </td>
+
+            <td class="px-4 py-3 text-xs">
+              ${invoiceHtml}
+            </td>
+
+            <td class="px-4 py-3">
+              ${status}
+            </td>
+          </tr>`;
+      });
+    });
+
+    if(!html){
+      html='<tr><td colspan="7" class="px-4 py-12 text-center text-slate-600">'+budgetHealthText('No budget data')+'</td></tr>';
+    }
+
+    tbody.innerHTML=html;
+
+    document.getElementById('budgetHealthCompanies').textContent=companies.size;
+    document.getElementById('budgetHealthTotalBudget').textContent=euro(totalBudget);
+    document.getElementById('budgetHealthTotalSpent').textContent=euro(totalSpent);
+
+    const totalRemainingEl=document.getElementById('budgetHealthTotalRemaining');
+
+    totalRemainingEl.textContent=euro(totalRemaining);
+
+    totalRemainingEl.className=
+      'text-2xl font-black mt-1 '+
+      (totalRemaining<0 ? 'text-rose-400' : 'text-emerald-300');
+  }
+
+  async function exportBudgetHealthPng(){
+    const target=document.getElementById('budgetHealthExport');
+
+    if(!target || typeof html2canvas==='undefined'){
+      alert('PNG export is unavailable.');
+      return;
+    }
+
+    try{
+      const canvas=await html2canvas(target,{
+        backgroundColor:'#020617',
+        scale:2,
+        useCORS:true,
+        logging:false
+      });
+
+      const link=document.createElement('a');
+
+      const stamp=new Date().toISOString()
+        .replace(/[:.]/g,'-')
+        .replace('T','_')
+        .replace('Z','');
+
+      link.download='finflow_budget_health_'+stamp+'.png';
+      link.href=canvas.toDataURL('image/png');
+      link.click();
+
+    }catch(err){
+      console.error(err);
+      alert('Could not save PNG.');
+    }
+  }
+
+  document.querySelectorAll('#product-ALPHA, #product-BETA').forEach(card=>{
+    card.style.cursor='pointer';
+    card.title='Click to view full budget overview';
+
+    card.addEventListener('click',function(e){
+      if(e.target.closest('button,a,input,select,textarea'))return;
+      openBudgetHealthModal(
+        card.id === 'product-ALPHA' ? 'ALPHA' :
+        card.id === 'product-BETA' ? 'BETA' :
+        null
+      );
+    });
+  });
+
+  document.getElementById('budgetHealthModal')?.addEventListener('click',function(e){
+    if(e.target===this)closeBudgetHealthModal();
+  });
 
 </script>
+
+
+
+<script src="/static/js/finflow-i18n.js?v=20260911-4"></script>
 
 
 <script>
@@ -4769,7 +4011,10 @@ function renderFinFlowAnalytics(){
     function closeUserMenu() {
         dropdown.classList.add("hidden");
         button.setAttribute("aria-expanded", "false");
-        if (chevron) chevron.classList.remove("rotate-180");
+
+        if (chevron) {
+            chevron.classList.remove("rotate-180");
+        }
     }
 
     function toggleUserMenu() {
@@ -4780,7 +4025,10 @@ function renderFinFlowAnalytics(){
         } else {
             dropdown.classList.remove("hidden");
             button.setAttribute("aria-expanded", "true");
-            if (chevron) chevron.classList.add("rotate-180");
+
+            if (chevron) {
+                chevron.classList.add("rotate-180");
+            }
         }
     }
 

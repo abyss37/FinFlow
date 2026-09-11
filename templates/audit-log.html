@@ -701,7 +701,7 @@
 </div>
 
 
-<script src="/static/js/finflow-i18n.js?v=20260909-dashboard-only"></script>
+<script src="/static/js/finflow-i18n.js?v=20260911-4"></script>
 <script>
 const state = {
     page: 1,
@@ -767,10 +767,10 @@ function formatDateTime(value) {
         window.finflowI18n &&
         typeof window.finflowI18n.getLanguage === "function"
             ? window.finflowI18n.getLanguage()
-            : (localStorage.getItem("finflow-language") || "ru");
+            : (localStorage.getItem("finflow-language") || "uk");
 
     return new Intl.DateTimeFormat(
-        lang === "en" ? "en-US" : "ru-RU",
+        lang === "en" ? "en-US" : "uk-UA",
         {
             year: "numeric",
             month: "short",
@@ -880,7 +880,7 @@ function localizedDescription(item) {
         window.finflowI18n &&
         typeof window.finflowI18n.getLanguage === "function"
             ? window.finflowI18n.getLanguage()
-            : (localStorage.getItem("finflow-language") || "ru");
+            : (localStorage.getItem("finflow-language") || "uk");
 
     if (lang === "en") {
         switch (action) {
@@ -1173,11 +1173,11 @@ function updatePagination(pagination) {
         window.finflowI18n &&
         typeof window.finflowI18n.getLanguage === "function"
             ? window.finflowI18n.getLanguage()
-            : (localStorage.getItem("finflow-language") || "ru");
+            : (localStorage.getItem("finflow-language") || "uk");
 
-    if (lang === "ru") {
+    if (lang === "uk") {
         els.paginationInfo.textContent =
-            `Страница ${pagination.page} из ${pagination.pages} · ${pagination.total} всего`;
+            `Сторінка ${pagination.page} з ${pagination.pages} · всього ${pagination.total}`;
     } else {
         els.paginationInfo.textContent =
             `Page ${pagination.page} of ${pagination.pages} · ${pagination.total} total`;
