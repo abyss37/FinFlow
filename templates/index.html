@@ -608,6 +608,42 @@
             letter-spacing: -.04em;
         }
 
+
+        /* Compact budget-health company list */
+        .budget-health-company-list {
+            max-height: 235px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 3px;
+            scrollbar-width: thin;
+        }
+
+        .budget-health-company-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .budget-health-company-list::-webkit-scrollbar-track {
+            background: rgba(15,23,42,.45);
+            border-radius: 999px;
+        }
+
+        .budget-health-company-list::-webkit-scrollbar-thumb {
+            background: rgba(100,116,139,.35);
+            border-radius: 999px;
+        }
+
+        .budget-health-company-row {
+            padding: 10px 11px;
+            border: 1px solid rgba(71,94,120,.20);
+            background: rgba(2,6,23,.30);
+            border-radius: 12px;
+        }
+
+        .budget-health-company-row:hover {
+            background: rgba(15,23,42,.48);
+            border-color: rgba(71,94,120,.32);
+        }
+
         .product-card-v2 .product-footer {
             display: flex;
             align-items: center;
@@ -1624,6 +1660,157 @@ input:focus-visible {
     <meta name="twitter:description" content="Financial control for contracts, invoices & budgets.">
     <meta name="twitter:image" content="https://finflow.lexxkato.win/finflow-preview.png">
 
+
+<style id="finflow-budget-health-fix">
+  /* Compact product card: only product + remaining are visible */
+  #budgetHealthProducts .product-card-v2 .budget-health-extra{
+    display:none !important;
+  }
+
+  /* Currency values must always be vertical */
+  #budgetHealthProducts .budget-health-money{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-end !important;
+    gap:2px !important;
+    white-space:nowrap !important;
+  }
+
+  #budgetHealthProducts .budget-health-money > div{
+    display:block !important;
+    width:100% !important;
+    line-height:1.25 !important;
+  }
+
+  /* Top remaining badge */
+  #budgetHealthProducts .budget-health-remaining{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-end !important;
+    gap:2px !important;
+    white-space:nowrap !important;
+  }
+
+  #budgetHealthProducts .budget-health-remaining > div{
+    display:block !important;
+    line-height:1.25 !important;
+  }
+
+  /* Utilization values inside detailed view */
+  .budget-health-utilization{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    gap:2px !important;
+  }
+
+  .budget-health-utilization > div{
+    display:block !important;
+    line-height:1.25 !important;
+  }
+</style>
+
+
+<style id="finflow-budget-health-final-fix">
+#budgetHealthProducts [id^="summary"][id$="Budget"],
+#budgetHealthProducts [id^="summary"][id$="Spent"],
+#budgetHealthProducts [id^="summary"][id$="Companies"],
+#budgetHealthProducts [id^="summary"][id$="Pct"],
+#budgetHealthProducts [id^="summary"][id$="Progress"]{
+  display:none !important;
+}
+</style>
+
+
+<style id="finflow-budget-health-modal-final">
+/* Budget Health modal: every currency value gets its own line */
+#budgetHealthModal #budgetHealthTotalBudget,
+#budgetHealthModal #budgetHealthTotalSpent,
+#budgetHealthModal #budgetHealthTotalRemaining{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-end !important;
+  gap:2px !important;
+  line-height:1.25 !important;
+}
+
+#budgetHealthModal #budgetHealthTotalBudget > *,
+#budgetHealthModal #budgetHealthTotalSpent > *,
+#budgetHealthModal #budgetHealthTotalRemaining > *{
+  display:block !important;
+  white-space:nowrap !important;
+}
+
+/* Dashboard product-card remaining */
+#budgetHealthProducts .remaining-value{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-end !important;
+  gap:2px !important;
+  line-height:1.2 !important;
+}
+
+#budgetHealthProducts .remaining-value > *{
+  display:block !important;
+  white-space:nowrap !important;
+}
+</style>
+
+
+<style id="budget-health-list-geometry">
+.budget-health-company-list {
+    height: 235px !important;
+    max-height: 235px !important;
+    min-height: 235px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 4px;
+    scrollbar-width: thin;
+}
+
+.budget-health-company-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.budget-health-company-list::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, .35);
+    border-radius: 999px;
+}
+
+.budget-health-company-list::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, .45);
+    border-radius: 999px;
+}
+
+.budget-health-company-row {
+    padding: 10px 11px;
+    border: 1px solid rgba(71, 94, 120, .20);
+    background: rgba(2, 6, 23, .30);
+    border-radius: 12px;
+    transition: background .18s ease, border-color .18s ease;
+}
+
+.budget-health-company-row:hover {
+    background: rgba(15, 23, 42, .52);
+    border-color: rgba(71, 94, 120, .38);
+}
+
+.budget-health-company-row .product-progress {
+    height: 6px;
+    min-height: 6px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(15, 23, 42, .9);
+    border: 1px solid rgba(71, 94, 120, .25);
+}
+
+.budget-health-company-row .product-progress > div {
+    height: 100%;
+    border-radius: inherit;
+    transition: width .35s ease;
+}
+</style>
+
 </head>
 <body class="text-slate-100 font-sans min-h-screen antialiased">
 <header class="sticky top-0 z-50 border-b border-slate-800/70 bg-[#07111f]/80 backdrop-blur-2xl">
@@ -1864,44 +2051,78 @@ input:focus-visible {
             <div class="ff-kpi-icon bg-emerald-400/10 border border-emerald-400/15 text-emerald-300">
                 <i class="bi bi-wallet2"></i>
             </div>
-            <div class="ff-kpi-label">Total budget</div>
-            <div class="ff-kpi-value">
-                €{{ "%.2f"|format(metrics.total_budget) }}
+            <div class="ff-kpi-label">Загальний бюджет</div>
+            <div class="ff-kpi-value space-y-1" id="dashboardTotalBudget">
+                {% if metrics.by_currency %}
+                    {% for currency, data in metrics.by_currency.items() %}
+                        <div class="block leading-tight">
+                            {{ currency_symbols.get(currency, currency) }}{{ "%.2f"|format(data.total_budget) }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    —
+                {% endif %}
             </div>
-            <div class="ff-kpi-note">All active products</div>
+            <div class="ff-kpi-note">Усі активні продукти · за валютами</div>
         </div>
 
         <div class="ff-kpi">
             <div class="ff-kpi-icon bg-cyan-400/10 border border-cyan-400/15 text-cyan-300">
                 <i class="bi bi-receipt"></i>
             </div>
-            <div class="ff-kpi-label">Invoiced</div>
-            <div class="ff-kpi-value">
-                €{{ "%.2f"|format(metrics.total_spent) }}
+            <div class="ff-kpi-label">Виставлено рахунків</div>
+            <div class="ff-kpi-value space-y-1" id="dashboardTotalSpent">
+                {% if metrics.by_currency %}
+                    {% for currency, data in metrics.by_currency.items() %}
+                        <div class="block leading-tight">
+                            {{ currency_symbols.get(currency, currency) }}{{ "%.2f"|format(data.total_spent) }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    —
+                {% endif %}
             </div>
-            <div class="ff-kpi-note">Recorded spend</div>
+            <div class="ff-kpi-note">Виставлені рахунки · за валютами</div>
         </div>
 
         <div class="ff-kpi">
-            <div class="ff-kpi-icon {{ 'bg-rose-400/10 border border-rose-400/15 text-rose-300' if metrics.remaining < 0 else 'bg-emerald-400/10 border border-emerald-400/15 text-emerald-300' }}">
-                <i class="bi {{ 'bi-exclamation-triangle' if metrics.remaining < 0 else 'bi-piggy-bank' }}"></i>
+            <div class="ff-kpi-icon bg-emerald-400/10 border border-emerald-400/15 text-emerald-300">
+                <i class="bi bi-piggy-bank"></i>
             </div>
-            <div class="ff-kpi-label">Remaining</div>
-            <div class="ff-kpi-value {{ 'text-rose-300' if metrics.remaining < 0 else 'text-emerald-300' }}">
-                €{{ "%.2f"|format(metrics.remaining) }}
+            <div class="ff-kpi-label">Залишок</div>
+            <div class="ff-kpi-value space-y-1" id="dashboardRemaining">
+                {% if metrics.by_currency %}
+                    {% for currency, data in metrics.by_currency.items() %}
+                        <div class="block leading-tight {{ 'text-rose-300' if data.remaining < 0 else 'text-emerald-300' }}">
+                            {{ currency_symbols.get(currency, currency) }}{{ "%.2f"|format(data.remaining) }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    —
+                {% endif %}
             </div>
-            <div class="ff-kpi-note">Available budget</div>
+            <div class="ff-kpi-note">Доступний бюджет · за валютами</div>
         </div>
 
         <div class="ff-kpi">
             <div class="ff-kpi-icon bg-violet-400/10 border border-violet-400/15 text-violet-300">
                 <i class="bi bi-speedometer2"></i>
             </div>
-            <div class="ff-kpi-label">Utilization</div>
-            <div class="ff-kpi-value">
-                {{ "%.1f"|format(metrics.utilization) }}%
+            <div class="ff-kpi-label">Використання</div>
+            <div class="ff-kpi-value space-y-1" id="dashboardUtilization">
+                {% if metrics.by_currency %}
+                    {% for currency, data in metrics.by_currency.items() %}
+                        {% set utilization = (data.total_spent / data.total_budget * 100) if data.total_budget else 0 %}
+                        <div class="block leading-tight">
+                            <span class="text-slate-400 text-sm">{{ currency }}</span>
+                            <span>{{ "%.1f"|format(utilization) }}%</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    —
+                {% endif %}
             </div>
-            <div class="ff-kpi-note">Budget consumed</div>
+            <div class="ff-kpi-note">Використано бюджету · за валютами</div>
         </div>
 
     </section>
@@ -1933,7 +2154,36 @@ input:focus-visible {
          ======================================================= -->
 
 
-<section class="grid lg:grid-cols-2 gap-4">
+<section class="glass rounded-2xl p-5 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+            <div>
+                <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                    Стан бюджету
+                </div>
+                <h2 class="text-xl font-black mt-1">
+                    ALPHA та BETA
+                </h2>
+                <p class="text-xs text-slate-500 mt-1">
+                    Контроль бюджету та виставлених рахунків за продуктами.
+                </p>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <label for="budgetHealthSort"
+                       class="text-[10px] uppercase tracking-wider font-bold text-slate-500 whitespace-nowrap">
+                    Сортування
+                </label>
+                <select id="budgetHealthSort"
+                        class="bg-slate-950/70 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-emerald-400">
+                    <option value="name">За алфавітом</option>
+                    <option value="date">За датою</option>
+                    <option value="amountAsc">Сума ↑</option>
+                    <option value="amountDesc">Сума ↓</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="budgetHealthProducts" class="grid lg:grid-cols-2 gap-4">
         {% for software in ['ALPHA','BETA'] %}
         <div class="glass product-card-v2 {{ 'beta' if software == 'BETA' else '' }} rounded-2xl p-5"
              id="product-{{ software }}"
@@ -1956,74 +2206,37 @@ input:focus-visible {
                                        else 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20' }}">
                                     {{ software }}
                                 </span>
-                                <span class="text-[10px] uppercase tracking-wider text-slate-600 font-bold">
-                                    Product
-                                </span>
+
                             </div>
 
-                            <h2 class="font-black text-lg mt-1">Budget health</h2>
-                            <p class="text-xs text-slate-500 mt-0.5">
-                                Remaining budget by company
-                            </p>
+
                         </div>
                     </div>
 
                     <div class="text-right">
-                        <div class="metric-label">Remaining</div>
+                        <div class="metric-label">Залишок</div>
                         <div id="summary{{ software }}Total"
                              class="remaining-value {{ 'text-cyan-300' if software == 'BETA' else 'text-emerald-300' }}">
-                            €0.00
+                            —
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-3 mt-6">
-                    <div>
-                        <div class="metric-label">Budget</div>
-                        <div id="summary{{ software }}Budget" class="metric-value">€0.00</div>
-                    </div>
-
-                    <div>
-                        <div class="metric-label">Invoiced</div>
-                        <div id="summary{{ software }}Spent" class="metric-value">€0.00</div>
-                    </div>
-
-                    <div>
-                        <div class="metric-label">Companies</div>
-                        <div id="summary{{ software }}Companies" class="metric-value">0</div>
-                    </div>
-                </div>
-
-                <div class="mt-5">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="metric-label">Budget utilization</span>
-                        <span id="summary{{ software }}Pct"
-                              class="text-[11px] font-black {{ 'text-cyan-300' if software == 'BETA' else 'text-emerald-300' }}">
-                            0%
-                        </span>
-                    </div>
-
-                    <div class="product-progress">
-                        <div id="summary{{ software }}Progress"
-                             class="{{ 'bg-cyan-400' if software == 'BETA' else 'bg-emerald-400' }}"
-                             style="width:0%">
-                        </div>
-                    </div>
-                </div>
-
-                <div id="summary{{ software }}List"
-                     class="space-y-2 max-h-64 overflow-auto mt-5">
+                <div
+                    id="summary{{ software }}List"
+                    class="budget-health-company-list mt-5 space-y-2"
+                >
                 </div>
 
                 <div class="product-footer">
                     <span class="text-[11px] text-slate-500">
                         <i class="bi bi-bar-chart-line mr-1"></i>
-                        Click for detailed overview
+                        Натисніть для детального огляду
                     </span>
 
                     <span class="text-[11px] font-black
                         {{ 'text-cyan-300' if software == 'BETA' else 'text-emerald-300' }}">
-                        View details
+                        Детальніше
                         <i class="bi bi-arrow-right ml-1"></i>
                     </span>
                 </div>
@@ -2031,22 +2244,69 @@ input:focus-visible {
             </div>
         </div>
         {% endfor %}
+        </div>
     </section>
 
     <section class="glass rounded-2xl p-5 sm:p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-            <div><div class="text-xs font-bold uppercase tracking-wider text-emerald-400">Workspace</div><h2 class="text-xl font-black mt-1">Companies & contracts</h2><p class="text-xs text-slate-500 mt-1">Set budgets, review spend and spot risk at a glance.</p></div>
-            <div class="relative sm:w-72"><i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i><input id="companyCardSearch" placeholder="Search companies..." class="w-full bg-slate-950/70 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-emerald-400"></div>
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-5">
+            <div>
+                <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                    Робоча область
+                </div>
+                <h2 class="text-xl font-black mt-1">
+                    Компанії та договори
+                </h2>
+                <p class="text-xs text-slate-500 mt-1">
+                    Бюджети, виставлені рахунки та контроль ризиків.
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+                <div class="relative sm:w-72">
+                    <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                    <input
+                        id="companyCardSearch"
+                        placeholder="Пошук компанії..."
+                        class="w-full bg-slate-950/70 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-emerald-400"
+                    >
+                </div>
+
+                <select
+                    id="companyCardSort"
+                    class="sm:w-44 bg-slate-950/70 border border-slate-700 rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-emerald-400"
+                >
+                    <option value="name">За алфавітом</option>
+                    <option value="date">За датою</option>
+                    <option value="amountAsc">Сума ↑</option>
+                    <option value="amountDesc">Сума ↓</option>
+                </select>
+            </div>
         </div>
         <div class="grid md:grid-cols-2 gap-4" id="companyCardsGrid">
         {% for c in company_cards %}
-        <div class="company-card rounded-2xl border border-slate-700/60 bg-slate-950/30 p-5" data-company-name="{{ c.name|lower }}" data-company-title="{{ c.name }}" data-company-id="{{ c.id }}" data-has-alpha="{{ '1' if c.has_alpha else '0' }}" data-has-beta="{{ '1' if c.has_beta else '0' }}" data-alpha-budget="{{ c.alpha_budget }}" data-alpha-spent="{{ c.alpha_spent }}" data-alpha-date="{{ c.alpha_date }}" data-beta-budget="{{ c.beta_budget }}" data-beta-spent="{{ c.beta_spent }}" data-beta-date="{{ c.beta_date }}" id="card-{{ c.id }}">
+        <div class="company-card rounded-2xl border border-slate-700/60 bg-slate-950/30 p-5" data-company-name="{{ c.name|lower }}" data-company-title="{{ c.name }}" data-company-id="{{ c.id }}" data-has-alpha="{{ '1' if c.has_alpha else '0' }}" data-has-beta="{{ '1' if c.has_beta else '0' }}" data-alpha-budget="{{ c.alpha_budget }}" data-alpha-spent="{{ c.alpha_spent }}" data-alpha-currency="{{ c.alpha_currency }}" data-alpha-date="{{ c.alpha_date }}" data-beta-budget="{{ c.beta_budget }}" data-beta-spent="{{ c.beta_spent }}" data-beta-currency="{{ c.beta_currency }}" data-beta-date="{{ c.beta_date }}" id="card-{{ c.id }}">
             <div class="flex items-start justify-between gap-3 company-header"><button onclick="openCompanyInvoicesModal({{ c.id }})" class="text-left min-w-0"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-emerald-400/10 text-emerald-300 flex items-center justify-center"><i class="bi bi-building"></i></div><div class="min-w-0"><div class="font-black truncate" title="{{ c.name }}">{{ c.name }}</div><div class="text-[11px] text-slate-500">Click to view invoices</div></div></div></button><select onchange="switchSoftware({{ c.id }}, this.value)" class="sw-select bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs font-black text-emerald-300 outline-none">{% if c.has_alpha %}<option value="ALPHA" {{ 'selected' if c.default_sw == 'ALPHA' }}>ALPHA</option>{% endif %}{% if c.has_beta %}<option value="BETA" {{ 'selected' if c.default_sw == 'BETA' }}>BETA</option>{% endif %}</select></div>
             <div class="mt-5 space-y-3">
-                <form action="/update_company_budget" onsubmit="saveCompanyBudget(event,this)" method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="company_id" value="{{ c.id }}"><input type="hidden" name="software" class="sw-hidden-input" value="{{ c.default_sw }}"><label class="text-[10px] uppercase tracking-wider font-bold text-slate-500">Contract budget (€)</label><div class="flex gap-2 mt-1 budget-row"><input type="number" min="0" step="0.01" name="total_amount" class="budget-input w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold outline-none focus:border-emerald-400" value="0.00"><button class="px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs">Save</button></div></form>
-                <div class="flex justify-between text-sm"><span class="text-slate-500">Invoiced</span><span class="spent-display font-bold">€0.00</span></div>
-                <div class="flex justify-between items-end"><span class="text-slate-500 text-sm">Remaining</span><span class="remainder-display text-xl font-black">€0.00</span></div>
-                <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-800"><span class="text-xs text-slate-500">Contract end</span><input type="date" onchange="saveCompanyCompletionDate({{ c.id }},this.value,this)" class="card-date-input bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs outline-none focus:border-emerald-400"></div>
+                <form action="/update_company_budget" onsubmit="saveCompanyBudget(event,this)" method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="company_id" value="{{ c.id }}"><input type="hidden" name="software" class="sw-hidden-input" value="{{ c.default_sw }}"><label class="text-[10px] uppercase tracking-wider font-bold text-slate-500">Contract budget</label><div class="flex gap-2 mt-1 budget-row"><input type="number" min="0" step="0.01" name="total_amount" class="budget-input w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold outline-none focus:border-emerald-400" value="0.00"><select name="currency" class="currency-select bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold outline-none focus:border-emerald-400"><option value="EUR">EUR €</option><option value="USD">USD $</option><option value="UAH">UAH ₴</option></select><button class="px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs">Save</button></div></form>
+                <div class="flex justify-between text-sm"><span class="text-slate-500">Invoiced</span><span class="spent-display font-bold">—</span></div>
+                <div class="flex justify-between items-end"><span class="text-slate-500 text-sm">Remaining</span><span class="remainder-display text-xl font-black">—</span></div>
+                <div class="pt-2 border-t border-slate-800">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-xs text-slate-500">Завершення договору</span>
+                        <input
+                            type="date"
+                            onchange="saveCompanyCompletionDate({{ c.id }},this.value,this)"
+                            class="card-date-input bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs outline-none focus:border-emerald-400"
+                        >
+                    </div>
+                    <div
+                        class="contract-countdown mt-2 text-[11px] font-bold flex items-center justify-end gap-1.5"
+                        data-countdown-company="{{ c.id }}"
+                    >
+                        <span class="countdown-dot w-1.5 h-1.5 rounded-full"></span>
+                        <span class="countdown-text">—</span>
+                    </div>
+                </div>
                 <div class="progress-track rounded-full h-2 overflow-hidden border border-slate-800"><div class="progress-bar-fill h-full transition-all duration-500" style="width:0%"></div></div>
                 <div class="flex justify-between text-[10px] text-slate-600"><span>0%</span><span class="usage-label">0% used</span><span>100%</span></div>
             </div>
@@ -2060,7 +2320,9 @@ input:focus-visible {
     <section class="glass rounded-2xl overflow-hidden">
         <div class="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800"><div><div class="text-xs font-bold uppercase tracking-wider text-emerald-400">Invoice registry</div><h2 class="text-xl font-black mt-1">Recent invoices <span id="mainInvoiceCount" class="text-xs align-middle px-2 py-1 rounded-full bg-slate-800 text-slate-400">{{ invoices|length }}</span></h2></div><div class="relative sm:w-72"><i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i><input id="tableSearch" placeholder="Search invoices..." class="w-full bg-slate-950/70 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-emerald-400"></div></div>
         <div class="overflow-auto max-h-[520px]"><table class="w-full text-sm" id="invoicesTable"><thead class="sticky top-0 bg-slate-950 text-slate-500 text-[10px] uppercase tracking-wider"><tr><th class="text-left px-5 py-3">Invoice</th><th class="text-left px-5 py-3">Date</th><th class="text-left px-5 py-3">Company</th><th class="text-left px-5 py-3">Product</th><th class="text-right px-5 py-3">Amount</th><th class="px-3 py-3"></th></tr></thead><tbody id="mainInvoicesTbody" class="divide-y divide-slate-800">
-        {% for inv in invoices %}<tr id="main-row-{{ inv.id }}" class="hover:bg-slate-800/40 {{ 'opacity-60' if inv.status == 'CANCELLED' else '' }}"><td class="px-5 py-3 font-black {{ 'text-slate-500 line-through' if inv.status == 'CANCELLED' else 'text-emerald-300' }}">#{{ inv.invoice_number or '—' }}</td><td class="px-5 py-3 text-slate-500 text-xs">{{ inv.invoice_date or '—' }}</td><td class="px-5 py-3 font-bold">{{ inv.company.name }}</td><td class="px-5 py-3"><span class="px-2 py-1 rounded-md text-[10px] font-black {{ 'bg-emerald-400/10 text-emerald-300' if inv.software == 'ALPHA' else 'bg-cyan-400/10 text-cyan-300' }}">{{ inv.software }}</span></td><td class="px-5 py-3 text-right font-black {{ 'text-slate-500 line-through' if inv.status == 'CANCELLED' else '' }}">€{{ "%.2f"|format(inv.amount_eur) }}</td><td class="px-3 py-3 text-center"><div class="flex items-center justify-center gap-1">{% if inv.status == 'CANCELLED' %}<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black" title="{{ inv.cancellation_reason or 'Cancelled' }}">CANCELLED</span>{% else %}<a href="{{ url_for('generator') }}?invoice_id={{ inv.id }}" class="text-slate-600 hover:text-emerald-300 p-2" title="Edit invoice"><i class="bi bi-pencil-square"></i></a><button onclick="cancelInvoice({{ inv.id }},'main')" class="text-slate-600 hover:text-rose-400 p-2" title="Cancel invoice"><i class="bi bi-x-circle"></i></button>{% endif %}</div></td></tr>{% else %}<tr><td colspan="6" class="px-5 py-12 text-center text-slate-500">No invoices yet.</td></tr>{% endfor %}
+        {% for inv in invoices %}<tr id="main-row-{{ inv.id }}" class="hover:bg-slate-800/40 {{ 'opacity-60' if inv.status == 'CANCELLED' else '' }}"><td class="px-5 py-3 font-black {{ 'text-slate-500 line-through' if inv.status == 'CANCELLED' else 'text-emerald-300' }}">#{{ inv.invoice_number or '—' }}</td><td class="px-5 py-3 text-slate-500 text-xs">{{ inv.invoice_date or '—' }}</td><td class="px-5 py-3 font-bold">{{ inv.company.name }}</td><td class="px-5 py-3"><span class="px-2 py-1 rounded-md text-[10px] font-black {{ 'bg-emerald-400/10 text-emerald-300' if inv.software == 'ALPHA' else 'bg-cyan-400/10 text-cyan-300' }}">{{ inv.software }}</span></td><td class="px-5 py-3 text-right font-black {{ 'text-slate-500 line-through' if inv.status == 'CANCELLED' else '' }}">
+    {{ currency_symbols.get(inv.currency or 'EUR', inv.currency or 'EUR') }}{{ "%.2f"|format(inv.amount_eur) }}
+</td><td class="px-3 py-3 text-center"><div class="flex items-center justify-center gap-1">{% if inv.status == 'CANCELLED' %}<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black" title="{{ inv.cancellation_reason or 'Cancelled' }}">CANCELLED</span>{% else %}<a href="{{ url_for('generator') }}?invoice_id={{ inv.id }}" class="text-slate-600 hover:text-emerald-300 p-2" title="Edit invoice"><i class="bi bi-pencil-square"></i></a><button onclick="cancelInvoice({{ inv.id }},'main')" class="text-slate-600 hover:text-rose-400 p-2" title="Cancel invoice"><i class="bi bi-x-circle"></i></button>{% endif %}</div></td></tr>{% else %}<tr><td colspan="6" class="px-5 py-12 text-center text-slate-500">No invoices yet.</td></tr>{% endfor %}
         </tbody></table></div>
     </section>
 </main>
@@ -2121,17 +2383,17 @@ input:focus-visible {
 
           <div class="budget-modal-stat">
             <div class="text-[10px] uppercase tracking-wider text-slate-500">Total budget</div>
-            <div id="budgetHealthTotalBudget" class="text-2xl font-black text-emerald-300 mt-1">€0.00</div>
+            <div id="budgetHealthTotalBudget" class="text-2xl font-black text-emerald-300 mt-1">—</div>
           </div>
 
           <div class="budget-modal-stat">
             <div class="text-[10px] uppercase tracking-wider text-slate-500">Active invoiced</div>
-            <div id="budgetHealthTotalSpent" class="text-2xl font-black text-cyan-300 mt-1">€0.00</div>
+            <div id="budgetHealthTotalSpent" class="text-2xl font-black text-cyan-300 mt-1">—</div>
           </div>
 
           <div class="budget-modal-stat">
             <div class="text-[10px] uppercase tracking-wider text-slate-500">Remaining</div>
-            <div id="budgetHealthTotalRemaining" class="text-2xl font-black mt-1">€0.00</div>
+            <div id="budgetHealthTotalRemaining" class="text-2xl font-black mt-1">—</div>
           </div>
         </div>
 
@@ -2242,9 +2504,23 @@ input:focus-visible {
                  class="w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-emerald-400">
         </div>
 
-        <div class="md:col-span-2">
+        <div>
+          <label for="quickAddCurrency" class="mb-1.5 block text-sm font-semibold text-slate-300">
+            Currency
+          </label>
+          <select id="quickAddCurrency"
+                  name="currency"
+                  required
+                  class="w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-emerald-400">
+            <option value="EUR">EUR €</option>
+            <option value="USD">USD $</option>
+            <option value="UAH">UAH ₴</option>
+          </select>
+        </div>
+
+        <div>
           <label for="quickAddAmount" class="mb-1.5 block text-sm font-semibold text-slate-300">
-            Amount (€)
+            Amount
           </label>
           <input id="quickAddAmount"
                  name="amount_eur"
@@ -2281,26 +2557,26 @@ input:focus-visible {
     <div class="grid grid-cols-3 gap-3 text-xs">
       <div>
         <div class="text-slate-500" data-i18n="Invoiced">Invoiced</div>
-        <div class="mt-1 font-black text-white">€0.00</div>
+        <div class="mt-1 font-black text-white">—</div>
       </div>
       <div>
         <div class="text-slate-500" data-i18n="Paid">Paid</div>
-        <div class="mt-1 font-black text-emerald-300">€0.00</div>
+        <div class="mt-1 font-black text-emerald-300">—</div>
       </div>
       <div>
         <div class="text-slate-500" data-i18n="Outstanding">Outstanding</div>
-        <div class="mt-1 font-black text-amber-300">€0.00</div>
+        <div class="mt-1 font-black text-amber-300">—</div>
       </div>
     </div>
   </div>
-  <span id="modalTotalSum" class="hidden">€0.00</span>
+  <span id="modalTotalSum" class="hidden">—</span>
 </div></div></div>
 
 
 
 
 <script>
-let allInvoices = [{% for inv in invoices %}{id:{{ inv.id }},company_id:{{ inv.company_id }},invoice_number:{{ (inv.invoice_number or '—')|tojson }},invoice_date:{{ (inv.invoice_date or '—')|tojson }},completion_date:{{ (inv.completion_date.isoformat() if inv.completion_date else '')|tojson }},software:{{ inv.software|tojson }},amount:{{ inv.amount_eur }},paid_amount:{{ inv.paid_amount_eur or 0 }},payment_status:{{ (inv.payment_status or 'UNPAID')|tojson }},contract_details:{{ ((inv.contract_details|parse_details) or '—')|tojson }},status:{{ inv.status|tojson }},cancelled_at:{{ (inv.cancelled_at.isoformat() if inv.cancelled_at else '')|tojson }},cancellation_reason:{{ (inv.cancellation_reason or '')|tojson }}}{% if not loop.last %},{% endif %}{% endfor %}];
+let allInvoices = [{% for inv in invoices %}{id:{{ inv.id }},company_id:{{ inv.company_id }},invoice_number:{{ (inv.invoice_number or '—')|tojson }},invoice_date:{{ (inv.invoice_date or '—')|tojson }},completion_date:{{ (inv.completion_date.isoformat() if inv.completion_date else '')|tojson }},software:{{ inv.software|tojson }},currency:{{ inv.currency|tojson }},amount:{{ inv.amount_eur }},paid_amount:{{ inv.paid_amount_eur or 0 }},payment_status:{{ (inv.payment_status or 'UNPAID')|tojson }},contract_details:{{ ((inv.contract_details|parse_details) or '—')|tojson }},status:{{ inv.status|tojson }},cancelled_at:{{ (inv.cancelled_at.isoformat() if inv.cancelled_at else '')|tojson }},cancellation_reason:{{ (inv.cancellation_reason or '')|tojson }}}{% if not loop.last %},{% endif %}{% endfor %}];
 let currentModalSoftware='ALPHA';
 
 
@@ -2791,20 +3067,115 @@ document.addEventListener('keydown', function(e){
 });
 
 
-const euro = n => `€${Number(n||0).toFixed(2)}`;
+const currencySymbols = {
+  EUR: '€',
+  USD: '$',
+  UAH: '₴'
+};
+
+function currencySymbol(currency){
+  return currencySymbols[String(currency || 'EUR').trim().toUpperCase()] || '€';
+}
+
+function moneyDisplay(value, currency){
+  return `${currencySymbol(currency)}${Number(value || 0).toFixed(2)}`;
+}
 function updateSummaryCards(){
   for(const software of ['ALPHA','BETA']){
-    let total=0, html='';
+    const byCurrency = {};
+    let html = '';
+
     document.querySelectorAll('.company-card').forEach(card=>{
-      const budget=Number(card.dataset[software.toLowerCase()+'Budget']||0), spent=Number(card.dataset[software.toLowerCase()+'Spent']||0), rem=budget-spent;
-      const has=card.dataset['has'+software.charAt(0)+software.slice(1).toLowerCase()] === '1' || budget>0 || spent>0;
-      if(!has) return; total+=rem;
-      const pct=budget>0?(spent/budget*100):0;
-      const cls=rem<0?'text-rose-400':pct>=85?'text-amber-300':'text-emerald-300';
-      html += `<div class="p-3 rounded-xl bg-slate-950/50 border border-slate-800"><div class="flex justify-between gap-3"><span class="text-xs font-bold truncate">${escapeHtml(card.dataset.companyTitle)}</span><span class="text-xs font-black ${cls}">${euro(rem)}</span></div><div class="mt-2 h-1.5 bg-slate-800 rounded-full overflow-hidden"><div class="h-full ${rem<0?'bg-rose-500':pct>=85?'bg-amber-400':'bg-emerald-400'}" style="width:${Math.min(Math.max(pct,0),100)}%"></div></div><div class="mt-1 text-[10px] text-slate-600">${pct.toFixed(0)}% used</div></div>`;
+      const key = software.toLowerCase();
+
+      const budget = Number(card.dataset[key + 'Budget'] || 0);
+      const spent = Number(card.dataset[key + 'Spent'] || 0);
+      const currency = String(
+        card.dataset[key + 'Currency'] || 'EUR'
+      ).trim().toUpperCase();
+
+      const has =
+        card.dataset[
+          'has' + software.charAt(0) + software.slice(1).toLowerCase()
+        ] === '1' ||
+        budget > 0 ||
+        spent > 0;
+
+      if(!has) return;
+
+      const rem = budget - spent;
+      const pct = budget > 0 ? (spent / budget * 100) : 0;
+
+      if(!byCurrency[currency]){
+        byCurrency[currency] = {
+          remaining: 0,
+          budget: 0,
+          spent: 0
+        };
+      }
+
+      byCurrency[currency].remaining += rem;
+      byCurrency[currency].budget += budget;
+      byCurrency[currency].spent += spent;
+
+      const cls =
+        rem < 0
+          ? 'text-rose-400'
+          : pct >= 85
+            ? 'text-amber-300'
+            : 'text-emerald-300';
+
+      html += `
+        <div class="p-3 rounded-xl bg-slate-950/50 border border-slate-800">
+          <div class="flex justify-between gap-3">
+            <span class="text-xs font-bold truncate">
+              ${escapeHtml(card.dataset.companyTitle)}
+            </span>
+            <span class="text-xs font-black ${cls}">
+              ${moneyDisplay(rem, currency)}
+            </span>
+          </div>
+
+          <div class="mt-2 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div
+              class="h-full ${
+                rem < 0
+                  ? 'bg-rose-500'
+                  : pct >= 85
+                    ? 'bg-amber-400'
+                    : 'bg-emerald-400'
+              }"
+              style="width:${Math.min(Math.max(pct,0),100)}%"
+            ></div>
+          </div>
+
+          <div class="mt-1 text-[10px] text-slate-600">
+            ${pct.toFixed(0)}% used · ${currency}
+          </div>
+        </div>
+      `;
     });
-    document.getElementById('summary'+software+'List').innerHTML=html || '<div class="text-xs text-slate-600 py-5 text-center">No data yet</div>';
-    document.getElementById('summary'+software+'Total').textContent=euro(total);
+
+    document.getElementById('summary'+software+'List').innerHTML =
+      html ||
+      '<div class="text-xs text-slate-600 py-5 text-center">No data yet</div>';
+
+    const totalEl = document.getElementById('summary'+software+'Total');
+
+    const totals = Object.entries(byCurrency);
+
+    if(!totals.length){
+      totalEl.textContent = moneyDisplay(0, 'EUR');
+    }else if(totals.length === 1){
+      const [currency, data] = totals[0];
+      totalEl.textContent = moneyDisplay(data.remaining, currency);
+    }else{
+      totalEl.innerHTML = totals
+        .map(([currency, data]) =>
+          `<span class="inline-block mr-3">${moneyDisplay(data.remaining, currency)}</span>`
+        )
+        .join('');
+    }
   }
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
@@ -2832,6 +3203,7 @@ function switchSoftware(companyId, software){
 
   const budget = Number(card.dataset[key + 'Budget'] || 0);
   const spent = Number(card.dataset[key + 'Spent'] || 0);
+  const currency = String(card.dataset[key + 'Currency'] || 'EUR').toUpperCase();
   const date = card.dataset[key + 'Date'] || '';
   const remaining = budget - spent;
   const pct = budget > 0 ? (spent / budget) * 100 : 0;
@@ -2839,6 +3211,7 @@ function switchSoftware(companyId, software){
 
   const hiddenInput = card.querySelector('.sw-hidden-input');
   const budgetInput = card.querySelector('.budget-input');
+  const currencySelect = card.querySelector('.currency-select');
   const spentDisplay = card.querySelector('.spent-display');
   const remainderDisplay = card.querySelector('.remainder-display');
   const dateInput = card.querySelector('.card-date-input');
@@ -2853,12 +3226,16 @@ function switchSoftware(companyId, software){
     budgetInput.value = budget.toFixed(2);
   }
 
+  if(currencySelect){
+    currencySelect.value = currency;
+  }
+
   if(spentDisplay){
-    spentDisplay.textContent = euro(spent);
+    spentDisplay.textContent = moneyDisplay(spent, currency);
   }
 
   if(remainderDisplay){
-    remainderDisplay.textContent = euro(remaining);
+    remainderDisplay.textContent = moneyDisplay(remaining, currency);
     remainderDisplay.className =
       'remainder-display text-xl font-black ' +
       (remaining < 0 ? 'text-rose-400' : 'text-emerald-300');
@@ -2914,6 +3291,7 @@ async function saveCompanyBudget(e, form){
     const key = software.toLowerCase();
 
     card.dataset[key + 'Budget'] = Number(data.total_amount || 0);
+    card.dataset[key + 'Currency'] = String(data.currency || 'EUR').toUpperCase();
 
     switchSoftware(companyId, software);
     updateSummaryCards();
@@ -2941,6 +3319,12 @@ async function saveCompanyCompletionDate(id, value, input){
     const formData = new FormData();
     formData.append('company_id', id);
     formData.append('software', software);
+
+    const currency = String(
+      card.dataset[software.toLowerCase() + 'Currency'] || 'EUR'
+    ).toUpperCase();
+
+    formData.append('currency', currency);
     formData.append('completion_date', value);
     formData.append('csrf_token', getCsrfToken());
 
@@ -2957,6 +3341,8 @@ async function saveCompanyCompletionDate(id, value, input){
 
     card.dataset[software.toLowerCase() + 'Date'] =
       data.completion_date || '';
+
+    updateContractCountdowns();
 
     if(input){
       input.classList.remove('border-rose-400');
@@ -3030,6 +3416,7 @@ async function updateInvoicePayment(id){
   const currentPaid = Number(item.paid_amount || 0);
   const amount = Number(item.amount || 0);
   const currentDue = Math.max(amount - currentPaid, 0);
+  const currency = String(item.currency || 'EUR').toUpperCase();
 
   const t = (key) =>
     window.finflowI18n &&
@@ -3039,9 +3426,9 @@ async function updateInvoicePayment(id){
 
   const value = prompt(
     `${t('Paid amount for invoice')} #${item.invoice_number}\n` +
-    `${t('Total')}: €${amount.toFixed(2)}\n` +
-    `${t('Currently paid')}: €${currentPaid.toFixed(2)}\n` +
-    `${t('Remaining')}: €${currentDue.toFixed(2)}\n\n` +
+    `${t('Total')}: ${moneyDisplay(amount, currency)}\n` +
+    `${t('Currently paid')}: ${moneyDisplay(currentPaid, currency)}\n` +
+    `${t('Remaining')}: ${moneyDisplay(currentDue, currency)}\n\n` +
     `${t('Enter total paid amount')}:`,
     currentPaid.toFixed(2)
   );
@@ -3057,7 +3444,7 @@ async function updateInvoicePayment(id){
 
   if(paid > amount){
     alert(
-      `${t('Paid amount cannot exceed invoice total')} (€${amount.toFixed(2)}).`
+      `${t('Paid amount cannot exceed invoice total')} (${moneyDisplay(amount, currency)}).`
     );
     return;
   }
@@ -3081,6 +3468,7 @@ async function updateInvoicePayment(id){
     if(d.invoice){
       item.paid_amount = Number(d.invoice.paid_amount_eur || 0);
       item.payment_status = d.invoice.payment_status || 'UNPAID';
+      item.currency = String(d.invoice.currency || item.currency || 'EUR').toUpperCase();
       item.amount = Number(d.invoice.amount_eur || item.amount);
     }
 
@@ -3089,6 +3477,107 @@ async function updateInvoicePayment(id){
   }catch(err){
     alert(err.message);
   }
+}
+
+function updateContractCountdowns(){
+  const today = new Date();
+  const startToday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  document.querySelectorAll('.company-card').forEach(card => {
+    const countdown = card.querySelector('.contract-countdown');
+    const text = countdown?.querySelector('.countdown-text');
+    const dot = countdown?.querySelector('.countdown-dot');
+
+    if(!countdown || !text || !dot) return;
+
+    const select = card.querySelector('.sw-select');
+    const software = select
+      ? String(select.value || '').trim().toUpperCase()
+      : '';
+
+    if(software !== 'ALPHA' && software !== 'BETA'){
+      text.textContent = '—';
+      return;
+    }
+
+    const dateValue =
+      card.dataset[software.toLowerCase() + 'Date'] || '';
+
+    countdown.className =
+      'contract-countdown mt-2 text-[11px] font-bold flex items-center justify-end gap-1.5';
+
+    dot.className =
+      'countdown-dot w-1.5 h-1.5 rounded-full';
+
+    if(!dateValue){
+      text.textContent = 'Дату не встановлено';
+      text.classList.add('text-slate-600');
+      dot.classList.add('bg-slate-600');
+      return;
+    }
+
+    const completion = new Date(dateValue + 'T00:00:00');
+
+    if(Number.isNaN(completion.getTime())){
+      text.textContent = 'Некоректна дата';
+      text.classList.add('text-rose-400');
+      dot.classList.add('bg-rose-400');
+      return;
+    }
+
+    const diffDays = Math.floor(
+      (completion - startToday) / 86400000
+    );
+
+    if(diffDays < 0){
+      const days = Math.abs(diffDays);
+
+      text.textContent =
+        days === 1
+          ? 'Договір завершено · 1 день тому'
+          : `Договір завершено · ${days} днів тому`;
+
+      text.classList.add('text-slate-500');
+      dot.classList.add('bg-slate-500');
+      return;
+    }
+
+    if(diffDays === 0){
+      text.textContent = 'Завершення сьогодні';
+      text.classList.add('text-rose-400');
+      dot.classList.add('bg-rose-400');
+      return;
+    }
+
+    if(diffDays === 1){
+      text.textContent = '1 день залишився';
+      text.classList.add('text-rose-400');
+      dot.classList.add('bg-rose-400');
+      return;
+    }
+
+    if(diffDays <= 7){
+      text.textContent = `${diffDays} днів залишилось`;
+      text.classList.add('text-orange-400');
+      dot.classList.add('bg-orange-400');
+      return;
+    }
+
+    if(diffDays <= 30){
+      text.textContent = `${diffDays} днів залишилось`;
+      text.classList.add('text-amber-300');
+      dot.classList.add('bg-amber-300');
+      return;
+    }
+
+    text.textContent = `${diffDays} днів залишилось`;
+    text.classList.add('text-emerald-300');
+    dot.classList.add('bg-emerald-400');
+  });
 }
 
 function isInvoiceOverdue(item){
@@ -3145,7 +3634,7 @@ function paymentBadge(item){
         <span class="px-2 py-0.5 rounded-md bg-emerald-400/10 text-emerald-300 font-black">
           ${t('PAID')}
         </span>
-        <span class="text-emerald-300/70">€${paid.toFixed(2)}</span>
+        <span class="text-emerald-300/70">${moneyDisplay(paid, item.currency)}</span>
       </div>`;
   }
 
@@ -3157,11 +3646,11 @@ function paymentBadge(item){
             ${t('PARTIAL')}
           </span>
           <span class="text-slate-400">
-            €${paid.toFixed(2)} ${t('paid')}
+            ${moneyDisplay(paid, item.currency)} ${t('paid')}
           </span>
         </div>
         <div class="text-right text-slate-500 mt-0.5">
-          €${due.toFixed(2)} ${t('due')}
+          ${moneyDisplay(due, item.currency)} ${t('due')}
         </div>
       </div>`;
   }
@@ -3196,9 +3685,21 @@ function openCompanyInvoicesModal(id){
   document.getElementById('modalCompanyName').textContent=company;
   document.getElementById('modalSubTitle').textContent=t('Invoices')+' · '+sw;
 
-  let total=0;
-  let paidTotal=0;
-  let dueTotal=0;
+  const totalsByCurrency = {};
+
+  function ensureModalCurrency(currency){
+    currency = String(currency || 'EUR').trim().toUpperCase();
+
+    if(!totalsByCurrency[currency]){
+      totalsByCurrency[currency] = {
+        total: 0,
+        paid: 0,
+        due: 0
+      };
+    }
+
+    return totalsByCurrency[currency];
+  }
 
   const tbody=document.getElementById('modalInvoicesTbody');
 
@@ -3208,9 +3709,12 @@ function openCompanyInvoicesModal(id){
     if(!cancelled){
       const amount=Number(x.amount||0);
       const paid=Math.min(Number(x.paid_amount||0),amount);
-      total+=amount;
-      paidTotal+=paid;
-      dueTotal+=Math.max(amount-paid,0);
+      const currency=String(x.currency || 'EUR').trim().toUpperCase();
+      const totals=ensureModalCurrency(currency);
+
+      totals.total += amount;
+      totals.paid += paid;
+      totals.due += Math.max(amount-paid,0);
     }
 
     const overdue=isInvoiceOverdue(x);
@@ -3266,7 +3770,7 @@ function openCompanyInvoicesModal(id){
       <td class="p-2 text-slate-500">${escapeHtml(x.invoice_date)}</td>
       <td class="p-2 text-right">
         <div class="font-bold ${cancelled?'text-slate-500 line-through':'text-white'}">
-          ${euro(x.amount)}
+          ${moneyDisplay(x.amount, x.currency)}
         </div>
         ${paymentBadge(x)}
       </td>
@@ -3279,7 +3783,22 @@ function openCompanyInvoicesModal(id){
     </tr>`;
   }).join(''):'<tr><td colspan="4" class="p-8 text-center text-slate-600">No invoices</td></tr>';
 
-  document.getElementById('modalTotalSum').textContent=euro(total);
+  const currencyTotals=Object.entries(totalsByCurrency);
+
+  const formatModalTotals=(field)=>{
+    if(!currencyTotals.length){
+      return moneyDisplay(0, 'EUR');
+    }
+
+    return currencyTotals
+      .map(([currency, data]) =>
+        `<span class="inline-block mr-3">${moneyDisplay(data[field], currency)}</span>`
+      )
+      .join('');
+  };
+
+  document.getElementById('modalTotalSum').innerHTML=
+    formatModalTotals('total');
 
   const footer=document.querySelector('#companyInvoicesModal [data-payment-summary]');
 
@@ -3288,15 +3807,21 @@ function openCompanyInvoicesModal(id){
       <div class="grid grid-cols-3 gap-3 text-xs">
         <div>
           <div class="text-slate-500">${t('Invoiced')}</div>
-          <div class="mt-1 font-black text-white">${euro(total)}</div>
+          <div class="mt-1 font-black text-white">
+            ${formatModalTotals('total')}
+          </div>
         </div>
         <div>
           <div class="text-slate-500">${t('Paid')}</div>
-          <div class="mt-1 font-black text-emerald-300">${euro(paidTotal)}</div>
+          <div class="mt-1 font-black text-emerald-300">
+            ${formatModalTotals('paid')}
+          </div>
         </div>
         <div>
           <div class="text-slate-500">${t('Outstanding')}</div>
-          <div class="mt-1 font-black ${dueTotal>0?'text-amber-300':'text-emerald-300'}">${euro(dueTotal)}</div>
+          <div class="mt-1 font-black text-amber-300">
+            ${formatModalTotals('due')}
+          </div>
         </div>
       </div>`;
   }
@@ -3309,47 +3834,384 @@ function closeCompanyInvoicesModal(){
   m.classList.add('hidden');
   m.classList.remove('flex');
 }
-document.getElementById('companyCardSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('.company-card').forEach(c=>c.style.display=c.dataset.companyName.includes(q)?'':'none');});
+const companySearchInput =
+  document.getElementById('companyCardSearch');
+
+if(companySearchInput){
+  companySearchInput.addEventListener('input', e => {
+    const q = e.target.value.toLowerCase().trim();
+
+    document.querySelectorAll('.company-card').forEach(card => {
+      const name = String(
+        card.dataset.companyName ||
+        card.dataset.companyTitle ||
+        ''
+      ).toLowerCase();
+
+      card.style.display =
+        name.includes(q) ? '' : 'none';
+    });
+  });
+}
+
+const budgetHealthSort =
+  document.getElementById('budgetHealthSort');
+
+if(budgetHealthSort){
+  budgetHealthSort.addEventListener(
+    'change',
+    sortBudgetHealthCards
+  );
+}
+
+const companyCardSort =
+  document.getElementById('companyCardSort');
+
+if(companyCardSort){
+  companyCardSort.addEventListener(
+    'change',
+    sortCompanyCards
+  );
+}
+
+sortBudgetHealthCards();
+sortCompanyCards();
 document.getElementById('tableSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#mainInvoicesTbody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCompanyInvoicesModal();});
+
+function sortBudgetHealthCards(){
+  const container = document.getElementById('budgetHealthProducts');
+  const select = document.getElementById('budgetHealthSort');
+
+  if(!container || !select){
+    return;
+  }
+
+  const cards = Array.from(
+    container.querySelectorAll(':scope > .product-card-v2')
+  );
+
+  const mode = select.value || 'name';
+
+  /*
+   * Build sortable metrics directly from company cards.
+   *
+   * Currency values are NEVER combined.
+   * For amount sorting we compare the largest aggregate
+   * currency bucket for each product.
+   */
+  const productMetrics = {};
+
+  ['ALPHA','BETA'].forEach(software => {
+    const key = software.toLowerCase();
+    const byCurrency = {};
+    let earliestDate = '';
+
+    document.querySelectorAll('.company-card').forEach(card => {
+      const budget = Number(
+        card.dataset[key + 'Budget'] || 0
+      );
+
+      const spent = Number(
+        card.dataset[key + 'Spent'] || 0
+      );
+
+      const currency = String(
+        card.dataset[key + 'Currency'] || 'EUR'
+      ).trim().toUpperCase();
+
+      const has =
+        card.dataset[
+          'has' +
+          software.charAt(0) +
+          software.slice(1).toLowerCase()
+        ] === '1' ||
+        budget > 0 ||
+        spent > 0;
+
+      if(!has){
+        return;
+      }
+
+      if(!byCurrency[currency]){
+        byCurrency[currency] = 0;
+      }
+
+      byCurrency[currency] += budget;
+
+      /*
+       * Contract/date sorting uses the earliest known
+       * company-card date for this product.
+       */
+      const dateCandidates = [
+        card.dataset[key + 'Date'],
+        card.dataset.contractEnd,
+        card.dataset.contractDate
+      ].filter(Boolean);
+
+      dateCandidates.forEach(value => {
+        if(!earliestDate || String(value) < String(earliestDate)){
+          earliestDate = String(value);
+        }
+      });
+    });
+
+    const amounts = Object.values(byCurrency)
+      .map(Number)
+      .filter(Number.isFinite);
+
+    productMetrics[software] = {
+      amount: amounts.length ? Math.max(...amounts) : 0,
+      date: earliestDate || '',
+      name: software
+    };
+  });
+
+  cards.sort((a, b) => {
+    const softwareA =
+      String(a.dataset.product || '').toUpperCase();
+
+    const softwareB =
+      String(b.dataset.product || '').toUpperCase();
+
+    const metricA =
+      productMetrics[softwareA] || {
+        amount: 0,
+        date: '',
+        name: softwareA
+      };
+
+    const metricB =
+      productMetrics[softwareB] || {
+        amount: 0,
+        date: '',
+        name: softwareB
+      };
+
+    if(mode === 'name'){
+      return metricA.name.localeCompare(
+        metricB.name,
+        undefined,
+        { sensitivity: 'base' }
+      );
+    }
+
+    if(mode === 'date'){
+      if(!metricA.date && !metricB.date){
+        return metricA.name.localeCompare(metricB.name);
+      }
+
+      if(!metricA.date){
+        return 1;
+      }
+
+      if(!metricB.date){
+        return -1;
+      }
+
+      const timeA = new Date(metricA.date).getTime();
+      const timeB = new Date(metricB.date).getTime();
+
+      if(Number.isFinite(timeA) && Number.isFinite(timeB)){
+        return (
+          timeA - timeB ||
+          metricA.name.localeCompare(metricB.name)
+        );
+      }
+
+      return String(metricA.date).localeCompare(
+        String(metricB.date)
+      );
+    }
+
+    if(mode === 'amountAsc'){
+      return (
+        metricA.amount - metricB.amount ||
+        metricA.name.localeCompare(metricB.name)
+      );
+    }
+
+    if(mode === 'amountDesc'){
+      return (
+        metricB.amount - metricA.amount ||
+        metricA.name.localeCompare(metricB.name)
+      );
+    }
+
+    return metricA.name.localeCompare(metricB.name);
+  });
+
+  cards.forEach(card => {
+    container.appendChild(card);
+  });
+}
+
+function sortCompanyCards(){
+  const container = document.getElementById('companyCardsGrid');
+  const select = document.getElementById('companyCardSort');
+
+  if(!container || !select) return;
+
+  const cards = Array.from(
+    container.querySelectorAll('.company-card')
+  );
+
+  const getName = card =>
+    String(
+      card.dataset.companyTitle ||
+      card.dataset.companyName ||
+      ''
+    ).trim();
+
+  const getDate = card => {
+    const dates = [
+      card.dataset.alphaDate || '',
+      card.dataset.betaDate || ''
+    ].filter(Boolean);
+
+    if(!dates.length){
+      return Number.POSITIVE_INFINITY;
+    }
+
+    const timestamps = dates
+      .map(value => new Date(value).getTime())
+      .filter(value => Number.isFinite(value));
+
+    return timestamps.length
+      ? Math.min(...timestamps)
+      : Number.POSITIVE_INFINITY;
+  };
+
+  /*
+   * Never add currencies together.
+   * For sorting we use the largest individual
+   * product budget attached to the company.
+   */
+  const getAmount = card => {
+    const amounts = [
+      Number(card.dataset.alphaBudget || 0),
+      Number(card.dataset.betaBudget || 0)
+    ].filter(value => value > 0);
+
+    return amounts.length
+      ? Math.max(...amounts)
+      : 0;
+  };
+
+  cards.sort((a,b)=>{
+    switch(select.value){
+      case 'date':
+        return getDate(a) - getDate(b);
+
+      case 'amountAsc':
+        return getAmount(a) - getAmount(b);
+
+      case 'amountDesc':
+        return getAmount(b) - getAmount(a);
+
+      case 'name':
+      default:
+        return getName(a).localeCompare(
+          getName(b),
+          'uk'
+        );
+    }
+  });
+
+  cards.forEach(card => container.appendChild(card));
+}
+
 function updateProductCardMetrics(){
   for(const software of ['ALPHA','BETA']){
-    let budgetTotal=0;
-    let spentTotal=0;
+    const byCurrency={};
     let companies=0;
+
+    const listEl=
+      document.getElementById('summary'+software+'List');
+
+    const remainingEl=
+      document.getElementById('summary'+software+'Total');
+
+    const rows=[];
 
     document.querySelectorAll('.company-card').forEach(card=>{
       const key=software.toLowerCase();
-      const budget=Number(card.dataset[key+'Budget']||0);
-      const spent=Number(card.dataset[key+'Spent']||0);
-      const has=card.dataset['has'+software.charAt(0)+software.slice(1).toLowerCase()] === '1'
-        || budget>0
-        || spent>0;
 
-      if(!has)return;
+      const budget=Number(
+        card.dataset[key+'Budget'] || 0
+      );
 
-      budgetTotal+=budget;
-      spentTotal+=spent;
+      const spent=Number(
+        card.dataset[key+'Spent'] || 0
+      );
+
+      const currency=String(
+        card.dataset[key+'Currency'] || 'EUR'
+      ).trim().toUpperCase();
+
+      const has=
+        card.dataset[
+          'has'+
+          software.charAt(0)+
+          software.slice(1).toLowerCase()
+        ] === '1' ||
+        budget > 0 ||
+        spent > 0;
+
+      if(!has){
+        return;
+      }
+
+      if(!byCurrency[currency]){
+        byCurrency[currency]={
+          budget:0,
+          spent:0,
+          remaining:0
+        };
+      }
+
+      byCurrency[currency].budget+=budget;
+      byCurrency[currency].spent+=spent;
+      byCurrency[currency].remaining+=budget-spent;
+
+      const companyName=
+        card.dataset.companyTitle ||
+        card.dataset.companyName ||
+        '—';
+
+      const remaining=budget-spent;
+
+      const pct=budget>0
+        ? (spent/budget)*100
+        : 0;
+
+      const cappedPct=Math.min(
+        Math.max(pct,0),
+        100
+      );
+
+      rows.push({
+        name:companyName,
+        budget,
+        spent,
+        remaining,
+        currency,
+        pct,
+        cappedPct,
+        date:String(
+          card.dataset[key+'Date'] || ''
+        )
+      });
+
       companies++;
     });
 
-    const remaining=budgetTotal-spentTotal;
-    const pct=budgetTotal>0 ? (spentTotal/budgetTotal*100) : 0;
-    const cappedPct=Math.min(Math.max(pct,0),100);
+    const currencies=Object.keys(byCurrency).sort();
 
-    const budgetEl=document.getElementById('summary'+software+'Budget');
-    const spentEl=document.getElementById('summary'+software+'Spent');
-    const companiesEl=document.getElementById('summary'+software+'Companies');
-    const pctEl=document.getElementById('summary'+software+'Pct');
-    const progressEl=document.getElementById('summary'+software+'Progress');
-    const remainingEl=document.getElementById('summary'+software+'Total');
-
-    if(budgetEl)budgetEl.textContent=euro(budgetTotal);
-    if(spentEl)spentEl.textContent=euro(spentTotal);
-    if(companiesEl)companiesEl.textContent=companies;
-    if(pctEl)pctEl.textContent=pct.toFixed(1)+'%';
-    if(progressEl)progressEl.style.width=cappedPct.toFixed(1)+'%';
-
+    /*
+     * Compact card: only the remaining amount belongs
+     * in the large headline area.
+     */
     if(remainingEl){
       remainingEl.classList.remove(
         'text-emerald-300',
@@ -3358,14 +4220,123 @@ function updateProductCardMetrics(){
         'text-rose-400'
       );
 
-      if(remaining<0){
-        remainingEl.classList.add('text-rose-400');
-      }else if(pct>=85){
-        remainingEl.classList.add('text-amber-300');
-      }else if(software==='BETA'){
-        remainingEl.classList.add('text-cyan-300');
+      if(!currencies.length){
+        remainingEl.innerHTML=
+          `<span class="block">${moneyDisplay(0,'EUR')}</span>`;
+
+        remainingEl.classList.add(
+          software==='BETA'
+            ? 'text-cyan-300'
+            : 'text-emerald-300'
+        );
       }else{
-        remainingEl.classList.add('text-emerald-300');
+        remainingEl.innerHTML=
+          currencies.map(currency=>{
+            const data=byCurrency[currency];
+            const pct=data.budget>0
+              ? data.spent/data.budget*100
+              : 0;
+
+            const cls=
+              data.remaining<0
+                ? 'text-rose-400'
+                : pct>=85
+                  ? 'text-amber-300'
+                  : software==='BETA'
+                    ? 'text-cyan-300'
+                    : 'text-emerald-300';
+
+            return `
+              <span class="block leading-tight ${cls}">
+                ${moneyDisplay(data.remaining,currency)}
+              </span>
+            `;
+          }).join('');
+      }
+    }
+
+    /*
+     * Company list inside the compact card.
+     *
+     * The container has a fixed maximum height via CSS,
+     * so many companies scroll inside the card instead
+     * of changing the card height.
+     */
+    if(listEl){
+      if(!rows.length){
+        listEl.innerHTML=`
+          <div class="text-xs text-slate-600 py-4 text-center">
+            Немає компаній
+          </div>
+        `;
+      }else{
+        rows.sort((a,b)=>
+          a.name.localeCompare(
+            b.name,
+            'uk',
+            {sensitivity:'base'}
+          )
+        );
+
+        listEl.innerHTML=rows.map(row=>{
+          const remainingClass=
+            row.remaining<0
+              ? 'text-rose-400'
+              : row.pct>=85
+                ? 'text-amber-300'
+                : 'text-slate-200';
+
+          const progressClass=
+            software==='BETA'
+              ? 'bg-cyan-400'
+              : 'bg-emerald-400';
+
+          return `
+            <div class="budget-health-company-row">
+
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="text-xs font-black text-slate-200 truncate"
+                       title="${String(row.name)
+                         .replace(/"/g,'&quot;')}">
+                    ${String(row.name)
+                      .replace(/</g,'&lt;')
+                      .replace(/>/g,'&gt;')}
+                  </div>
+
+                  <div class="text-[10px] text-slate-600 mt-0.5">
+                    ${moneyDisplay(row.budget,row.currency)}
+                    бюджет
+                  </div>
+                </div>
+
+                <div class="text-right shrink-0">
+                  <div class="text-[10px] uppercase tracking-wider text-slate-600">
+                    Залишок
+                  </div>
+
+                  <div class="text-sm font-black ${remainingClass}">
+                    ${moneyDisplay(row.remaining,row.currency)}
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 mt-2">
+                <div class="product-progress flex-1">
+                  <div
+                    class="${progressClass}"
+                    style="width:${row.cappedPct.toFixed(1)}%"
+                  ></div>
+                </div>
+
+                <span class="text-[10px] font-black text-slate-500 w-12 text-right">
+                  ${row.pct.toFixed(1)}%
+                </span>
+              </div>
+
+            </div>
+          `;
+        }).join('');
       }
     }
   }
@@ -3376,11 +4347,8 @@ function updateProductCardMetrics(){
    FinFlow Financial Analytics
    ============================================================ */
 
-function analyticsEuro(value){
-    return '€' + Number(value || 0).toLocaleString('en-GB', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+function analyticsMoney(value, currency){
+    return moneyDisplay(value, currency);
 }
 
 function analyticsGetInvoices(){
@@ -3394,25 +4362,115 @@ function analyticsGetInvoices(){
 }
 
 function analyticsGetCompanies(){
-    return Array.from(document.querySelectorAll('.company-card'))
-        .map(card => ({
-            name: card.dataset.companyTitle || card.dataset.companyName || 'Unknown',
-            spent:
-                Number(card.dataset.alphaSpent || 0) +
-                Number(card.dataset.betaSpent || 0)
-        }))
-        .filter(company => company.spent > 0);
+    const totals = {};
+
+    Array.from(document.querySelectorAll('.company-card')).forEach(card=>{
+        const name =
+            card.dataset.companyTitle ||
+            card.dataset.companyName ||
+            'Unknown';
+
+        const products = [
+            ['alpha', card.dataset.alphaSpent || 0, card.dataset.alphaCurrency || 'EUR'],
+            ['beta', card.dataset.betaSpent || 0, card.dataset.betaCurrency || 'EUR']
+        ];
+
+        products.forEach(([, value, rawCurrency])=>{
+            const spent = Number(value || 0);
+            if(spent <= 0) return;
+
+            const currency =
+                String(rawCurrency || 'EUR').trim().toUpperCase();
+
+            const key = name + '|' + currency;
+
+            if(!totals[key]){
+                totals[key] = {
+                    name,
+                    currency,
+                    spent: 0
+                };
+            }
+
+            totals[key].spent += spent;
+        });
+    });
+
+    return Object.values(totals);
+}
+
+function analyticsCurrencyTotals(invoices, valueGetter){
+    const totals = {};
+
+    invoices.forEach(inv=>{
+        const currency =
+            String(inv.currency || 'EUR').trim().toUpperCase();
+
+        const value = Number(valueGetter(inv) || 0);
+
+        if(!totals[currency]){
+            totals[currency] = 0;
+        }
+
+        totals[currency] += value;
+    });
+
+    return totals;
+}
+
+function analyticsFormatTotals(totals){
+    const currencies = Object.keys(totals);
+
+    if(!currencies.length){
+        return moneyDisplay(0, 'EUR');
+    }
+
+    return currencies
+        .sort()
+        .map(currency =>
+            `<span class="inline-block mr-3">${analyticsMoney(totals[currency], currency)}</span>`
+        )
+        .join('');
 }
 
 function renderAnalyticsUtilization(){
 
-    const budget = Number({{ metrics.total_budget|tojson }});
-    const spent = Number({{ metrics.total_spent|tojson }});
-    const remaining = Number({{ metrics.remaining|tojson }});
+    const invoices = analyticsGetInvoices()
+        .filter(inv => inv.status !== 'CANCELLED');
 
-    const pct = budget > 0 ? (spent / budget) * 100 : 0;
-    const visualPct = Math.min(Math.max(pct, 0), 100);
-    const degrees = visualPct * 3.6;
+    /*
+     * Dashboard metrics are legacy EUR-only values. Do not use them
+     * for multi-currency analytics because that could mix currencies.
+     *
+     * Instead, calculate budget/spent from company cards per currency.
+     */
+    const byCurrency = {};
+
+    document.querySelectorAll('.company-card').forEach(card=>{
+        [
+            ['alpha', card.dataset.alphaBudget || 0, card.dataset.alphaSpent || 0, card.dataset.alphaCurrency || 'EUR'],
+            ['beta', card.dataset.betaBudget || 0, card.dataset.betaSpent || 0, card.dataset.betaCurrency || 'EUR']
+        ].forEach(([, rawBudget, rawSpent, rawCurrency])=>{
+            const budget = Number(rawBudget || 0);
+            const spent = Number(rawSpent || 0);
+            const currency =
+                String(rawCurrency || 'EUR').trim().toUpperCase();
+
+            if(!byCurrency[currency]){
+                byCurrency[currency] = {
+                    budget: 0,
+                    spent: 0,
+                    remaining: 0
+                };
+            }
+
+            byCurrency[currency].budget += budget;
+            byCurrency[currency].spent += spent;
+            byCurrency[currency].remaining += budget - spent;
+        });
+    });
+
+    const currencies = Object.keys(byCurrency);
 
     const amount = document.getElementById('analyticsUtilizationAmount');
     const budgetEl = document.getElementById('analyticsBudget');
@@ -3421,37 +4479,108 @@ function renderAnalyticsUtilization(){
     const pctEl = document.getElementById('analyticsUtilizationPct');
     const donut = document.getElementById('analyticsDonut');
 
-    if(amount){
-        amount.textContent = analyticsEuro(spent) + ' / ' + analyticsEuro(budget);
+    if(!currencies.length){
+        if(amount) amount.textContent = moneyDisplay(0, 'EUR');
+        if(budgetEl) budgetEl.textContent = moneyDisplay(0, 'EUR');
+        if(spentEl) spentEl.textContent = moneyDisplay(0, 'EUR');
+        if(remainingEl) remainingEl.textContent = moneyDisplay(0, 'EUR');
+        if(pctEl) pctEl.textContent = '0%';
+        if(donut){
+            donut.style.background =
+                'conic-gradient(rgba(51,65,85,.55) 0deg, rgba(51,65,85,.55) 0deg)';
+        }
+        return;
     }
 
-    if(budgetEl) budgetEl.textContent = analyticsEuro(budget);
-    if(spentEl) spentEl.textContent = analyticsEuro(spent);
+    const utilization = currencies.map(currency=>{
+        const data = byCurrency[currency];
+
+        const pct =
+            data.budget > 0
+                ? (data.spent / data.budget) * 100
+                : 0;
+
+        return {
+            currency,
+            budget: data.budget,
+            spent: data.spent,
+            remaining: data.remaining,
+            pct,
+            visualPct: Math.min(Math.max(pct, 0), 100)
+        };
+    });
+
+    if(amount){
+        amount.innerHTML = utilization
+            .map(item =>
+                `<span class="inline-block mr-3">${analyticsMoney(item.spent, item.currency)} / ${analyticsMoney(item.budget, item.currency)}</span>`
+            )
+            .join('');
+    }
+
+    if(budgetEl){
+        budgetEl.innerHTML = utilization
+            .map(item => analyticsMoney(item.budget, item.currency))
+            .join(' <span class="mx-2 text-slate-600">·</span> ');
+    }
+
+    if(spentEl){
+        spentEl.innerHTML = utilization
+            .map(item => analyticsMoney(item.spent, item.currency))
+            .join(' <span class="mx-2 text-slate-600">·</span> ');
+    }
 
     if(remainingEl){
-        remainingEl.textContent = analyticsEuro(remaining);
-        remainingEl.className =
-            'font-black ' +
-            (remaining < 0 ? 'text-rose-400' : 'text-slate-200');
+        remainingEl.innerHTML = utilization
+            .map(item => {
+                const cls =
+                    item.remaining < 0
+                        ? 'text-rose-400'
+                        : 'text-slate-200';
+
+                return `<span class="inline-block mr-3 ${cls}">${analyticsMoney(item.remaining, item.currency)}</span>`;
+            })
+            .join('');
+
+        remainingEl.className = 'font-black text-slate-200';
     }
 
     if(pctEl){
-        pctEl.textContent = pct.toFixed(1) + '%';
+        pctEl.innerHTML = utilization
+            .map(item =>
+                `<span class="block leading-tight">${item.pct.toFixed(1)}% ${item.currency}</span>`
+            )
+            .join('');
 
         pctEl.className =
             'text-2xl font-black ' +
-            (pct > 100
-                ? 'text-rose-400'
-                : pct >= 85
-                    ? 'text-amber-300'
-                    : 'text-emerald-300');
+            (
+                Math.max(...utilization.map(item => item.pct)) > 100
+                    ? 'text-rose-400'
+                    : Math.max(...utilization.map(item => item.pct)) >= 85
+                        ? 'text-amber-300'
+                        : 'text-emerald-300'
+            );
     }
 
     if(donut){
+        /*
+         * One donut cannot represent several currencies.
+         * Use the highest utilization as the conservative visual
+         * indicator and show the exact per-currency percentages above.
+         */
+        const primaryPct =
+            Math.max(...utilization.map(item => item.pct));
+
+        const visualPct =
+            Math.min(Math.max(primaryPct, 0), 100);
+
+        const degrees = visualPct * 3.6;
+
         const primary =
-            pct > 100
+            primaryPct > 100
                 ? 'rgb(244 63 94)'
-                : pct >= 85
+                : primaryPct >= 85
                     ? 'rgb(251 191 36)'
                     : 'rgb(52 211 153)';
 
@@ -3475,7 +4604,10 @@ function renderAnalyticsBars(targetId, rows, emptyText){
         return;
     }
 
-    const max = Math.max(...rows.map(row => row.value), 0);
+    const max = Math.max(
+        ...rows.map(row => row.value),
+        0
+    );
 
     target.innerHTML = rows.map(row => {
 
@@ -3499,7 +4631,7 @@ function renderAnalyticsBars(targetId, rows, emptyText){
                 </div>
 
                 <div class="text-xs font-black text-slate-200 whitespace-nowrap">
-                    ${analyticsEuro(row.value)}
+                    ${analyticsMoney(row.value, row.currency)}
                 </div>
 
             </div>
@@ -3514,6 +4646,7 @@ function renderAnalyticsCompany(){
         .map(company => ({
             label: company.name,
             value: company.spent,
+            currency: company.currency,
             fillClass: 'bg-emerald-400'
         }));
 
@@ -3526,10 +4659,7 @@ function renderAnalyticsCompany(){
 
 function renderAnalyticsSoftware(){
 
-    const totals = {
-        ALPHA: 0,
-        BETA: 0
-    };
+    const totals = {};
 
     analyticsGetInvoices()
         .filter(inv => inv.status !== 'CANCELLED')
@@ -3541,29 +4671,46 @@ function renderAnalyticsSoftware(){
             const amount =
                 Number(inv.amount || 0);
 
-            /*
-             * Keep legacy "Accounting System License" under ALPHA.
-             * This matches the application's canonical software logic.
-             */
+            const currency =
+                String(inv.currency || 'EUR').trim().toUpperCase();
+
+            let product = null;
+
             if(
                 software === 'ALPHA' ||
                 software === 'ACCOUNTING SYSTEM LICENSE'
             ){
-                totals.ALPHA += amount;
+                product = 'ALPHA';
             }
 
             if(software === 'BETA'){
-                totals.BETA += amount;
+                product = 'BETA';
             }
+
+            if(!product || amount <= 0) return;
+
+            const key = product + '|' + currency;
+
+            if(!totals[key]){
+                totals[key] = {
+                    product,
+                    currency,
+                    value: 0
+                };
+            }
+
+            totals[key].value += amount;
         });
 
-    const rows = Object.entries(totals)
-        .filter(([,value]) => value > 0)
-        .sort((a,b) => b[1] - a[1])
-        .map(([label,value]) => ({
-            label,
-            value,
-            fillClass: 'bg-emerald-400'
+    const rows = Object.values(totals)
+        .sort((a,b) => b.value - a.value)
+        .map(item => ({
+            label: item.product,
+            value: item.value,
+            currency: item.currency,
+            fillClass: item.product === 'BETA'
+                ? 'bg-cyan-400'
+                : 'bg-emerald-400'
         }));
 
     renderAnalyticsBars(
@@ -3594,14 +4741,35 @@ function renderAnalyticsMonthly(){
 
             if(!/^\d{4}-\d{2}$/.test(key)) return;
 
-            monthly[key] =
-                (monthly[key] || 0) +
+            const currency =
+                String(inv.currency || 'EUR').trim().toUpperCase();
+
+            const amount =
                 Number(inv.amount || 0);
+
+            const groupKey = key + '|' + currency;
+
+            if(!monthly[groupKey]){
+                monthly[groupKey] = {
+                    key,
+                    currency,
+                    value: 0
+                };
+            }
+
+            monthly[groupKey].value += amount;
         });
 
-    const keys = Object.keys(monthly).sort();
+    const rows = Object.values(monthly)
+        .sort((a,b) => {
+            if(a.key !== b.key){
+                return a.key.localeCompare(b.key);
+            }
 
-    if(!keys.length){
+            return a.currency.localeCompare(b.currency);
+        });
+
+    if(!rows.length){
         target.innerHTML =
             '<div class="analytics-empty">' +
             'No dated invoices yet.' +
@@ -3610,17 +4778,21 @@ function renderAnalyticsMonthly(){
     }
 
     const max =
-        Math.max(...keys.map(key => monthly[key]), 0);
+        Math.max(...rows.map(row => row.value), 0);
 
-    const labels = keys.map(key => {
+    const labels = rows.map(item => {
 
-        const [year, month] = key.split('-');
+        const [year, month] = item.key.split('-');
 
         const d =
-            new Date(Number(year), Number(month) - 1, 1);
+            new Date(
+                Number(year),
+                Number(month) - 1,
+                1
+            );
 
         return {
-            key,
+            ...item,
             label: d.toLocaleDateString('en-GB', {
                 month: 'short',
                 year: '2-digit'
@@ -3633,19 +4805,17 @@ function renderAnalyticsMonthly(){
 
             ${labels.map(item => {
 
-                const value = monthly[item.key];
-
                 const height =
                     max > 0
-                        ? Math.max((value / max) * 130, 3)
+                        ? Math.max((item.value / max) * 130, 3)
                         : 3;
 
                 return `
                     <div class="analytics-month-item"
-                         title="${item.label}: ${analyticsEuro(value)}">
+                         title="${item.label}: ${analyticsMoney(item.value, item.currency)}">
 
                         <div class="analytics-month-value">
-                            ${analyticsEuro(value)}
+                            ${analyticsMoney(item.value, item.currency)}
                         </div>
 
                         <div class="analytics-month-bar bg-emerald-400"
@@ -3653,7 +4823,7 @@ function renderAnalyticsMonthly(){
                         </div>
 
                         <div class="analytics-month-label">
-                            ${item.label}
+                            ${item.label} · ${item.currency}
                         </div>
 
                     </div>
@@ -3677,7 +4847,7 @@ function renderFinFlowAnalytics(){
     renderAnalyticsMonthly();
 }
 
-document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.company-card').forEach(c=>{const sw=c.querySelector('.sw-select')?.value;if(sw)switchSoftware(c.dataset.companyId,sw)});updateSummaryCards();updateProductCardMetrics();});
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.company-card').forEach(c=>{const sw=c.querySelector('.sw-select')?.value;if(sw)switchSoftware(c.dataset.companyId,sw)});updateSummaryCards();updateProductCardMetrics();updateContractCountdowns();});
 
   function openBudgetHealthModal(software){
     const selected=canonicalSoftwareForUi(software);
@@ -3693,13 +4863,29 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
     }
 
     if(descriptionEl){
-      descriptionEl.textContent=selected
-        ? budgetHealthText(
-            'Only '+selected+' companies and invoices'
-          )
-        : budgetHealthText(
-            'Selected product budget and invoice overview'
-          );
+      if(selected){
+        const lang =
+          window.finflowI18n &&
+          typeof window.finflowI18n.getLang === 'function'
+            ? window.finflowI18n.getLang()
+            : 'uk';
+
+        const prefix = lang === 'en'
+          ? 'Only companies and invoices'
+          : 'Тільки компанії та рахунки';
+
+        descriptionEl.textContent = prefix + ' ' + selected;
+      }else{
+        const lang =
+          window.finflowI18n &&
+          typeof window.finflowI18n.getLang === 'function'
+            ? window.finflowI18n.getLang()
+            : 'uk';
+
+        descriptionEl.textContent = lang === 'en'
+          ? 'Selected product budget and invoice overview'
+          : 'Огляд бюджету вибраного продукту та рахунків';
+      }
     }
 
     if(iconEl){
@@ -3733,9 +4919,10 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
   }
 
   function budgetHealthText(text){
-    return typeof translate === 'function'
-      ? translate(text)
-      : text;
+    return window.finflowI18n &&
+      typeof window.finflowI18n.translate === 'function'
+        ? window.finflowI18n.translate(text)
+        : text;
   }
 
   function renderBudgetHealth(selectedSoftware){
@@ -3743,13 +4930,44 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
     const selected = selectedSoftware
       ? canonicalSoftwareForUi(selectedSoftware)
       : null;
+
     if(!tbody)return;
 
-    let totalBudget=0;
-    let totalSpent=0;
-    let totalRemaining=0;
+    const totalsByCurrency = {};
     const companies=new Set();
     let html='';
+
+    function ensureCurrency(currency){
+      currency=String(currency || 'EUR').trim().toUpperCase();
+
+      if(!totalsByCurrency[currency]){
+        totalsByCurrency[currency]={
+          budget:0,
+          spent:0,
+          remaining:0
+        };
+      }
+
+      return totalsByCurrency[currency];
+    }
+
+    function formatTotals(field){
+      const currencies=Object.keys(totalsByCurrency);
+
+      if(!currencies.length){
+        return moneyDisplay(0,'EUR');
+      }
+
+      return currencies
+        .sort()
+        .map(currency =>
+          `<span class="inline-block mr-3">${moneyDisplay(
+            totalsByCurrency[currency][field],
+            currency
+          )}</span>`
+        )
+        .join('');
+    }
 
     document.querySelectorAll('.company-card').forEach(card=>{
       const companyId=Number(card.dataset.companyId);
@@ -3762,17 +4980,25 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
       const softwareRows=[
         {
           software:'ALPHA',
-          budget:Number(card.dataset.alphaBudget||0)
+          budget:Number(card.dataset.alphaBudget||0),
+          currency:String(
+            card.dataset.alphaCurrency || 'EUR'
+          ).trim().toUpperCase()
         },
         {
           software:'BETA',
-          budget:Number(card.dataset.betaBudget||0)
+          budget:Number(card.dataset.betaBudget||0),
+          currency:String(
+            card.dataset.betaCurrency || 'EUR'
+          ).trim().toUpperCase()
         }
-      ].filter(row => !selected || row.software === selected);
+      ].filter(row =>
+        !selected || row.software === selected
+      );
 
       /*
        * Preserve legacy / historical invoice products that are not
-       * currently represented by an ALPHA/BETA budget.
+       * represented by an ALPHA/BETA budget.
        */
       const knownSoftware=new Set(['ALPHA','BETA']);
 
@@ -3785,8 +5011,12 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
           softwareRows.push({
             software:inv.software || 'LEGACY',
             budget:0,
+            currency:String(
+              inv.currency || 'EUR'
+            ).trim().toUpperCase(),
             legacy:true
           });
+
           knownSoftware.add(canonical);
         }
       });
@@ -3794,7 +5024,13 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
       softwareRows.forEach(row=>{
         const software=row.software;
         const canonical=canonicalSoftwareForUi(software);
+
         const budget=Number(row.budget||0);
+
+        const budgetCurrency=
+          String(
+            row.currency || 'EUR'
+          ).trim().toUpperCase();
 
         const productInvoices=companyInvoices.filter(
           x=>canonicalSoftwareForUi(x.software)===canonical
@@ -3804,14 +5040,31 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
           x=>x.status!=='CANCELLED'
         );
 
+        /*
+         * Only invoices matching the budget currency participate
+         * in utilization. Other currencies remain visible in the
+         * invoice history but cannot corrupt the budget calculation.
+         */
         const spent=activeInvoices.reduce(
-          (sum,x)=>sum+Number(x.amount||0),0
+          (sum,x)=>{
+            const invoiceCurrency=
+              String(
+                x.currency || 'EUR'
+              ).trim().toUpperCase();
+
+            if(invoiceCurrency !== budgetCurrency){
+              return sum;
+            }
+
+            return sum + Number(x.amount||0);
+          },
+          0
         );
 
         /*
-         * Legacy products have no budget in the current budget model.
-         * Their invoice history is still displayed, but they do not
-         * artificially create budget/remaining values.
+         * Legacy products have no budget in the current model.
+         * Their invoice history remains visible without creating
+         * artificial budget/utilization totals.
          */
         const remaining=budget-spent;
 
@@ -3826,24 +5079,27 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
 
         companies.add(companyId);
 
-        /*
-         * Only ALPHA/BETA budgets participate in budget totals.
-         * Legacy invoice amounts are shown in history but are not
-         * added to the current budget utilization totals.
-         */
         if(!row.legacy){
-          totalBudget+=budget;
-          totalSpent+=spent;
-          totalRemaining+=remaining;
+          const totals=ensureCurrency(budgetCurrency);
+
+          totals.budget += budget;
+          totals.spent += spent;
+          totals.remaining += remaining;
         }
 
-        const pct=budget>0 ? (spent/budget*100) : 0;
+        const pct=
+          budget>0
+            ? (spent/budget*100)
+            : 0;
 
         const remainingClass=
-          row.legacy ? 'text-slate-400' :
-          remaining<0 ? 'text-rose-400' :
-          pct>=85 ? 'text-amber-300' :
-          'text-emerald-300';
+          row.legacy
+            ? 'text-slate-400'
+            : remaining<0
+              ? 'text-rose-400'
+              : pct>=85
+                ? 'text-amber-300'
+                : 'text-emerald-300';
 
         const invoiceHtml=productInvoices.length
           ? productInvoices.map(x=>{
@@ -3853,13 +5109,18 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
                 ? `<div class="text-[9px] text-slate-600 mt-0.5">${escapeHtml(x.cancellation_reason)}</div>`
                 : '';
 
+              const invoiceCurrency=
+                String(
+                  x.currency || 'EUR'
+                ).trim().toUpperCase();
+
               return `<div class="mb-1 ${
                 cancelled
                   ? 'text-slate-600 line-through'
                   : 'text-slate-300'
               }">
                 <span class="font-bold">#${escapeHtml(x.invoice_number)}</span>
-                <span class="ml-1">${euro(x.amount)}</span>
+                <span class="ml-1">${moneyDisplay(x.amount, invoiceCurrency)}</span>
                 ${
                   cancelled
                     ? '<span class="ml-1 text-[9px] text-rose-400 no-underline">CANCELLED</span>'
@@ -3873,13 +5134,17 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
         let status;
 
         if(row.legacy){
-          status='<span class="px-2 py-1 rounded-md bg-slate-400/10 text-slate-400 text-[10px] font-black">HISTORY</span>';
+          status=
+            '<span class="px-2 py-1 rounded-md bg-slate-400/10 text-slate-400 text-[10px] font-black">HISTORY</span>';
         }else if(remaining<0){
-          status='<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">OVER BUDGET</span>';
+          status=
+            '<span class="px-2 py-1 rounded-md bg-rose-400/10 text-rose-300 text-[10px] font-black">OVER BUDGET</span>';
         }else if(pct>=85){
-          status='<span class="px-2 py-1 rounded-md bg-amber-400/10 text-amber-300 text-[10px] font-black">HIGH USAGE</span>';
+          status=
+            '<span class="px-2 py-1 rounded-md bg-amber-400/10 text-amber-300 text-[10px] font-black">HIGH USAGE</span>';
         }else{
-          status='<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">HEALTHY</span>';
+          status=
+            '<span class="px-2 py-1 rounded-md bg-emerald-400/10 text-emerald-300 text-[10px] font-black">HEALTHY</span>';
         }
 
         const productBadgeClass=
@@ -3891,7 +5156,9 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
 
         html += `
           <tr class="hover:bg-slate-800/30">
-            <td class="px-4 py-3 font-black">${escapeHtml(companyName)}</td>
+            <td class="px-4 py-3 font-black">
+              ${escapeHtml(companyName)}
+            </td>
 
             <td class="px-4 py-3">
               <span class="px-2 py-1 rounded-md text-[10px] font-black ${productBadgeClass}">
@@ -3900,15 +5167,31 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
             </td>
 
             <td class="px-4 py-3 text-right font-bold">
-              ${row.legacy ? '<span class="text-slate-600">—</span>' : euro(budget)}
+              ${
+                row.legacy
+                  ? '<span class="text-slate-600">—</span>'
+                  : moneyDisplay(budget, budgetCurrency)
+              }
             </td>
 
             <td class="px-4 py-3 text-right font-bold">
-              ${euro(spent)}
+              ${
+                moneyDisplay(
+                  spent,
+                  budgetCurrency
+                )
+              }
             </td>
 
             <td class="px-4 py-3 text-right font-black ${remainingClass}">
-              ${row.legacy ? '<span class="text-slate-600">—</span>' : euro(remaining)}
+              ${
+                row.legacy
+                  ? '<span class="text-slate-600">—</span>'
+                  : moneyDisplay(
+                      remaining,
+                      budgetCurrency
+                    )
+              }
             </td>
 
             <td class="px-4 py-3 text-xs">
@@ -3923,22 +5206,56 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.co
     });
 
     if(!html){
-      html='<tr><td colspan="7" class="px-4 py-12 text-center text-slate-600">'+budgetHealthText('No budget data')+'</td></tr>';
+      html=
+        '<tr><td colspan="7" class="px-4 py-12 text-center text-slate-600">'+
+        budgetHealthText('No budget data')+
+        '</td></tr>';
     }
 
     tbody.innerHTML=html;
 
-    document.getElementById('budgetHealthCompanies').textContent=companies.size;
-    document.getElementById('budgetHealthTotalBudget').textContent=euro(totalBudget);
-    document.getElementById('budgetHealthTotalSpent').textContent=euro(totalSpent);
+    const companiesEl=
+      document.getElementById('budgetHealthCompanies');
 
-    const totalRemainingEl=document.getElementById('budgetHealthTotalRemaining');
+    const totalBudgetEl=
+      document.getElementById('budgetHealthTotalBudget');
 
-    totalRemainingEl.textContent=euro(totalRemaining);
+    const totalSpentEl=
+      document.getElementById('budgetHealthTotalSpent');
 
-    totalRemainingEl.className=
-      'text-2xl font-black mt-1 '+
-      (totalRemaining<0 ? 'text-rose-400' : 'text-emerald-300');
+    const totalRemainingEl=
+      document.getElementById('budgetHealthTotalRemaining');
+
+    if(companiesEl){
+      companiesEl.textContent=companies.size;
+    }
+
+    if(totalBudgetEl){
+      totalBudgetEl.innerHTML=
+        formatTotals('budget');
+    }
+
+    if(totalSpentEl){
+      totalSpentEl.innerHTML=
+        formatTotals('spent');
+    }
+
+    if(totalRemainingEl){
+      totalRemainingEl.innerHTML=
+        formatTotals('remaining');
+
+      const hasNegative=
+        Object.values(totalsByCurrency)
+          .some(data=>data.remaining<0);
+
+      totalRemainingEl.className=
+        'text-2xl font-black mt-1 '+
+        (
+          hasNegative
+            ? 'text-rose-400'
+            : 'text-emerald-300'
+        );
+    }
   }
 
   async function exportBudgetHealthPng(){

@@ -163,6 +163,7 @@
             "Budget utilization": "Використання бюджету",
             "Budget health": "Стан бюджету",
             "Budget overview": "Огляд бюджету",
+            "Only companies and invoices": "Тільки компанії та рахунки",
             "Editing archive template": "Редагується шаблон з архіву",
             "Editing archive template:": "Редагується шаблон з архіву:",
             "Bank account selection": "Вибір банківських рахунків",

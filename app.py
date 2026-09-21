@@ -115,6 +115,29 @@ def canonical_software(value):
     return SOFTWARE_ALIASES.get(value, value)
 
 
+SUPPORTED_CURRENCIES = {
+    "EUR": "€",
+    "USD": "$",
+    "UAH": "₴",
+}
+
+
+def canonical_currency(value):
+    currency = (value or "EUR").strip().upper()
+
+    if currency not in SUPPORTED_CURRENCIES:
+        raise ValueError("Unsupported currency")
+
+    return currency
+
+
+def currency_symbol(value):
+    return SUPPORTED_CURRENCIES.get(
+        canonical_currency(value),
+        "€",
+    )
+
+
 def money(value, default="0.00"):
     try:
         amount = Decimal(str(value if value not in (None, "") else default))
@@ -399,6 +422,7 @@ class CompanyBudget(db.Model):
     # Numeric is intentional: PostgreSQL stores money exactly; existing SQLite DBs
     # can continue working until an explicit migration converts the column.
     total_amount = db.Column(Numeric(14, 2), default=Decimal("0.00"))
+    currency = db.Column(db.String(3), nullable=False, default="EUR")
     completion_date = db.Column(db.Date, nullable=True)
 
 
@@ -502,6 +526,7 @@ class Invoice(db.Model):
     completion_date = db.Column(db.Date, nullable=True)
     software = db.Column(db.String(50), nullable=False)
     amount_eur = db.Column(Numeric(14, 2), nullable=False)
+    currency = db.Column(db.String(3), nullable=False, default="EUR")
     contract_details = db.Column(db.Text, nullable=True)
     status = db.Column(
         db.String(20),
@@ -566,48 +591,198 @@ def migrate_legacy_software():
 
 def build_company_cards(companies):
     cards = []
+
     for company in companies:
-        budgets = {
-            b.software: b for b in company.budgets if canonical_software(b.software) in ("ALPHA", "BETA")
-        }
-        alpha_budget = budgets.get("ALPHA")
-        beta_budget = budgets.get("BETA")
-        active_invoices = [inv for inv in company.invoices if inv.status != "CANCELLED"]
-        alpha_spent = sum((money(inv.amount_eur) for inv in active_invoices if canonical_software(inv.software) == "ALPHA"), Decimal("0.00"))
-        beta_spent = sum((money(inv.amount_eur) for inv in active_invoices if canonical_software(inv.software) == "BETA"), Decimal("0.00"))
-        has_alpha = any(canonical_software(inv.software) == "ALPHA" for inv in active_invoices) or bool(alpha_budget and money(alpha_budget.total_amount) > 0)
-        has_beta = any(canonical_software(inv.software) == "BETA" for inv in active_invoices) or bool(beta_budget and money(beta_budget.total_amount) > 0)
+        active_invoices = [
+            inv for inv in company.invoices
+            if inv.status != "CANCELLED"
+        ]
+
+        software_data = {}
+
+        for software in ("ALPHA", "BETA"):
+            software_budgets = [
+                budget
+                for budget in company.budgets
+                if canonical_software(budget.software) == software
+            ]
+
+            software_invoices = [
+                inv
+                for inv in active_invoices
+                if canonical_software(inv.software) == software
+            ]
+
+            # A company/software card represents one budget.
+            # Prefer the existing budget with the highest amount.
+            # Currency is kept explicitly so EUR/USD/UAH are never mixed.
+            budget = (
+                max(
+                    software_budgets,
+                    key=lambda item: money(item.total_amount),
+                )
+                if software_budgets
+                else None
+            )
+
+            if budget:
+                currency = canonical_currency(budget.currency)
+            elif software_invoices:
+                currency = canonical_currency(software_invoices[0].currency)
+            else:
+                currency = "EUR"
+
+            spent = sum(
+                (
+                    money(inv.amount_eur)
+                    for inv in software_invoices
+                    if canonical_currency(inv.currency) == currency
+                ),
+                Decimal("0.00"),
+            )
+
+            has_software = bool(software_invoices) or bool(
+                budget and money(budget.total_amount) > 0
+            )
+
+            software_data[software] = {
+                "budget": budget,
+                "currency": currency,
+                "spent": spent,
+                "has": has_software,
+            }
+
+        alpha = software_data["ALPHA"]
+        beta = software_data["BETA"]
+
+        has_alpha = alpha["has"]
+        has_beta = beta["has"]
+
         if not has_alpha and not has_beta:
             has_alpha = True
+
         default_sw = "ALPHA" if has_alpha else "BETA"
+
         cards.append({
             "id": company.id,
             "name": company.name,
+
             "has_alpha": has_alpha,
             "has_beta": has_beta,
             "default_sw": default_sw,
-            "alpha_budget": money_float(alpha_budget.total_amount) if alpha_budget else 0,
-            "alpha_spent": money_float(alpha_spent),
-            "alpha_date": alpha_budget.completion_date.isoformat() if alpha_budget and alpha_budget.completion_date else "",
-            "beta_budget": money_float(beta_budget.total_amount) if beta_budget else 0,
-            "beta_spent": money_float(beta_spent),
-            "beta_date": beta_budget.completion_date.isoformat() if beta_budget and beta_budget.completion_date else "",
+
+            "alpha_budget": (
+                money_float(alpha["budget"].total_amount)
+                if alpha["budget"] else 0
+            ),
+            "alpha_spent": money_float(alpha["spent"]),
+            "alpha_currency": alpha["currency"],
+            "alpha_symbol": currency_symbol(alpha["currency"]),
+            "alpha_date": (
+                alpha["budget"].completion_date.isoformat()
+                if alpha["budget"] and alpha["budget"].completion_date
+                else ""
+            ),
+
+            "beta_budget": (
+                money_float(beta["budget"].total_amount)
+                if beta["budget"] else 0
+            ),
+            "beta_spent": money_float(beta["spent"]),
+            "beta_currency": beta["currency"],
+            "beta_symbol": currency_symbol(beta["currency"]),
+            "beta_date": (
+                beta["budget"].completion_date.isoformat()
+                if beta["budget"] and beta["budget"].completion_date
+                else ""
+            ),
         })
+
     return cards
 
 
 
-
 def dashboard_metrics(company_cards, invoices):
-    total_budget = sum((Decimal(str(c["alpha_budget"])) + Decimal(str(c["beta_budget"])) for c in company_cards), Decimal("0.00"))
-    total_spent = sum((money(inv.amount_eur) for inv in invoices if inv.status != "CANCELLED"), Decimal("0.00"))
-    remaining = total_budget - total_spent
-    utilization = (total_spent / total_budget * 100) if total_budget > 0 else Decimal("0")
+    """
+    Calculate financial metrics separately for each currency.
+
+    EUR, USD and UAH must never be summed together because they are
+    different monetary units.
+    """
+
+    by_currency = {}
+
+    def ensure_currency(currency):
+        currency = canonical_currency(currency)
+
+        if currency not in by_currency:
+            by_currency[currency] = {
+                "currency": currency,
+                "symbol": currency_symbol(currency),
+                "total_budget": Decimal("0.00"),
+                "total_spent": Decimal("0.00"),
+            }
+
+        return by_currency[currency]
+
+    # Budgets come from company cards.
+    for card in company_cards:
+        for software in ("alpha", "beta"):
+            currency = canonical_currency(
+                card[f"{software}_currency"]
+            )
+
+            data = ensure_currency(currency)
+
+            data["total_budget"] += Decimal(
+                str(card[f"{software}_budget"] or 0)
+            )
+
+    # Invoices are grouped by their own currency.
+    for inv in invoices:
+        if inv.status == "CANCELLED":
+            continue
+
+        currency = canonical_currency(inv.currency)
+        data = ensure_currency(currency)
+
+        data["total_spent"] += money(inv.amount_eur)
+
+    result = {}
+
+    for currency, data in by_currency.items():
+        remaining = (
+            data["total_budget"] -
+            data["total_spent"]
+        )
+
+        utilization = (
+            data["total_spent"] /
+            data["total_budget"] *
+            Decimal("100")
+            if data["total_budget"] > 0
+            else Decimal("0")
+        )
+
+        result[currency] = {
+            "currency": currency,
+            "symbol": data["symbol"],
+            "total_budget": money_float(data["total_budget"]),
+            "total_spent": money_float(data["total_spent"]),
+            "remaining": money_float(remaining),
+            "utilization": round(float(utilization), 1),
+        }
+
+    # Keep the old top-level EUR values temporarily so the existing
+    # frontend does not break before the currency-aware UI is added.
+    eur = result.get("EUR", {})
+
     return {
-        "total_budget": money_float(total_budget),
-        "total_spent": money_float(total_spent),
-        "remaining": money_float(remaining),
-        "utilization": round(float(utilization), 1),
+        "by_currency": result,
+        "total_budget": eur.get("total_budget", 0),
+        "total_spent": eur.get("total_spent", 0),
+        "remaining": eur.get("remaining", 0),
+        "utilization": eur.get("utilization", 0),
     }
 
 
@@ -624,6 +799,9 @@ def build_alerts(company_cards, invoices=None):
 
     Also keeps contract-end alerts for contracts ending within 30 days
     and adds overdue invoice alerts.
+
+    Monetary values are displayed using the currency of the
+    corresponding budget or invoice.
     """
 
     alerts = []
@@ -633,8 +811,18 @@ def build_alerts(company_cards, invoices=None):
         company_name = card["name"]
 
         for software in ("ALPHA", "BETA"):
-            budget = Decimal(str(card[f"{software.lower()}_budget"] or 0))
-            spent = Decimal(str(card[f"{software.lower()}_spent"] or 0))
+            prefix = software.lower()
+
+            budget = Decimal(
+                str(card[f"{prefix}_budget"] or 0)
+            )
+            spent = Decimal(
+                str(card[f"{prefix}_spent"] or 0)
+            )
+            currency = canonical_currency(
+                card[f"{prefix}_currency"]
+            )
+            symbol = currency_symbol(currency)
 
             if budget <= 0:
                 continue
@@ -647,24 +835,33 @@ def build_alerts(company_cards, invoices=None):
                     "level": "critical",
                     "icon": "bi-exclamation-octagon",
                     "title": f"{company_name} · {software}",
-                    "text": f"Budget exceeded by €{abs(remaining):,.2f}",
+                    "text": (
+                        f"Budget exceeded by "
+                        f"{symbol}{abs(remaining):,.2f}"
+                    ),
                 })
             elif pct >= Decimal("90"):
                 alerts.append({
                     "level": "critical",
                     "icon": "bi-exclamation-octagon",
                     "title": f"{company_name} · {software}",
-                    "text": f"{pct:.1f}% of the budget has been invoiced. €{remaining:,.2f} remains.",
+                    "text": (
+                        f"{pct:.1f}% of the budget has been invoiced. "
+                        f"{symbol}{remaining:,.2f} remains."
+                    ),
                 })
             elif pct >= Decimal("80"):
                 alerts.append({
                     "level": "warning",
                     "icon": "bi-exclamation-triangle",
                     "title": f"{company_name} · {software}",
-                    "text": f"{pct:.1f}% of the budget has been invoiced. €{remaining:,.2f} remains.",
+                    "text": (
+                        f"{pct:.1f}% of the budget has been invoiced. "
+                        f"{symbol}{remaining:,.2f} remains."
+                    ),
                 })
 
-            completion = card[f"{software.lower()}_date"]
+            completion = card[f"{prefix}_date"]
 
             if isinstance(completion, str):
                 try:
@@ -680,7 +877,10 @@ def build_alerts(company_cards, invoices=None):
                         "level": "warning",
                         "icon": "bi-calendar-event",
                         "title": f"{company_name} · {software}",
-                        "text": f"Contract ends in {days} day{'s' if days != 1 else ''}",
+                        "text": (
+                            f"Contract ends in "
+                            f"{days} day{'s' if days != 1 else ''}"
+                        ),
                     })
 
     # Overdue invoices:
@@ -709,6 +909,8 @@ def build_alerts(company_cards, invoices=None):
         outstanding = amount - paid
         company_name = inv.company.name if inv.company else "Unknown company"
         software = canonical_software(inv.software)
+        currency = canonical_currency(inv.currency)
+        symbol = currency_symbol(currency)
 
         alerts.append({
             "level": "critical",
@@ -717,7 +919,7 @@ def build_alerts(company_cards, invoices=None):
             "text": (
                 f"Invoice {inv.invoice_number or inv.id} is "
                 f"{days_overdue} day{'s' if days_overdue != 1 else ''} overdue. "
-                f"€{outstanding:,.2f} outstanding."
+                f"{symbol}{outstanding:,.2f} outstanding."
             ),
             "type": "overdue_invoice",
             "invoice_id": inv.id,
@@ -739,12 +941,16 @@ def build_alerts(company_cards, invoices=None):
     )
 
     return alerts[:8]
+
 def sync_notifications(company_cards, invoices):
     """
     Synchronize dashboard conditions into persistent notifications.
 
     Notifications are deduplicated by database-enforced dedup_key.
     Existing notifications are preserved so the user can mark them read.
+
+    Monetary values are displayed using the currency of the
+    corresponding budget or invoice.
     """
 
     today = date.today()
@@ -768,6 +974,11 @@ def sync_notifications(company_cards, invoices):
                 str(card[f"{prefix}_spent"] or 0)
             )
 
+            currency = canonical_currency(
+                card[f"{prefix}_currency"]
+            )
+            symbol = currency_symbol(currency)
+
             if budget > 0:
                 pct = (spent / budget) * Decimal("100")
                 remaining = budget - spent
@@ -779,7 +990,7 @@ def sync_notifications(company_cards, invoices):
                         title=f"{company_name} · {software}",
                         message=(
                             f"Budget exceeded by "
-                            f"€{abs(remaining):,.2f}."
+                            f"{symbol}{abs(remaining):,.2f}."
                         ),
                         dedup_key=(
                             f"BUDGET_EXCEEDED:"
@@ -796,7 +1007,7 @@ def sync_notifications(company_cards, invoices):
                         title=f"{company_name} · {software}",
                         message=(
                             f"{pct:.1f}% of the budget has been "
-                            f"invoiced. €{remaining:,.2f} remains."
+                            f"invoiced. {symbol}{remaining:,.2f} remains."
                         ),
                         dedup_key=(
                             f"BUDGET_CRITICAL:"
@@ -813,7 +1024,7 @@ def sync_notifications(company_cards, invoices):
                         title=f"{company_name} · {software}",
                         message=(
                             f"{pct:.1f}% of the budget has been "
-                            f"invoiced. €{remaining:,.2f} remains."
+                            f"invoiced. {symbol}{remaining:,.2f} remains."
                         ),
                         dedup_key=(
                             f"BUDGET_WARNING:"
@@ -889,6 +1100,8 @@ def sync_notifications(company_cards, invoices):
         )
 
         software = canonical_software(inv.software)
+        currency = canonical_currency(inv.currency)
+        symbol = currency_symbol(currency)
 
         create_notification(
             notification_type="OVERDUE_INVOICE",
@@ -898,7 +1111,7 @@ def sync_notifications(company_cards, invoices):
                 f"Invoice {inv.invoice_number or inv.id} is "
                 f"{days_overdue} day"
                 f"{'s' if days_overdue != 1 else ''} overdue. "
-                f"€{outstanding:,.2f} outstanding."
+                f"{symbol}{outstanding:,.2f} outstanding."
             ),
             dedup_key=f"OVERDUE_INVOICE:{inv.id}",
             company_id=inv.company_id,
@@ -907,6 +1120,7 @@ def sync_notifications(company_cards, invoices):
         )
 
     db.session.commit()
+
 def notification_payload(notification):
     return {
         "id": notification.id,
@@ -1016,6 +1230,7 @@ def index():
         metrics=metrics,
         alerts=alerts,
         current_user=get_current_user(),
+        currency_symbols=SUPPORTED_CURRENCIES,
         database_backend="PostgreSQL" if DATABASE_URL.startswith("postgresql") else "SQLite",
     )
 
@@ -1033,6 +1248,7 @@ def analytics():
         invoices=invoices,
         company_cards=company_cards,
         metrics=metrics,
+        currency_symbols=SUPPORTED_CURRENCIES,
         database_backend="PostgreSQL" if DATABASE_URL.startswith("postgresql") else "SQLite",
     )
 
@@ -1051,6 +1267,8 @@ def generator():
             "invoice_date": inv.invoice_date.isoformat() if inv.invoice_date else "",
             "completion_date": inv.completion_date.isoformat() if inv.completion_date else "",
             "software": canonical_software(inv.software),
+            "currency": canonical_currency(inv.currency),
+            "currency_symbol": currency_symbol(inv.currency),
             "amount_eur": money_float(inv.amount_eur),
             "contract_details": inv.contract_details or "",
             "status": inv.status,
@@ -1112,6 +1330,7 @@ def invoice_payload(data, require_amount=True):
     except ValueError as exc:
         raise ValueError("Dates must use YYYY-MM-DD format") from exc
     software = canonical_software(data.get("software"))
+    currency = canonical_currency(data.get("currency"))
     amount = money(data.get("amount_eur", 0))
     contract_details = (data.get("contract_details") or "").strip()
     if not company_name:
@@ -1120,7 +1339,16 @@ def invoice_payload(data, require_amount=True):
         raise ValueError("Unknown software product")
     if require_amount and amount <= 0:
         raise ValueError("Total amount must be greater than 0")
-    return company_name, invoice_number, invoice_date, completion_date, software, amount, contract_details
+    return (
+        company_name,
+        invoice_number,
+        invoice_date,
+        completion_date,
+        software,
+        currency,
+        amount,
+        contract_details,
+    )
 
 
 @app.route("/add_invoice", methods=["POST"])
@@ -1128,12 +1356,20 @@ def invoice_payload(data, require_amount=True):
 def add_invoice():
     try:
         data = request.form.to_dict()
-        company_name, invoice_number, invoice_date, completion_date, software, amount, _ = invoice_payload(data)
+        company_name, invoice_number, invoice_date, completion_date, software, currency, amount, _ = invoice_payload(data)
         company = get_or_create_company(company_name)
         duplicate = duplicate_invoice(company.id, software, invoice_number)
         if duplicate:
             return jsonify({"status": "error", "code": "duplicate", "message": f"Invoice {invoice_number} already exists for this company and product."}), 409
-        new_inv = Invoice(company_id=company.id, invoice_number=invoice_number, invoice_date=invoice_date, completion_date=completion_date, software=software, amount_eur=amount)
+        new_inv = Invoice(
+            company_id=company.id,
+            invoice_number=invoice_number,
+            invoice_date=invoice_date,
+            completion_date=completion_date,
+            software=software,
+            amount_eur=amount,
+            currency=currency,
+        )
         db.session.add(new_inv)
         db.session.flush()
 
@@ -1149,6 +1385,7 @@ def add_invoice():
                 "invoice_date": invoice_date.isoformat() if invoice_date else None,
                 "completion_date": completion_date.isoformat() if completion_date else None,
                 "amount_eur": str(amount),
+                "currency": currency,
             },
         )
 
@@ -1166,12 +1403,21 @@ def add_invoice():
 @role_required("admin", "manager")
 def save_generated_invoice():
     try:
-        company_name, invoice_number, invoice_date, completion_date, software, amount, contract_details = invoice_payload(request.json or {})
+        company_name, invoice_number, invoice_date, completion_date, software, currency, amount, contract_details = invoice_payload(request.json or {})
         company = get_or_create_company(company_name)
         duplicate = duplicate_invoice(company.id, software, invoice_number)
         if duplicate:
             return jsonify({"status": "error", "code": "duplicate", "message": f"Invoice {invoice_number} already exists for this company and product."}), 409
-        new_inv = Invoice(company_id=company.id, invoice_number=invoice_number, invoice_date=invoice_date, completion_date=completion_date, software=software, amount_eur=amount, contract_details=contract_details)
+        new_inv = Invoice(
+            company_id=company.id,
+            invoice_number=invoice_number,
+            invoice_date=invoice_date,
+            completion_date=completion_date,
+            software=software,
+            amount_eur=amount,
+            currency=currency,
+            contract_details=contract_details,
+        )
         db.session.add(new_inv)
         db.session.flush()
 
@@ -1187,6 +1433,7 @@ def save_generated_invoice():
                 "invoice_date": invoice_date.isoformat() if invoice_date else None,
                 "completion_date": completion_date.isoformat() if completion_date else None,
                 "amount_eur": str(amount),
+                "currency": currency,
                 "contract_details": contract_details or None,
             },
         )
@@ -1210,7 +1457,7 @@ def update_generated_invoice(invoice_id):
         }), 409
 
     try:
-        company_name, invoice_number, invoice_date, completion_date, software, amount, contract_details = invoice_payload(request.json or {})
+        company_name, invoice_number, invoice_date, completion_date, software, currency, amount, contract_details = invoice_payload(request.json or {})
         company = get_or_create_company(company_name)
 
         duplicate = duplicate_invoice(
@@ -1238,6 +1485,7 @@ def update_generated_invoice(invoice_id):
         old_paid = money(inv.paid_amount_eur)
         old_payment_status = inv.payment_status or "UNPAID"
         old_contract_details = inv.contract_details or ""
+        old_currency = canonical_currency(inv.currency)
 
         # Payment cannot exceed the new invoice total.
         if amount < old_paid:
@@ -1246,7 +1494,7 @@ def update_generated_invoice(invoice_id):
                 "code": "amount_below_paid",
                 "message": (
                     f"Invoice total cannot be less than the already paid "
-                    f"amount (€{old_paid:.2f})."
+                    f"amount ({currency_symbol(old_currency)}{old_paid:.2f})."
                 ),
             }), 400
 
@@ -1290,6 +1538,22 @@ def update_generated_invoice(invoice_id):
                 "to": str(amount),
             }
 
+        if old_currency != currency:
+            if old_paid > 0:
+                return jsonify({
+                    "status": "error",
+                    "code": "currency_change_after_payment",
+                    "message": (
+                        "Invoice currency cannot be changed after "
+                        "a payment has been recorded."
+                    ),
+                }), 400
+
+            changes["currency"] = {
+                "from": old_currency,
+                "to": currency,
+            }
+
         if old_contract_details != contract_details:
             changes["contract_details"] = {
                 "from": old_contract_details or None,
@@ -1302,6 +1566,7 @@ def update_generated_invoice(invoice_id):
         inv.completion_date = completion_date
         inv.software = software
         inv.amount_eur = amount
+        inv.currency = currency
         inv.paid_amount_eur = new_paid
         inv.payment_status = new_payment_status
         inv.contract_details = contract_details
@@ -1368,6 +1633,8 @@ def update_invoice_payment(invoice_id):
 
         old_paid = money(inv.paid_amount_eur)
         old_payment_status = inv.payment_status or "UNPAID"
+        invoice_currency = canonical_currency(inv.currency)
+        invoice_symbol = currency_symbol(invoice_currency)
 
         paid, payment_status = payment_state(
             inv.amount_eur,
@@ -1381,6 +1648,8 @@ def update_invoice_payment(invoice_id):
                 "invoice": {
                     "id": inv.id,
                     "payment_status": payment_status,
+                    "currency": invoice_currency,
+                    "currency_symbol": invoice_symbol,
                     "paid_amount_eur": money_float(paid),
                     "amount_eur": money_float(inv.amount_eur),
                 },
@@ -1401,6 +1670,8 @@ def update_invoice_payment(invoice_id):
             details={
                 "invoice_number": inv.invoice_number,
                 "company": company,
+                "currency": invoice_currency,
+                "currency_symbol": invoice_symbol,
                 "before": {
                     "payment_status": old_payment_status,
                     "paid_amount_eur": str(old_paid),
@@ -1421,6 +1692,8 @@ def update_invoice_payment(invoice_id):
             "invoice": {
                 "id": inv.id,
                 "payment_status": inv.payment_status,
+                "currency": invoice_currency,
+                "currency_symbol": invoice_symbol,
                 "paid_amount_eur": money_float(inv.paid_amount_eur),
                 "amount_eur": money_float(inv.amount_eur),
             },
@@ -1447,6 +1720,7 @@ def update_company_budget():
     try:
         company_id = int(request.form.get("company_id"))
         software = canonical_software(request.form.get("software"))
+        currency = canonical_currency(request.form.get("currency"))
         total_amount = money(request.form.get("total_amount", 0))
 
         if software not in ("ALPHA", "BETA") or total_amount < 0:
@@ -1457,6 +1731,7 @@ def update_company_budget():
         budget = CompanyBudget.query.filter_by(
             company_id=company_id,
             software=software,
+            currency=currency,
         ).first()
 
         if not budget:
@@ -1465,6 +1740,7 @@ def update_company_budget():
                 company_id=company_id,
                 software=software,
                 total_amount=total_amount,
+                currency=currency,
             )
             db.session.add(budget)
         else:
@@ -1482,6 +1758,7 @@ def update_company_budget():
                 details={
                     "company": company.name,
                     "software": software,
+                    "currency": currency,
                     "changes": {
                         "total_amount": {
                             "from": str(old_amount),
@@ -1496,6 +1773,7 @@ def update_company_budget():
         return jsonify({
             "status": "ok",
             "total_amount": money_float(total_amount),
+            "currency": currency,
         })
 
     except (ValueError, TypeError) as exc:
@@ -1512,6 +1790,7 @@ def update_company_completion_date():
     try:
         company_id = int(request.form.get("company_id"))
         software = canonical_software(request.form.get("software"))
+        currency = canonical_currency(request.form.get("currency"))
         completion_date_raw = request.form.get("completion_date", "").strip()
         completion_date = date.fromisoformat(completion_date_raw) if completion_date_raw else None
 
@@ -1520,6 +1799,7 @@ def update_company_completion_date():
         budget = CompanyBudget.query.filter_by(
             company_id=company_id,
             software=software,
+            currency=currency,
         ).first()
 
         if not budget:
@@ -1528,6 +1808,7 @@ def update_company_completion_date():
                 company_id=company_id,
                 software=software,
                 total_amount=Decimal("0.00"),
+                currency=currency,
                 completion_date=completion_date,
             )
             db.session.add(budget)
@@ -1546,6 +1827,7 @@ def update_company_completion_date():
                 details={
                     "company": company.name,
                     "software": software,
+                    "currency": currency,
                     "changes": {
                         "completion_date": {
                             "from": old_completion_date.isoformat() if old_completion_date else None,
@@ -1559,7 +1841,8 @@ def update_company_completion_date():
 
         return jsonify({
             "status": "ok",
-            "completion_date": completion_date.isoformat() if completion_date else ""
+            "completion_date": completion_date.isoformat() if completion_date else "",
+            "currency": currency,
         })
 
     except (ValueError, TypeError) as exc:
