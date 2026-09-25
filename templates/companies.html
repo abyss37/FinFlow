@@ -1,0 +1,887 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Компании') if _ else 'Компании' }} · FinFlow{% endblock %}
+
+{% block head %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/companies.css') }}?v=20260923">
+{% endblock %}
+
+
+{% block page_icon %}
+<span class="ff-page-icon">
+    <i class="bi bi-buildings"></i>
+</span>
+{% endblock %}
+
+{% block page_title %}Компании{% endblock %}
+
+{% block page_subtitle %}
+Компании, договоры и финансовые отношения в одном рабочем пространстве.
+{% endblock %}
+
+{% block content %}
+
+<main class="ff-page ff-companies-page">
+
+    <!-- =====================================================
+         PAGE ACTIONS
+         ===================================================== -->
+
+    <div class="ff-companies-page-actions">
+
+        {% if current_user and current_user.role in ['admin', 'manager'] %}
+        <button
+            type="button"
+            class="ff-btn ff-btn-primary"
+            id="companies-create-button">
+
+            <i class="bi bi-plus-lg"></i>
+            <span>Новая компания</span>
+
+        </button>
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         TOOLBAR
+         ===================================================== -->
+    <section class="ff-companies-toolbar">
+
+        <div class="ff-company-search">
+
+            <i class="bi bi-search"></i>
+
+            <input
+                id="companies-search"
+                type="search"
+                autocomplete="off"
+                placeholder="Поиск компаний..."
+                aria-label="Поиск компаний">
+
+            <button
+                type="button"
+                id="companies-search-clear"
+                class="ff-search-clear hidden"
+                aria-label="Очистить поиск">
+
+                <i class="bi bi-x-lg"></i>
+
+            </button>
+
+        </div>
+
+
+        <div class="ff-companies-toolbar-right">
+
+            <div
+                class="ff-view-switcher"
+                role="group"
+                aria-label="Вид компаний">
+
+                <button
+                    type="button"
+                    class="ff-view-button is-active"
+                    data-view="grid"
+                    title="Плитка">
+
+                    <i class="bi bi-grid-3x3-gap"></i>
+                    <span>Плитка</span>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="ff-view-button"
+                    data-view="list"
+                    title="Список">
+
+                    <i class="bi bi-list-ul"></i>
+                    <span>Список</span>
+
+                </button>
+
+            </div>
+
+            <div class="ff-companies-count">
+                <span id="companies-visible-count">{{ companies|length }}</span>
+                <span>из</span>
+                <span>{{ companies|length }}</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         EMPTY SEARCH STATE
+         ===================================================== -->
+    <section
+        id="companies-search-empty"
+        class="ff-companies-empty hidden">
+
+        <div class="ff-empty-icon">
+            <i class="bi bi-search"></i>
+        </div>
+
+        <h3>Компании не найдены</h3>
+
+        <p>
+            Попробуйте изменить поисковый запрос.
+        </p>
+
+        <button
+            type="button"
+            class="ff-btn ff-btn-secondary"
+            id="companies-search-reset">
+
+            Сбросить поиск
+
+        </button>
+
+    </section>
+
+
+    <!-- =====================================================
+         GRID VIEW
+         ===================================================== -->
+    <section
+        id="companies-grid"
+        class="ff-companies-grid"
+        aria-label="Компании">
+
+        {% for company in companies %}
+
+        {% set card = namespace(found=None) %}
+
+        {% for item in company_cards %}
+            {% if item.id == company.id %}
+                {% set card.found = item %}
+            {% endif %}
+        {% endfor %}
+
+        <article
+            class="ff-company-card"
+            data-company-id="{{ company.id }}"
+            data-company-name="{{ company.name|lower }}">
+
+            <!-- CARD MAIN -->
+            <div class="ff-company-card-main">
+
+                <button
+                    type="button"
+                    class="ff-company-card-open"
+                    data-company-toggle="{{ company.id }}"
+                    aria-expanded="false">
+
+                    <span class="ff-company-identity">
+
+                        <span class="ff-company-logo">
+                            {{ company.name[:1]|upper }}
+                        </span>
+
+                        <span class="ff-company-title">
+
+                            <strong>{{ company.name }}</strong>
+
+                            <small>
+                                Компания #{{ company.id }}
+                            </small>
+
+                        </span>
+
+                    </span>
+
+                    <span class="ff-company-open-icon">
+                        <i class="bi bi-chevron-down"></i>
+                    </span>
+
+                </button>
+
+
+                <div class="ff-company-menu-wrap">
+
+                    {% if current_user and current_user.role in ['admin', 'manager'] %}
+
+                    <button
+                        type="button"
+                        class="ff-icon-button ff-company-menu-button"
+                        data-company-menu="{{ company.id }}"
+                        aria-label="Действия">
+
+                        <i class="bi bi-three-dots"></i>
+
+                    </button>
+
+                    <div
+                        class="ff-company-menu hidden"
+                        data-company-menu-panel="{{ company.id }}">
+
+                        <button
+                            type="button"
+                            data-company-edit="{{ company.id }}">
+
+                            <i class="bi bi-pencil"></i>
+                            Редактировать
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="is-danger"
+                            data-company-delete="{{ company.id }}">
+
+                            <i class="bi bi-trash3"></i>
+                            Удалить
+
+                        </button>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- META -->
+            <div class="ff-company-meta">
+
+                <span class="ff-company-meta-item">
+
+                    <i class="bi bi-receipt"></i>
+
+                    <span>
+                        <strong
+                            data-company-invoice-count="{{ company.id }}">0</strong>
+                        счетов
+                    </span>
+
+                </span>
+
+                {% if card.found %}
+                <span class="ff-company-meta-item">
+
+                    <i class="bi bi-code-square"></i>
+
+                    <span>
+                        {% if card.found.products %}
+                            {% for product in card.found.products %}
+                                {{ product.code }}{% if not loop.last %} · {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </span>
+
+                </span>
+                {% endif %}
+
+            </div>
+
+
+            <!-- FINANCIAL SNAPSHOT -->
+            <div class="ff-company-financial">
+
+                <div class="ff-financial-item">
+
+                    <span class="ff-financial-label">
+                        Бюджет
+                    </span>
+
+                    <strong
+                        data-company-budget="{{ company.id }}">
+                        —
+                    </strong>
+
+                </div>
+
+                <div class="ff-financial-item">
+
+                    <span class="ff-financial-label">
+                        Использовано
+                    </span>
+
+                    <strong
+                        data-company-spent="{{ company.id }}">
+                        —
+                    </strong>
+
+                </div>
+
+                <div class="ff-financial-item">
+
+                    <span class="ff-financial-label">
+                        Остаток
+                    </span>
+
+                    <strong
+                        data-company-remaining="{{ company.id }}">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROGRESS -->
+            <div class="ff-company-progress">
+
+                <div class="ff-company-progress-head">
+
+                    <span>Использование бюджета</span>
+
+                    <strong
+                        data-company-utilization="{{ company.id }}">
+                        —
+                    </strong>
+
+                </div>
+
+                <div class="ff-progress-track">
+
+                    <span
+                        class="ff-progress-value"
+                        data-company-progress="{{ company.id }}"
+                        style="width:0%">
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTRACT -->
+            <div class="ff-company-contract">
+
+                <div class="ff-contract-icon">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+
+                <div class="ff-contract-content">
+
+                    <span>Завершение договора</span>
+
+                    <strong
+                        data-company-contract="{{ company.id }}">
+                        —
+                    </strong>
+
+                </div>
+
+                <span
+                    class="ff-contract-status"
+                    data-company-contract-status="{{ company.id }}">
+                    —
+                </span>
+
+            </div>
+
+
+            <!-- EXPANDABLE DETAILS -->
+            <div
+                class="ff-company-details"
+                data-company-details="{{ company.id }}"
+                hidden>
+
+                <div class="ff-company-details-inner">
+
+                    <!-- DETAILS HEADER -->
+                    <div class="ff-company-details-header">
+
+                        <div>
+
+                            <span class="ff-details-eyebrow">
+                                FINANCIAL ACTIVITY
+                            </span>
+
+                            <h3>Счета компании</h3>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="ff-details-close"
+                            data-company-toggle="{{ company.id }}"
+                            aria-label="Свернуть">
+
+                            <i class="bi bi-chevron-up"></i>
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- INVOICE FILTERS -->
+                    <div class="ff-company-invoice-toolbar">
+
+                        <div
+    class="ff-invoice-filters"
+    data-invoice-filter-group="{{ company.id }}">
+
+    <button
+        type="button"
+        class="is-active"
+        data-invoice-filter="ALL">
+
+        Все
+
+    </button>
+
+    {% set company_card = (
+        company_cards
+        | selectattr("id", "equalto", company.id)
+        | list
+        | first
+    ) %}
+
+    {% if company_card and company_card.products %}
+        {% for product in company_card.products %}
+            <button
+                type="button"
+                data-invoice-filter="{{ product.code }}">
+
+                {{ product.code }}
+
+            </button>
+        {% endfor %}
+    {% endif %}
+
+</div>
+
+                        <span
+                            class="ff-company-invoice-total"
+                            data-invoice-count="{{ company.id }}">
+                            0 счетов
+                        </span>
+
+                    </div>
+
+
+                    <!-- INVOICE TOTALS -->
+                    <div
+                        class="ff-invoice-totals"
+                        data-invoice-totals="{{ company.id }}">
+                    </div>
+
+
+                    <!-- INVOICES -->
+                    <div
+                        class="ff-company-invoices"
+                        data-company-invoices="{{ company.id }}">
+
+                        <div class="ff-invoices-loading">
+                            <i class="bi bi-arrow-repeat"></i>
+                            Загрузка счетов...
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </article>
+
+        {% else %}
+
+        <section class="ff-companies-empty">
+
+            <div class="ff-empty-icon">
+                <i class="bi bi-buildings"></i>
+            </div>
+
+            <h3>Компаний пока нет</h3>
+
+            <p>
+                Создайте первую компанию, чтобы начать работу.
+            </p>
+
+        </section>
+
+        {% endfor %}
+
+    </section>
+
+
+    <!-- =====================================================
+         LIST VIEW
+         ===================================================== -->
+    <section
+        id="companies-list"
+        class="ff-companies-list hidden"
+        aria-label="Список компаний">
+
+        <div class="ff-list-head">
+
+            <span>Компания</span>
+            <span>Продукты</span>
+            <span>Бюджет</span>
+            <span>Использовано</span>
+            <span>Остаток</span>
+            <span>Договор</span>
+            <span>Счета</span>
+            <span></span>
+
+        </div>
+
+        <div id="companies-list-body">
+
+            {% for company in companies %}
+
+            <div
+                class="ff-company-list-row"
+                data-company-id="{{ company.id }}"
+                data-company-name="{{ company.name|lower }}">
+
+                <button
+                    type="button"
+                    class="ff-list-company"
+                    data-company-toggle="{{ company.id }}">
+
+                    <span class="ff-company-logo">
+                        {{ company.name[:1]|upper }}
+                    </span>
+
+                    <span>
+                        <strong>{{ company.name }}</strong>
+                        <small>#{{ company.id }}</small>
+                    </span>
+
+                </button>
+
+                <span data-list-products="{{ company.id }}">—</span>
+                <strong data-list-budget="{{ company.id }}">—</strong>
+                <strong data-list-spent="{{ company.id }}">—</strong>
+                <strong data-list-remaining="{{ company.id }}">—</strong>
+                <span data-list-contract="{{ company.id }}">—</span>
+                <span data-list-invoices="{{ company.id }}">0</span>
+
+                {% if current_user and current_user.role in ['admin', 'manager'] %}
+                <div class="ff-company-menu-wrap">
+
+                    <button
+                        type="button"
+                        class="ff-icon-button ff-company-menu-button"
+                        data-company-menu="{{ company.id }}"
+                        aria-label="Действия">
+
+                        <i class="bi bi-three-dots"></i>
+
+                    </button>
+
+                    <div
+                        class="ff-company-menu hidden"
+                        data-company-menu-panel="{{ company.id }}">
+
+                        <button
+                            type="button"
+                            data-company-edit="{{ company.id }}">
+
+                            <i class="bi bi-pencil"></i>
+                            Редактировать
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="is-danger"
+                            data-company-delete="{{ company.id }}">
+
+                            <i class="bi bi-trash3"></i>
+                            Удалить
+
+                        </button>
+
+                    </div>
+
+                </div>
+                {% else %}
+                <span></span>
+                {% endif %}
+
+                <!-- LIST EXPANDABLE DETAILS -->
+                <div
+                    class="ff-company-list-details"
+                    data-company-details="{{ company.id }}"
+                    hidden>
+
+                    <div class="ff-company-details-inner">
+
+                        <div class="ff-company-details-header">
+
+                            <div>
+                                <span class="ff-details-eyebrow">
+                                    FINANCIAL ACTIVITY
+                                </span>
+
+                                <h3>Счета компании</h3>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="ff-details-close"
+                                data-company-toggle="{{ company.id }}"
+                                aria-label="Свернуть">
+
+                                <i class="bi bi-chevron-up"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="ff-company-invoice-toolbar">
+
+                            <div
+    class="ff-invoice-filters"
+    data-invoice-filter-group="{{ company.id }}">
+
+    <button
+        type="button"
+        class="is-active"
+        data-invoice-filter="ALL">
+
+        Все
+
+    </button>
+
+    {% set company_card = (
+        company_cards
+        | selectattr("id", "equalto", company.id)
+        | list
+        | first
+    ) %}
+
+    {% if company_card and company_card.products %}
+        {% for product in company_card.products %}
+            <button
+                type="button"
+                data-invoice-filter="{{ product.code }}">
+
+                {{ product.code }}
+
+            </button>
+        {% endfor %}
+    {% endif %}
+
+</div>
+
+                            <span
+                                class="ff-company-invoice-total"
+                                data-invoice-count="{{ company.id }}">
+                                0 счетов
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="ff-invoice-totals"
+                            data-invoice-totals="{{ company.id }}">
+                        </div>
+
+                        <div
+                            class="ff-company-invoices"
+                            data-company-invoices="{{ company.id }}">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     CREATE / EDIT COMPANY DIALOG
+     ===================================================== -->
+<div
+    id="company-dialog"
+    class="ff-dialog-backdrop hidden"
+    aria-hidden="true">
+
+    <div
+        class="ff-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="company-dialog-title">
+
+        <div class="ff-dialog-header">
+
+            <div>
+
+                <span class="ff-dialog-eyebrow">
+                    COMPANY
+                </span>
+
+                <h2 id="company-dialog-title">
+                    Новая компания
+                </h2>
+
+            </div>
+
+            <button
+                type="button"
+                class="ff-dialog-close"
+                id="company-dialog-close"
+                aria-label="Закрыть">
+
+                <i class="bi bi-x-lg"></i>
+
+            </button>
+
+        </div>
+
+
+        <form id="company-form">
+
+            <input
+                type="hidden"
+                id="company-form-id"
+                value="">
+
+            <div class="ff-form-field">
+
+                <label for="company-form-name">
+                    Название компании
+                </label>
+
+                <input
+                    id="company-form-name"
+                    name="name"
+                    type="text"
+                    maxlength="255"
+                    autocomplete="organization"
+                    required
+                    placeholder="Например, ООО «Альфа»">
+
+            </div>
+
+
+            <div class="ff-company-stamp-field" id="company-stamp-field">
+
+                <div class="ff-company-stamp-heading">
+                    <div>
+                        <label for="company-stamp-input">
+                            Печать компании
+                        </label>
+
+                        <small>
+                            Используется в генераторе счетов и при печати документа.
+                        </small>
+                    </div>
+
+                    <span
+                        id="company-stamp-status"
+                        class="ff-company-stamp-status">
+                        Не загружена
+                    </span>
+                </div>
+
+                <div class="ff-company-stamp-body">
+
+                    <div
+                        id="company-stamp-preview"
+                        class="ff-company-stamp-preview hidden">
+                    </div>
+
+                    <div class="ff-company-stamp-upload">
+
+                        <input
+                            type="file"
+                            id="company-stamp-input"
+                            accept=".png,.jpg,.jpeg,.webp"
+                            class="hidden">
+
+                        <button
+                            type="button"
+                            class="ff-btn ff-btn-secondary"
+                            id="company-stamp-button">
+
+                            <i class="bi bi-upload"></i>
+                            <span>Загрузить печать</span>
+
+                        </button>
+
+                        <small>
+                            PNG, JPG или WebP · до 5 МБ
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="company-form-error"
+                class="ff-form-error hidden">
+            </div>
+
+
+            <div class="ff-dialog-actions">
+
+                <button
+                    type="button"
+                    class="ff-btn ff-btn-secondary"
+                    id="company-dialog-cancel">
+
+                    Отмена
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="ff-btn ff-btn-primary"
+                    id="company-form-submit">
+
+                    <i class="bi bi-check-lg"></i>
+                    Сохранить
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     DATA
+     ===================================================== -->
+<script id="companies-data" type="application/json">
+{
+    "companies": {{ companies|map(attribute='id')|list|tojson }},
+    "companyCards": {{ company_cards|tojson }},
+    "invoices": {{ invoices|tojson }},
+    "currencySymbols": {{ currency_symbols|tojson }},
+    "currentUser": {
+        "id": {{ current_user.id if current_user else 'null' }},
+        "role": {{ current_user.role|tojson if current_user else 'null' }}
+    }
+}
+</script>
+
+<script>
+    window.FIN_FLOW_CSRF_TOKEN = {{ csrf_token()|tojson }};
+</script>
+
+<script src="{{ url_for('static', filename='js/companies.js') }}?v=20260924-1"></script>
+
+{% endblock %}

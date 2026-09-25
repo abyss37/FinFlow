@@ -1,419 +1,234 @@
-<!doctype html>
-<html lang="uk">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Users — FinFlow</title>
+{% extends "base.html" %}
 
-    <link rel="stylesheet" href="/static/css/tailwind.css">
-
-    <style>
-        html {
-            background: #070b12;
-        }
-
-        body {
-            background:
-                radial-gradient(circle at 15% 10%, rgba(59,130,246,.10), transparent 28%),
-                radial-gradient(circle at 85% 20%, rgba(139,92,246,.08), transparent 25%),
-                #070b12;
-            color: #e5e7eb;
-        }
-
-        .glass {
-            background: rgba(15, 23, 42, .68);
-            border: 1px solid rgba(148, 163, 184, .12);
-            box-shadow:
-                0 20px 60px rgba(0,0,0,.25),
-                inset 0 1px 0 rgba(255,255,255,.025);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-        }
-
-        .glass-soft {
-            background: rgba(15, 23, 42, .45);
-            border: 1px solid rgba(148, 163, 184, .10);
-        }
-
-        .input {
-            width: 100%;
-            border-radius: .75rem;
-            border: 1px solid rgba(148, 163, 184, .16);
-            background: rgba(2, 6, 23, .65);
-            color: #e5e7eb;
-            padding: .65rem .8rem;
-            outline: none;
-            transition: .15s ease;
-        }
-
-        .input:focus {
-            border-color: rgba(96,165,250,.65);
-            box-shadow: 0 0 0 3px rgba(59,130,246,.10);
-        }
-
-        select.input option {
-            background: #0f172a;
-            color: #e5e7eb;
-        }
-
-        .btn-primary {
-            border-radius: .75rem;
-            padding: .65rem 1rem;
-            background: linear-gradient(135deg, #2563eb, #4f46e5);
-            color: white;
-            font-weight: 600;
-            transition: .15s ease;
-            box-shadow: 0 8px 25px rgba(37,99,235,.20);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 30px rgba(37,99,235,.30);
-        }
-
-        .btn-secondary {
-            border-radius: .7rem;
-            padding: .55rem .8rem;
-            background: rgba(30,41,59,.75);
-            border: 1px solid rgba(148,163,184,.12);
-            color: #cbd5e1;
-            transition: .15s ease;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(51,65,85,.8);
-            color: white;
-        }
-
-        .btn-danger {
-            border-radius: .7rem;
-            padding: .5rem .75rem;
-            background: rgba(239,68,68,.08);
-            border: 1px solid rgba(239,68,68,.16);
-            color: #fca5a5;
-            transition: .15s ease;
-        }
-
-        .btn-danger:hover {
-            background: rgba(239,68,68,.14);
-            color: #fecaca;
-        }
-
-        .btn-success {
-            border-radius: .7rem;
-            padding: .5rem .75rem;
-            background: rgba(34,197,94,.08);
-            border: 1px solid rgba(34,197,94,.16);
-            color: #86efac;
-            transition: .15s ease;
-        }
-
-        .btn-success:hover {
-            background: rgba(34,197,94,.14);
-            color: #bbf7d0;
-        }
-
-        .role-admin {
-            color: #c4b5fd;
-            background: rgba(139,92,246,.12);
-            border-color: rgba(139,92,246,.22);
-        }
-
-        .role-manager {
-            color: #93c5fd;
-            background: rgba(59,130,246,.12);
-            border-color: rgba(59,130,246,.22);
-        }
-
-        .role-viewer {
-            color: #94a3b8;
-            background: rgba(100,116,139,.12);
-            border-color: rgba(100,116,139,.20);
-        }
-
-        .status-active {
-            color: #86efac;
-            background: rgba(34,197,94,.10);
-            border-color: rgba(34,197,94,.18);
-        }
-
-        .status-inactive {
-            color: #fca5a5;
-            background: rgba(239,68,68,.10);
-            border-color: rgba(239,68,68,.18);
-        }
-
-        .modal-backdrop {
-            background: rgba(2,6,23,.72);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        .table-row {
-            transition: background .15s ease;
-        }
-
-        .table-row:hover {
-            background: rgba(30,41,59,.35);
-        }
+{% block title %}Пользователи — FinFlow{% endblock %}
 
 
+{% block page_icon %}
+<span class="ff-page-icon">
+    <i class="bi bi-people"></i>
+</span>
+{% endblock %}
 
+{% block page_title %}Управление пользователями{% endblock %}
 
+{% block page_subtitle %}
+Управление аккаунтами, ролями и правами доступа FinFlow.
+{% endblock %}
 
+{% block content %}
 
-    </style>
-</head>
+<section class="ff-page users-page">
 
-<body class="min-h-screen">
+    <!-- PAGE ACTIONS -->
+    <div class="ff-page-actions">
 
-<div class="max-w-7xl mx-auto px-5 py-8 lg:px-8">
+        <button
+            type="button"
+            class="ff-btn ff-btn-primary"
+            id="users-create-button">
 
-    <!-- Header -->
-    <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between mb-8 pr-24">
+            <i class="bi bi-person-plus"></i>
 
-        <div>
-            <div class="flex items-center gap-3">
+            <span data-i18n="Create User">
+                Создать пользователя
+            </span>
+        </button>
 
-                <a
-                    href="{{ url_for('index') }}"
-                    class="text-slate-500 hover:text-slate-300 transition text-xl"
-                    title="Back to dashboard"
-                    aria-label="Back to dashboard"
-                >
-                    ←
-                </a>
-
-                <div>
-                    <div class="flex items-center gap-3 flex-wrap">
-
-                        <h1 class="text-3xl font-semibold tracking-tight text-white">
-                            Users
-                        </h1>
-
-                        <span class="px-2.5 py-1 rounded-full text-xs font-medium border border-violet-400/20 bg-violet-400/10 text-violet-300">
-                            Administrator
-                        </span>
-
-                    </div>
-
-                    <p class="mt-1 text-sm text-slate-400">
-                        Manage FinFlow users, roles and access.
-                    </p>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-
-            <div class="glass rounded-xl px-4 py-2.5 text-sm">
-                <span class="text-slate-500">Users</span>
-                <span class="ml-2 font-semibold text-white">{{ users|length }}</span>
-            </div>
-
-            <a
-                href="{{ url_for('index') }}"
-                class="btn-secondary"
-            >
-                Dashboard
-            </a>
-
-        </div>
     </div>
 
 
-    <!-- Create user -->
-    <section class="glass rounded-2xl p-6 mb-6">
+    <!-- KPI -->
+    <div class="ff-kpi-grid users-kpi-grid">
 
-        <div class="flex items-start justify-between gap-4 mb-5">
+        <article class="ff-kpi-card">
+            <div class="ff-kpi-icon">
+                <i class="bi bi-people"></i>
+            </div>
+
+            <div class="ff-kpi-copy">
+                <span class="ff-kpi-label" data-i18n="Total users">
+                    Всего пользователей
+                </span>
+
+                <strong class="ff-kpi-value">
+                    {{ users|length }}
+                </strong>
+            </div>
+        </article>
+
+
+        <article class="ff-kpi-card">
+            <div class="ff-kpi-icon is-success">
+                <i class="bi bi-person-check"></i>
+            </div>
+
+            <div class="ff-kpi-copy">
+                <span class="ff-kpi-label" data-i18n="Active">
+                    Активные
+                </span>
+
+                <strong class="ff-kpi-value">
+                    {{ users|selectattr('is_active')|list|length }}
+                </strong>
+            </div>
+        </article>
+
+
+        <article class="ff-kpi-card">
+            <div class="ff-kpi-icon is-warning">
+                <i class="bi bi-shield-check"></i>
+            </div>
+
+            <div class="ff-kpi-copy">
+                <span class="ff-kpi-label" data-i18n="Administrators">
+                    Администраторы
+                </span>
+
+                <strong class="ff-kpi-value">
+                    {{ users|selectattr('role', 'equalto', 'admin')|list|length }}
+                </strong>
+            </div>
+        </article>
+
+
+        <article class="ff-kpi-card">
+            <div class="ff-kpi-icon is-danger">
+                <i class="bi bi-person-x"></i>
+            </div>
+
+            <div class="ff-kpi-copy">
+                <span class="ff-kpi-label" data-i18n="Inactive">
+                    Неактивные
+                </span>
+
+                <strong class="ff-kpi-value">
+                    {{ users|rejectattr('is_active')|list|length }}
+                </strong>
+            </div>
+        </article>
+
+    </div>
+
+
+    <!-- USERS PANEL -->
+    <section class="ff-panel users-panel">
+
+        <div class="ff-panel-header">
 
             <div>
-                <h2 class="text-lg font-semibold text-white">
-                    Create user
+                <h2 class="ff-panel-title" data-i18n="User accounts">
+                    Учётные записи
                 </h2>
 
-                <p class="text-sm text-slate-500 mt-1">
-                    Add a new account with an initial role and password.
+                <p class="ff-panel-description"
+                   data-i18n="Username is the stable identity used in the audit log. The latest login IP is recorded for account activity tracking.">
+                    Имя пользователя используется как стабильный идентификатор
+                    в аудит-логе. IP-адрес последнего входа сохраняется для
+                    отслеживания активности учётной записи.
                 </p>
             </div>
 
-            <div class="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-300 border border-blue-400/10 text-xl">
-                +
-            </div>
+            <div class="users-toolbar">
 
-        </div>
+                <div class="users-search">
+                    <i class="bi bi-search"></i>
 
+                    <input
+                        type="search"
+                        id="users-search"
+                        autocomplete="off"
+                        placeholder="Поиск пользователей..."
+                        data-i18n-placeholder="Search users">
 
-        <form
-            method="post"
-            action="{{ url_for('create_user') }}"
-            class="grid grid-cols-1 md:grid-cols-12 gap-4"
-        >
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button
+                        type="button"
+                        id="users-search-clear"
+                        class="users-search-clear"
+                        aria-label="Clear search"
+                        hidden>
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
 
-            <div class="md:col-span-4">
+                <select
+                    id="users-role-filter"
+                    class="ff-select"
+                    aria-label="Filter by role">
 
-                <label class="block text-xs font-medium text-slate-400 mb-2">
-                    Username
-                </label>
-
-                <input
-                    class="input"
-                    type="text"
-                    name="username"
-                    maxlength="64"
-                    autocomplete="username"
-                    placeholder="username"
-                    required
-                >
-
-            </div>
-
-
-            <div class="md:col-span-3">
-
-                <label class="block text-xs font-medium text-slate-400 mb-2">
-                    Password
-                </label>
-
-                <input
-                    class="input"
-                    type="password"
-                    name="password"
-                    minlength="8"
-                    autocomplete="new-password"
-                    placeholder="Minimum 8 characters"
-                    required
-                >
-
-            </div>
-
-
-            <div class="md:col-span-3">
-
-                <label class="block text-xs font-medium text-slate-400 mb-2">
-                    Role
-                </label>
-
-                <select class="input" name="role">
+                    <option value="all" data-i18n="All roles">
+                        Все роли
+                    </option>
 
                     {% for role in valid_roles %}
-                        <option value="{{ role }}">
-                            {{ role|capitalize }}
-                        </option>
+                    <option value="{{ role }}">
+                        {{ role|capitalize }}
+                    </option>
                     {% endfor %}
-
                 </select>
 
             </div>
 
-
-            <div class="md:col-span-2 flex items-end">
-
-                <button
-                    type="submit"
-                    class="btn-primary w-full"
-                >
-                    Create user
-                </button>
-
-            </div>
-
-        </form>
-
-    </section>
-
-
-    <!-- Users table -->
-    <section class="glass rounded-2xl overflow-hidden">
-
-        <div class="px-6 py-5 border-b border-slate-700/30">
-
-            <h2 class="text-lg font-semibold text-white">
-                User accounts
-            </h2>
-
-            <p class="text-sm text-slate-500 mt-1">
-                Username is the stable identity used in the audit log.
-            </p>
-
         </div>
 
 
-        <div class="overflow-x-auto">
+        <!-- TABLE -->
+        <div class="users-table-wrap">
 
-            <table class="w-full min-w-[1050px]">
+            <table class="users-table">
 
                 <thead>
-
-                    <tr class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-700/30">
-
-                        <th class="px-6 py-4 font-medium">
-                            User
+                    <tr>
+                        <th data-i18n="User">Пользователь</th>
+                        <th data-i18n="Role">Роль</th>
+                        <th data-i18n="Status">Статус</th>
+                        <th data-i18n="Created">Создан</th>
+                        <th data-i18n="Last login">Последний вход</th>
+                        <th data-i18n="IP">IP</th>
+                        <th class="users-actions-column"
+                            data-i18n="Actions">
+                            Действия
                         </th>
-
-                        <th class="px-6 py-4 font-medium">
-                            Role
-                        </th>
-
-                        <th class="px-6 py-4 font-medium">
-                            Status
-                        </th>
-
-                        <th class="px-6 py-4 font-medium">
-                            Created
-                        </th>
-
-                        <th class="px-6 py-4 font-medium">
-                            Last login
-                        </th>
-
-                        <th class="px-6 py-4 font-medium text-right">
-                            Actions
-                        </th>
-
                     </tr>
-
                 </thead>
 
+                <tbody id="users-table-body">
 
-                <tbody class="divide-y divide-slate-800/50">
+                    {% for user in users %}
 
-                {% for user in users %}
+                    <tr
+                        class="users-row"
+                        data-username="{{ user.username|lower }}"
+                        data-role="{{ user.role }}"
+                        data-status="{{ 'active' if user.is_active else 'inactive' }}">
 
-                    <tr class="table-row">
+                        <td>
 
-                        <!-- User -->
-                        <td class="px-6 py-5">
+                            <div class="user-identity">
 
-                            <div class="flex items-center gap-3">
-
-                                <div class="h-10 w-10 shrink-0 rounded-xl flex items-center justify-center bg-slate-800/80 border border-slate-700/50 text-sm font-semibold text-slate-300">
+                                <div class="user-avatar">
                                     {{ user.username[:1]|upper }}
                                 </div>
 
-                                <div>
+                                <div class="user-identity-copy">
 
-                                    <div class="flex items-center gap-2">
+                                    <div class="user-name-line">
 
-                                        <span class="font-medium text-white">
+                                        <strong>
                                             {{ user.username }}
-                                        </span>
+                                        </strong>
 
                                         {% if user.id == current_user.id %}
-
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-medium border border-blue-400/20 bg-blue-400/10 text-blue-300">
-                                                You
-                                            </span>
-
+                                        <span class="user-self-badge"
+                                              data-i18n="You">
+                                            Вы
+                                        </span>
                                         {% endif %}
 
                                     </div>
 
-                                    <div class="text-xs text-slate-600 mt-0.5">
+                                    <span class="user-id">
                                         ID #{{ user.id }}
-                                    </div>
+                                    </span>
 
                                 </div>
 
@@ -422,166 +237,147 @@
                         </td>
 
 
-                        <!-- Role -->
-                        <td class="px-6 py-5">
+                        <td>
 
                             <form
                                 method="post"
                                 action="{{ url_for('update_user', user_id=user.id) }}"
-                            >
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                class="user-role-form">
+
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token() }}">
 
                                 <input
                                     type="hidden"
                                     name="is_active"
-                                    value="{{ '1' if user.is_active else '0' }}"
-                                >
+                                    value="{{ '1' if user.is_active else '0' }}">
 
                                 <select
                                     name="role"
-                                    class="input !w-auto min-w-[125px] py-2 text-xs font-semibold
-                                        {% if user.role == 'admin' %}
-                                            role-admin
-                                        {% elif user.role == 'manager' %}
-                                            role-manager
-                                        {% else %}
-                                            role-viewer
-                                        {% endif %}"
-                                    onchange="this.form.submit()"
-                                    {% if user.id == current_user.id %}disabled{% endif %}
-                                >
+                                    class="user-role-select role-{{ user.role }}"
+                                    {% if user.id == current_user.id %}disabled{% endif %}>
 
                                     {% for role in valid_roles %}
-
-                                        <option
-                                            value="{{ role }}"
-                                            {% if role == user.role %}selected{% endif %}
-                                        >
-                                            {{ role|capitalize }}
-                                        </option>
-
+                                    <option
+                                        value="{{ role }}"
+                                        {% if role == user.role %}selected{% endif %}>
+                                        {{ role|capitalize }}
+                                    </option>
                                     {% endfor %}
 
                                 </select>
-
-                                {% if user.id == current_user.id %}
-                                    <div class="text-[10px] text-slate-600 mt-1">
-                                        Your role cannot be changed here.
-                                    </div>
-                                {% endif %}
 
                             </form>
 
                         </td>
 
 
-                        <!-- Status -->
-                        <td class="px-6 py-5">
+                        <td>
 
-                            <span
-                                class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium border
-                                {% if user.is_active %}
-                                    status-active
-                                {% else %}
-                                    status-inactive
-                                {% endif %}"
-                            >
+                            <span class="user-status
+                                {{ 'is-active' if user.is_active else 'is-inactive' }}">
 
-                                <span
-                                    class="w-1.5 h-1.5 rounded-full
-                                    {% if user.is_active %}
-                                        bg-emerald-400
-                                    {% else %}
-                                        bg-red-400
-                                    {% endif %}"
-                                ></span>
+                                <span class="user-status-dot"></span>
 
-                                {% if user.is_active %}
-                                    Active
-                                {% else %}
-                                    Inactive
-                                {% endif %}
+                                <span data-i18n="{{ 'Active' if user.is_active else 'Inactive' }}">
+                                    {{ 'Active' if user.is_active else 'Inactive' }}
+                                </span>
 
                             </span>
 
                         </td>
 
 
-                        <!-- Created -->
-                        <td class="px-6 py-5 text-sm text-slate-400 whitespace-nowrap">
-
-                            {% if user.created_at %}
-                                {{ user.created_at.strftime('%Y-%m-%d %H:%M') }}
-                            {% else %}
-                                —
-                            {% endif %}
-
+                        <td>
+                            <span class="user-date">
+                                {{ user.created_at.strftime('%Y-%m-%d %H:%M')
+                                   if user.created_at else '—' }}
+                            </span>
                         </td>
 
 
-                        <!-- Last login -->
-                        <td class="px-6 py-5 text-sm text-slate-400 whitespace-nowrap">
-
-                            {% if user.last_login %}
-                                {{ user.last_login.strftime('%Y-%m-%d %H:%M') }}
-                            {% else %}
-                                Never
-                            {% endif %}
-
+                        <td>
+                            <span class="user-date">
+                                {{ user.last_login.strftime('%Y-%m-%d %H:%M')
+                                   if user.last_login else 'Never' }}
+                            </span>
                         </td>
 
 
-                        <!-- Actions -->
-                        <td class="px-6 py-5">
+                        <td>
+                            <span class="user-login-ip">
+                                {{ user.last_login_ip or '—' }}
+                            </span>
+                        </td>
 
-                            <div class="flex items-center justify-end gap-2 flex-wrap">
+
+                        <td>
+
+                            <div class="user-actions">
 
                                 <button
                                     type="button"
-                                    class="btn-secondary text-xs"
-                                    onclick="openPasswordModal({{ user.id }}, {{ user.username|tojson }})"
-                                >
-                                    <span class="mr-1">⌁</span>
-                                    Change password
+                                    class="ff-icon-button"
+                                    data-user-action="password"
+                                    data-user-id="{{ user.id }}"
+                                    data-username="{{ user.username }}"
+                                    title="Change password"
+                                    aria-label="Change password">
+
+                                    <i class="bi bi-key"></i>
+
                                 </button>
 
 
                                 <form
                                     method="post"
-                                    action="{{ url_for('update_user', user_id=user.id) }}"
-                                >
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    action="{{ url_for('update_user', user_id=user.id) }}">
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}">
 
                                     <input
                                         type="hidden"
                                         name="role"
-                                        value="{{ user.role }}"
-                                    >
+                                        value="{{ user.role }}">
 
                                     <input
                                         type="hidden"
                                         name="is_active"
-                                        value="{{ '0' if user.is_active else '1' }}"
-                                    >
+                                        value="{{ '0' if user.is_active else '1' }}">
 
                                     {% if user.is_active %}
 
-                                        <button
-                                            type="submit"
-                                            class="btn-danger text-xs"
-                                            {% if user.id == current_user.id %}disabled title="You cannot deactivate your own account."{% endif %}
-                                        >
-                                            Deactivate
-                                        </button>
+                                    <button
+                                        type="submit"
+                                        class="ff-icon-button is-danger"
+                                        data-user-action="deactivate"
+                                        title="Deactivate"
+                                        aria-label="Deactivate"
+                                        {% if user.id == current_user.id %}
+                                        disabled
+                                        {% endif %}>
+
+                                        <i class="bi bi-person-dash"></i>
+
+                                    </button>
 
                                     {% else %}
 
-                                        <button
-                                            type="submit"
-                                            class="btn-success text-xs"
-                                        >
-                                            Activate
-                                        </button>
+                                    <button
+                                        type="submit"
+                                        class="ff-icon-button is-success"
+                                        data-user-action="activate"
+                                        title="Activate"
+                                        aria-label="Activate">
+
+                                        <i class="bi bi-person-check"></i>
+
+                                    </button>
 
                                     {% endif %}
 
@@ -593,20 +389,23 @@
 
                     </tr>
 
-                {% else %}
+                    {% else %}
 
-                    <tr>
+                    <tr id="users-empty-row">
+                        <td colspan="6" class="users-empty">
+                            <i class="bi bi-people"></i>
 
-                        <td
-                            colspan="6"
-                            class="px-6 py-16 text-center text-slate-500"
-                        >
-                            No users found.
+                            <strong data-i18n="No users found">
+                                Пользователи не найдены
+                            </strong>
+
+                            <span data-i18n="No users match the current filters">
+                                Нет пользователей, соответствующих текущим фильтрам.
+                            </span>
                         </td>
-
                     </tr>
 
-                {% endfor %}
+                    {% endfor %}
 
                 </tbody>
 
@@ -614,99 +413,174 @@
 
         </div>
 
+
+        <!-- FILTER EMPTY STATE -->
+        <div
+            id="users-filter-empty"
+            class="users-filter-empty"
+            hidden>
+
+            <i class="bi bi-search"></i>
+
+            <strong data-i18n="No users found">
+                Пользователи не найдены
+            </strong>
+
+            <span data-i18n="No users match the current filters">
+                Нет пользователей, соответствующих текущим фильтрам.
+            </span>
+
+        </div>
+
     </section>
 
-</div>
+</section>
 
 
-<!-- Password modal -->
+<!-- CREATE USER MODAL -->
 <div
-    id="password-modal"
-    class="hidden fixed inset-0 z-[90] items-center justify-center p-5 modal-backdrop"
->
+    id="create-user-modal"
+    class="ff-modal"
+    hidden>
+
+    <div class="ff-modal-backdrop"></div>
 
     <div
-        class="glass rounded-2xl w-full max-w-md p-6"
+        class="ff-modal-dialog"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="password-modal-title"
-    >
+        aria-labelledby="create-user-title">
 
-        <div class="flex items-start justify-between gap-4 mb-5">
+        <div class="ff-modal-header">
 
-            <div>
+            <div class="ff-modal-heading">
 
-                <h2
-                    id="password-modal-title"
-                    class="text-lg font-semibold text-white"
-                >
-                    Change password
-                </h2>
+                <div class="ff-modal-icon is-primary">
+                    <i class="bi bi-person-plus"></i>
+                </div>
 
-                <p class="text-sm text-slate-500 mt-1">
-                    Set a new password for
-                    <span
-                        id="password-modal-user"
-                        class="text-slate-300 font-medium"
-                    ></span>
-                </p>
+                <div>
+                    <h2 id="create-user-title"
+                        data-i18n="Create User">
+                        Создать пользователя
+                    </h2>
+
+                    <p data-i18n="Add a new account with an initial role and password">
+                        Добавление нового аккаунта с ролью и паролем.
+                    </p>
+                </div>
 
             </div>
 
             <button
                 type="button"
-                onclick="closePasswordModal()"
-                class="text-slate-500 hover:text-slate-300 text-xl"
-                title="Close"
-                aria-label="Close"
-            >
-                ×
+                class="ff-modal-close"
+                data-modal-close="create-user-modal"
+                aria-label="Close">
+
+                <i class="bi bi-x-lg"></i>
+
             </button>
 
         </div>
 
 
         <form
-            id="password-form"
             method="post"
-        >
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-            <label class="block text-xs font-medium text-slate-400 mb-2">
-                New password
-            </label>
+            action="{{ url_for('create_user') }}"
+            id="create-user-form"
+            class="ff-modal-body">
 
             <input
-                id="password-input"
-                class="input"
-                type="password"
-                name="password"
-                minlength="8"
-                autocomplete="new-password"
-                placeholder="Minimum 8 characters"
-                required
-            >
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}">
 
-            <p class="text-[11px] text-slate-600 mt-2">
-                Password must contain at least 8 characters.
-            </p>
+            <div class="ff-form-field">
+
+                <label for="create-username"
+                       data-i18n="Username">
+                    Имя пользователя
+                </label>
+
+                <input
+                    id="create-username"
+                    type="text"
+                    name="username"
+                    maxlength="64"
+                    autocomplete="username"
+                    placeholder="username"
+                    required>
+
+            </div>
 
 
-            <div class="flex justify-end gap-2 mt-6">
+            <div class="ff-form-field">
+
+                <label for="create-password"
+                       data-i18n="Password">
+                    Пароль
+                </label>
+
+                <input
+                    id="create-password"
+                    type="password"
+                    name="password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    placeholder="Минимум 8 символов"
+                    required>
+
+                <small data-i18n="Password must contain at least 8 characters">
+                    Минимум 8 символов.
+                </small>
+
+            </div>
+
+
+            <div class="ff-form-field">
+
+                <label for="create-role"
+                       data-i18n="Role">
+                    Роль
+                </label>
+
+                <select
+                    id="create-role"
+                    name="role"
+                    required>
+
+                    {% for role in valid_roles %}
+                    <option value="{{ role }}">
+                        {{ role|capitalize }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="ff-modal-footer">
 
                 <button
                     type="button"
-                    class="btn-secondary"
-                    onclick="closePasswordModal()"
-                >
-                    Cancel
+                    class="ff-btn ff-btn-secondary"
+                    data-modal-close="create-user-modal"
+                    data-i18n="Cancel">
+                    Отмена
                 </button>
 
                 <button
                     type="submit"
-                    class="btn-primary"
-                >
-                    Change password
+                    class="ff-btn ff-btn-primary">
+
+                    <i class="bi bi-person-plus"></i>
+
+                    <span data-i18n="Create User">
+                        Создать пользователя
+                    </span>
+
                 </button>
 
             </div>
@@ -718,77 +592,131 @@
 </div>
 
 
-<script src="/static/js/finflow-i18n.js?v=20260911-4"></script>
+<!-- PASSWORD MODAL -->
+<div
+    id="password-modal"
+    class="ff-modal"
+    hidden>
+
+    <div class="ff-modal-backdrop"></div>
+
+    <div
+        class="ff-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="password-modal-title">
+
+        <div class="ff-modal-header">
+
+            <div class="ff-modal-heading">
+
+                <div class="ff-modal-icon is-warning">
+                    <i class="bi bi-key"></i>
+                </div>
+
+                <div>
+
+                    <h2 id="password-modal-title"
+                        data-i18n="Change password">
+                        Смена пароля
+                    </h2>
+
+                    <p>
+                        <span data-i18n="Set a new password for">
+                            Новый пароль для
+                        </span>
+
+                        <strong id="password-modal-user"></strong>
+                    </p>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="ff-modal-close"
+                data-modal-close="password-modal"
+                aria-label="Close">
+
+                <i class="bi bi-x-lg"></i>
+
+            </button>
+
+        </div>
+
+
+        <form
+            id="password-form"
+            method="post"
+            class="ff-modal-body">
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}">
+
+
+            <div class="ff-form-field">
+
+                <label for="password-input"
+                       data-i18n="New password">
+                    Новый пароль
+                </label>
+
+                <input
+                    id="password-input"
+                    type="password"
+                    name="password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    placeholder="Минимум 8 символов"
+                    required>
+
+            </div>
+
+
+            <div class="ff-modal-footer">
+
+                <button
+                    type="button"
+                    class="ff-btn ff-btn-secondary"
+                    data-modal-close="password-modal"
+                    data-i18n="Cancel">
+                    Отмена
+                </button>
+
+                <button
+                    type="submit"
+                    class="ff-btn ff-btn-primary">
+
+                    <i class="bi bi-check2"></i>
+
+                    <span data-i18n="Change password">
+                        Сохранить
+                    </span>
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
 <script>
-function openPasswordModal(userId, username) {
-
-    const modal =
-        document.getElementById("password-modal");
-
-    const form =
-        document.getElementById("password-form");
-
-    const userLabel =
-        document.getElementById("password-modal-user");
-
-    const password =
-        document.getElementById("password-input");
-
-
-    form.action =
-        "{{ url_for('change_user_password', user_id=0) }}"
-            .replace("/0/password", "/" + userId + "/password");
-
-
-    userLabel.textContent = username;
-
-    password.value = "";
-
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-
-    setTimeout(function () {
-        password.focus();
-    }, 50);
-
-}
-
-
-function closePasswordModal() {
-
-    const modal =
-        document.getElementById("password-modal");
-
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-
-}
-
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (event.key === "Escape") {
-            closePasswordModal();
-        }
-
-    }
-);
-
-
-document.getElementById("password-modal")
-    .addEventListener(
-        "click",
-        function (event) {
-
-            if (event.target === this) {
-                closePasswordModal();
-            }
-
-        }
-    );
+    window.finflowUsers = {
+        changePasswordBaseUrl: "{{ url_for('change_user_password', user_id=0) }}"
+    };
 </script>
 
-</body>
-</html>
+<script src="{{ url_for('static', filename='js/users.js') }}?v=20260923"></script>
+
+{% endblock %}

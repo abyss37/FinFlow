@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block page_icon %}
+<span class="ff-page-icon">
+    <i class="bi bi-bell-fill"></i>
+</span>
+{% endblock %}
+
+{% block page_title %}Оповещения{% endblock %}
+
+{% block page_subtitle %}
+Системные события, финансовые риски и контрольные уведомления
+{% endblock %}
+
+{% block content %}
+
+<section class="ff-notifications-page">
+
+    <!-- =====================================================
+         PAGE TOOLBAR
+         ===================================================== -->
+
+    <div class="ff-notifications-toolbar">
+
+        <div class="ff-notifications-toolbar-copy">
+            <div class="ff-section-kicker">
+                NOTIFICATION CENTER
+            </div>
+
+            <div class="ff-notifications-toolbar-title">
+                <span id="notification-total">0</span>
+                <span class="ff-notifications-toolbar-muted">
+                    уведомлений
+                </span>
+            </div>
+        </div>
+
+        <div class="ff-notifications-toolbar-actions">
+
+            <button
+                id="notification-read-all"
+                type="button"
+                class="ff-action-button ff-action-button-primary">
+
+                <i class="bi bi-check2-all"></i>
+
+                <span>
+                    Прочитать все
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY
+         ===================================================== -->
+
+    <div class="ff-notification-summary">
+
+        <button
+            type="button"
+            class="ff-notification-summary-card is-active"
+            data-notification-filter="all">
+
+            <span class="ff-notification-summary-icon">
+                <i class="bi bi-bell"></i>
+            </span>
+
+            <span class="ff-notification-summary-copy">
+                <span class="ff-notification-summary-label">
+                    Все
+                </span>
+
+                <strong id="notification-count-all">
+                    0
+                </strong>
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="ff-notification-summary-card"
+            data-notification-filter="unread">
+
+            <span class="ff-notification-summary-icon">
+                <i class="bi bi-envelope"></i>
+            </span>
+
+            <span class="ff-notification-summary-copy">
+                <span class="ff-notification-summary-label">
+                    Непрочитанные
+                </span>
+
+                <strong id="notification-count-unread">
+                    0
+                </strong>
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="ff-notification-summary-card"
+            data-notification-filter="critical">
+
+            <span class="ff-notification-summary-icon">
+                <i class="bi bi-exclamation-octagon"></i>
+            </span>
+
+            <span class="ff-notification-summary-copy">
+                <span class="ff-notification-summary-label">
+                    Критические
+                </span>
+
+                <strong id="notification-count-critical">
+                    0
+                </strong>
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="ff-notification-summary-card"
+            data-notification-filter="warning">
+
+            <span class="ff-notification-summary-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </span>
+
+            <span class="ff-notification-summary-copy">
+                <span class="ff-notification-summary-label">
+                    Предупреждения
+                </span>
+
+                <strong id="notification-count-warning">
+                    0
+                </strong>
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         LIST
+         ===================================================== -->
+
+    <section class="ff-glass-panel ff-notification-panel">
+
+        <div class="ff-notification-panel-head">
+
+            <div>
+                <div class="ff-section-kicker">
+                    EVENTS
+                </div>
+
+                <h2>
+                    Центр уведомлений
+                </h2>
+            </div>
+
+            <div
+                id="notification-filter-label"
+                class="ff-notification-filter-label">
+                Все уведомления
+            </div>
+
+        </div>
+
+
+        <div
+            id="notification-list"
+            class="ff-notification-list">
+
+            <div class="ff-notification-state">
+                <span class="ff-notification-state-icon">
+                    <i class="bi bi-arrow-repeat"></i>
+                </span>
+
+                <div>
+                    <strong>Загрузка уведомлений</strong>
+                    <span>Получаем актуальное состояние системы…</span>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="{{ url_for('static', filename='js/notifications.js') }}?v=20260923"></script>
+
+{% endblock %}

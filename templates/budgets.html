@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Бюджеты · FinFlow{% endblock %}
+
+{% block head %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/budgets.css') }}?v=20260923">
+{% endblock %}
+
+
+{% block page_icon %}
+<span class="ff-page-icon">
+    <i class="bi bi-wallet2"></i>
+</span>
+{% endblock %}
+
+{% block page_title %}Бюджеты{% endblock %}
+
+{% block page_subtitle %}
+Управление бюджетами компаний, расходами и состоянием контрактов.
+{% endblock %}
+
+{% block content %}
+<div class="ff-budgets-page">
+
+    <div class="ff-budget-hero-actions">
+        {% if current_user.role in ["admin", "manager"] %}
+        <button
+            type="button"
+            class="ff-budget-primary-button"
+            onclick="openCreateBudgetModal()"
+        >
+            <i class="bi bi-plus-lg"></i>
+            <span>Новый бюджет</span>
+        </button>
+        {% endif %}
+
+        <button
+            type="button"
+            class="ff-glass-button"
+            onclick="refreshBudgets()"
+        >
+            <i class="bi bi-arrow-clockwise"></i>
+            <span>Обновить</span>
+        </button>
+    </div>
+
+    <section class="ff-budget-stats" id="budgetStats">
+        <div class="ff-budget-stat">
+            <div class="ff-budget-stat-icon">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div>
+                <div class="ff-budget-stat-label">Бюджетов</div>
+                <div class="ff-budget-stat-value" id="statBudgetCount">0</div>
+            </div>
+        </div>
+
+        <div class="ff-budget-stat">
+            <div class="ff-budget-stat-icon">
+                <i class="bi bi-buildings"></i>
+            </div>
+            <div>
+                <div class="ff-budget-stat-label">Компаний</div>
+                <div class="ff-budget-stat-value" id="statCompanyCount">0</div>
+            </div>
+        </div>
+
+        <div class="ff-budget-stat">
+            <div class="ff-budget-stat-icon">
+                <i class="bi bi-speedometer2"></i>
+            </div>
+            <div>
+                <div class="ff-budget-stat-label">Под контролем</div>
+                <div class="ff-budget-stat-value" id="statHealthyCount">0</div>
+            </div>
+        </div>
+
+        <div class="ff-budget-stat">
+            <div class="ff-budget-stat-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <div>
+                <div class="ff-budget-stat-label">Требуют внимания</div>
+                <div class="ff-budget-stat-value" id="statAttentionCount">0</div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="ff-budget-toolbar">
+        <div class="ff-budget-search">
+            <i class="bi bi-search"></i>
+            <input
+                id="budgetSearch"
+                type="search"
+                placeholder="Поиск компании..."
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="ff-budget-filters">
+            <select id="budgetCurrencyFilter" class="ff-budget-select">
+                <option value="ALL">Все валюты</option>
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+                <option value="UAH">UAH</option>
+            </select>
+
+            <select id="budgetSoftwareFilter" class="ff-budget-select">
+                <option value="ALL">Все продукты</option>
+                {% for product in products %}
+                    <option value="{{ product.code }}">{{ product.name }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="ff-budget-view-toggle">
+                <button
+                    type="button"
+                    class="is-active"
+                    data-budget-view="grid"
+                    title="Плитка"
+                >
+                    <i class="bi bi-grid-3x3-gap"></i>
+                </button>
+
+                <button
+                    type="button"
+                    data-budget-view="list"
+                    title="Список"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="budgetsGrid" class="ff-budgets-grid"></section>
+
+    <section id="budgetsList" class="ff-budgets-list hidden"></section>
+
+    <section id="budgetsEmpty" class="ff-budget-empty hidden">
+        <div class="ff-budget-empty-icon">
+            <i class="bi bi-wallet2"></i>
+        </div>
+
+        <h3>Бюджеты не найдены</h3>
+
+        <p>
+            Попробуйте изменить фильтры или создать бюджет для компании.
+        </p>
+    </section>
+
+</div>
+
+
+<div id="budgetEditModal" class="ff-budget-modal hidden">
+    <div class="ff-budget-modal-backdrop" onclick="closeBudgetModal()"></div>
+
+    <div class="ff-budget-modal-card">
+        <div class="ff-budget-modal-header">
+            <div>
+                <div class="ff-page-eyebrow">
+                    <i class="bi bi-pencil-square"></i>
+                    BUDGET CONTROL
+                </div>
+
+                <h2 id="budgetModalTitle">Редактировать бюджет</h2>
+                <p id="budgetModalSubtitle"></p>
+            </div>
+
+            <button
+                type="button"
+                class="ff-budget-modal-close"
+                onclick="closeBudgetModal()"
+            >
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <form id="budgetEditForm">
+            <input type="hidden" id="budgetEditId">
+
+            <div class="ff-budget-form-grid">
+                <label>
+                    <span>Компания</span>
+                    <select id="budgetEditCompanyId" required>
+                        <option value="">Выберите компанию</option>
+                        {% for company in companies %}
+                            <option value="{{ company.id }}">{{ company.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    <span>Продукт</span>
+                    <select id="budgetEditSoftware" required>
+                        <option value="">Выберите продукт</option>
+                        {% for product in products %}
+                            <option value="{{ product.code }}">{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    <span>Валюта</span>
+                    <select id="budgetEditCurrency" required>
+                        {% for currency in currency_symbols %}
+                            <option value="{{ currency }}">{{ currency }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    <span>Бюджет</span>
+                    <div class="ff-budget-input-wrap">
+                        <input
+                            id="budgetEditAmount"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+                        <strong id="budgetEditCurrencyLabel">EUR</strong>
+                    </div>
+                </label>
+
+                <label>
+                    <span>Дата завершения</span>
+                    <input
+                        id="budgetEditCompletionDate"
+                        type="date"
+                    >
+                </label>
+            </div>
+
+            <div class="ff-budget-form-actions">
+                <button
+                    type="button"
+                    class="ff-glass-button"
+                    onclick="closeBudgetModal()"
+                >
+                    Отмена
+                </button>
+
+                <button
+                    type="submit"
+                    class="ff-budget-primary-button"
+                >
+                    <i class="bi bi-check2"></i>
+                    Сохранить
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+window.FINFLOW_BUDGETS = {{ budgets|tojson }};
+window.FINFLOW_CURRENT_USER_ROLE = {{ current_user.role|tojson }};
+</script>
+
+<script src="{{ url_for('static', filename='js/budgets.js') }}?v=20260924-3"></script>
+{% endblock %}

@@ -9,26 +9,44 @@
     <style>
         :root {
             color-scheme: dark;
-            --bg: #070b12;
-            --panel: rgba(18, 24, 36, 0.82);
-            --border: rgba(255, 255, 255, 0.09);
-            --text: #f4f7fb;
-            --muted: #8994a6;
-            --accent: #7c8cff;
-            --accent-hover: #8d9bff;
-            --danger: #ff6b7a;
+
+            --ff-bg: #050b14;
+            --ff-bg-soft: #091321;
+
+            --ff-panel: rgba(10, 23, 39, .76);
+            --ff-panel-strong: rgba(11, 27, 45, .88);
+
+            --ff-border: rgba(148, 163, 184, .13);
+            --ff-border-focus: rgba(96, 165, 250, .55);
+
+            --ff-text: #edf6ff;
+            --ff-text-soft: #9aacc0;
+            --ff-text-muted: #708399;
+
+            --ff-blue: #3b82f6;
+            --ff-cyan: #22d3ee;
+
+            --ff-danger: #fb7185;
         }
 
         * {
             box-sizing: border-box;
         }
 
+        html {
+            min-height: 100%;
+            background: var(--ff-bg);
+        }
+
         body {
-            margin: 0;
             min-height: 100vh;
+            margin: 0;
             display: grid;
             place-items: center;
-            padding: 24px;
+            padding: 32px 20px;
+
+            color: var(--ff-text);
+
             font-family:
                 Inter,
                 ui-sans-serif,
@@ -37,136 +55,410 @@
                 BlinkMacSystemFont,
                 "Segoe UI",
                 sans-serif;
-            color: var(--text);
+
             background:
                 radial-gradient(
-                    circle at 50% 0%,
-                    rgba(124, 140, 255, 0.14),
-                    transparent 42%
+                    circle at 50% -10%,
+                    rgba(59, 130, 246, .18),
+                    transparent 38%
                 ),
-                var(--bg);
+                radial-gradient(
+                    circle at 90% 80%,
+                    rgba(34, 211, 238, .055),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    180deg,
+                    #07111e 0%,
+                    #050b14 100%
+                );
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+
+            background:
+                linear-gradient(
+                    115deg,
+                    transparent 0%,
+                    rgba(255,255,255,.018) 50%,
+                    transparent 100%
+                );
+
+            opacity: .7;
         }
 
         .login-shell {
-            width: min(420px, 100%);
+            position: relative;
+            z-index: 1;
+
+            width: min(430px, 100%);
         }
 
         .brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            margin-bottom: 24px;
             text-align: center;
-            margin-bottom: 22px;
         }
 
-        .brand-title {
-            font-size: 30px;
+        .brand-logo {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+
+            margin-bottom: 14px;
+
+            filter:
+                drop-shadow(0 12px 28px rgba(37, 99, 235, .22));
+        }
+
+        .brand-name {
+            margin: 0;
+
+            font-size: 25px;
+            line-height: 1;
             font-weight: 750;
-            letter-spacing: -0.8px;
+            letter-spacing: -.7px;
         }
 
-        .brand-title span {
-            color: var(--accent);
+        .brand-name span {
+            color: #60a5fa;
         }
 
         .brand-subtitle {
-            margin-top: 7px;
-            color: var(--muted);
-            font-size: 14px;
+            margin-top: 9px;
+
+            color: var(--ff-text-muted);
+            font-size: 12px;
+            letter-spacing: .02em;
         }
 
         .card {
+            position: relative;
+
             padding: 30px;
-            border: 1px solid var(--border);
+
+            border: 1px solid var(--ff-border);
             border-radius: 22px;
-            background: var(--panel);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(18, 39, 62, .78),
+                    rgba(7, 18, 31, .86)
+                );
+
             box-shadow:
-                0 24px 70px rgba(0, 0, 0, 0.42),
-                inset 0 1px 0 rgba(255, 255, 255, 0.035);
-            backdrop-filter: blur(18px);
+                0 28px 80px rgba(0, 0, 0, .42),
+                0 0 0 1px rgba(255,255,255,.012) inset,
+                0 1px 0 rgba(255,255,255,.035) inset;
+
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
         }
 
-        h1 {
-            margin: 0 0 8px;
+        .card::before {
+            content: "";
+
+            position: absolute;
+            top: 0;
+            left: 28px;
+            right: 28px;
+
+            height: 1px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(96,165,250,.5),
+                    rgba(34,211,238,.28),
+                    transparent
+                );
+        }
+
+        .card-header {
+            margin-bottom: 25px;
+        }
+
+        .card-title {
+            margin: 0;
+
+            color: var(--ff-text);
+
             font-size: 22px;
-            letter-spacing: -0.3px;
-        }
-
-        .description {
-            margin: 0 0 24px;
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        label {
-            display: block;
-            margin: 0 0 8px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        input {
-            width: 100%;
-            height: 46px;
-            padding: 0 14px;
-            margin-bottom: 17px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            outline: none;
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.045);
-            font: inherit;
-            transition:
-                border-color 0.15s ease,
-                background 0.15s ease;
-        }
-
-        input:focus {
-            border-color: rgba(124, 140, 255, 0.65);
-            background: rgba(255, 255, 255, 0.065);
-        }
-
-        button {
-            width: 100%;
-            height: 46px;
-            border: 0;
-            border-radius: 12px;
-            color: white;
-            background: var(--accent);
-            font: inherit;
+            line-height: 1.2;
             font-weight: 700;
-            cursor: pointer;
-            transition:
-                background 0.15s ease,
-                transform 0.1s ease;
+            letter-spacing: -.35px;
         }
 
-        button:hover {
-            background: var(--accent-hover);
-        }
+        .card-description {
+            margin: 8px 0 0;
 
-        button:active {
-            transform: translateY(1px);
+            color: var(--ff-text-soft);
+            font-size: 13px;
+            line-height: 1.55;
         }
 
         .error {
-            margin-bottom: 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+
+            margin-bottom: 20px;
             padding: 11px 13px;
-            border: 1px solid rgba(255, 107, 122, 0.24);
-            border-radius: 11px;
-            color: #ffb5bd;
-            background: rgba(255, 107, 122, 0.08);
+
+            border: 1px solid rgba(251, 113, 133, .18);
+            border-radius: 12px;
+
+            color: #fecdd3;
+            background: rgba(244, 63, 94, .075);
+
             font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .error-icon {
+            flex: 0 0 auto;
+            width: 17px;
+            height: 17px;
+            margin-top: 1px;
+
+            border-radius: 50%;
+
+            display: grid;
+            place-items: center;
+
+            color: #fda4af;
+            background: rgba(244, 63, 94, .14);
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        .field:last-of-type {
+            margin-bottom: 21px;
+        }
+
+        .field-label {
+            display: block;
+
+            margin: 0 0 8px;
+
+            color: #c7d5e4;
+
+            font-size: 12px;
+            line-height: 1;
+            font-weight: 650;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .field-input {
+            width: 100%;
+            height: 46px;
+
+            padding: 0 13px;
+
+            border: 1px solid var(--ff-border);
+            border-radius: 11px;
+
+            outline: none;
+
+            color: var(--ff-text);
+            background: rgba(255,255,255,.035);
+
+            font: inherit;
+            font-size: 14px;
+
+            transition:
+                border-color .18s ease,
+                background .18s ease,
+                box-shadow .18s ease;
+        }
+
+        .field-input::placeholder {
+            color: #56697e;
+        }
+
+        .field-input:hover {
+            border-color: rgba(148,163,184,.2);
+            background: rgba(255,255,255,.045);
+        }
+
+        .field-input:focus {
+            border-color: var(--ff-border-focus);
+            background: rgba(59,130,246,.045);
+
+            box-shadow:
+                0 0 0 3px rgba(59,130,246,.08);
+        }
+
+        .password-input {
+            padding-right: 48px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+
+            width: 32px;
+            height: 32px;
+
+            transform: translateY(-50%);
+
+            display: grid;
+            place-items: center;
+
+            border: 0;
+            border-radius: 8px;
+
+            color: #71859a;
+            background: transparent;
+
+            cursor: pointer;
+
+            transition:
+                color .16s ease,
+                background .16s ease;
+        }
+
+        .password-toggle:hover {
+            color: #c7d8e9;
+            background: rgba(255,255,255,.055);
+        }
+
+        .password-toggle:focus-visible {
+            outline: 2px solid rgba(96,165,250,.55);
+            outline-offset: 1px;
+        }
+
+        .password-toggle svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .submit-button {
+            width: 100%;
+            height: 46px;
+
+            border: 1px solid rgba(96,165,250,.22);
+            border-radius: 11px;
+
+            color: #f5fbff;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #3b82f6 58%,
+                    #0ea5e9
+                );
+
+            box-shadow:
+                0 12px 28px rgba(37,99,235,.17),
+                0 1px 0 rgba(255,255,255,.12) inset;
+
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                transform .16s ease,
+                filter .16s ease,
+                box-shadow .16s ease;
+        }
+
+        .submit-button:hover {
+            filter: brightness(1.07);
+
+            box-shadow:
+                0 15px 32px rgba(37,99,235,.23),
+                0 1px 0 rgba(255,255,255,.14) inset;
+        }
+
+        .submit-button:active {
+            transform: translateY(1px);
+        }
+
+        .submit-button:focus-visible {
+            outline: 2px solid rgba(96,165,250,.6);
+            outline-offset: 3px;
+        }
+
+        .security-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+
+            margin-top: 18px;
+
+            color: var(--ff-text-muted);
+
+            font-size: 11px;
+        }
+
+        .security-dot {
+            width: 5px;
+            height: 5px;
+
+            border-radius: 50%;
+
+            background: #34d399;
+            box-shadow: 0 0 9px rgba(52,211,153,.45);
         }
 
         .footer {
-            margin-top: 18px;
+            margin-top: 19px;
+
             text-align: center;
-            color: var(--muted);
-            font-size: 12px;
+
+            color: #52667b;
+            font-size: 11px;
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 22px 15px;
+            }
+
+            .brand {
+                margin-bottom: 20px;
+            }
+
+            .brand-logo {
+                width: 62px;
+                height: 62px;
+            }
+
             .card {
-                padding: 24px;
-                border-radius: 18px;
+                padding: 24px 20px;
+                border-radius: 19px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
             }
         }
     </style>
@@ -174,49 +466,164 @@
 
 <body>
     <main class="login-shell">
-        <div class="brand">
-            <div class="brand-title">Fin<span>Flow</span></div>
-            <div class="brand-subtitle">Financial management system</div>
-        </div>
 
-        <section class="card">
-            <h1>Sign in</h1>
-            <p class="description">Enter your FinFlow credentials to continue.</p>
+        <header class="brand">
+            <img
+                class="brand-logo"
+                src="{{ url_for('static', filename='finflow-logo.png') }}?v=20260923"
+                alt="FinFlow">
+
+            <h2 class="brand-name">
+                Fin<span>Flow</span>
+            </h2>
+
+            <div class="brand-subtitle">
+                Financial management system
+            </div>
+        </header>
+
+        <section class="card" aria-labelledby="login-title">
+
+            <div class="card-header">
+                <h1 id="login-title" class="card-title">Welcome back</h1>
+
+                <p class="card-description">
+                    Sign in to continue to your FinFlow workspace.
+                </p>
+            </div>
 
             {% if error %}
-                <div class="error">{{ error }}</div>
+                <div class="error" role="alert">
+                    <span class="error-icon">!</span>
+                    <span>{{ error }}</span>
+                </div>
             {% endif %}
 
             <form method="post" action="{{ url_for('login', next=next_url) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="next" value="{{ next_url }}">
-
-                <label for="username">Username</label>
                 <input
-                    id="username"
-                    name="username"
-                    type="text"
-                    autocomplete="username"
-                    required
-                    autofocus
-                >
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}">
 
-                <label for="password">Password</label>
                 <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autocomplete="current-password"
-                    required
-                >
+                    type="hidden"
+                    name="next"
+                    value="{{ next_url }}">
 
-                <button type="submit">Sign in</button>
+                <div class="field">
+                    <label
+                        class="field-label"
+                        for="username">
+                        Username
+                    </label>
+
+                    <input
+                        class="field-input"
+                        id="username"
+                        name="username"
+                        type="text"
+                        autocomplete="username"
+                        required
+                        autofocus
+                        placeholder="Enter your username">
+                </div>
+
+                <div class="field">
+                    <label
+                        class="field-label"
+                        for="password">
+                        Password
+                    </label>
+
+                    <div class="input-wrap">
+                        <input
+                            class="field-input password-input"
+                            id="password"
+                            name="password"
+                            type="password"
+                            autocomplete="current-password"
+                            required
+                            placeholder="Enter your password">
+
+                        <button
+                            class="password-toggle"
+                            id="password-toggle"
+                            type="button"
+                            aria-label="Show password"
+                            title="Show password">
+
+                            <svg
+                                id="password-eye"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true">
+                                <path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/>
+                                <circle cx="12" cy="12" r="2.5"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button
+                    class="submit-button"
+                    type="submit">
+                    Sign in
+                </button>
             </form>
+
+            <div class="security-note">
+                <span class="security-dot"></span>
+                Secure FinFlow access
+            </div>
         </section>
 
-        <div class="footer">
+        <footer class="footer">
             FinFlow
-        </div>
+        </footer>
     </main>
+
+    <script>
+        (() => {
+            const password = document.getElementById('password');
+            const toggle = document.getElementById('password-toggle');
+            const eye = document.getElementById('password-eye');
+
+            if (!password || !toggle || !eye) {
+                return;
+            }
+
+            toggle.addEventListener('click', () => {
+                const visible = password.type === 'text';
+
+                password.type = visible ? 'password' : 'text';
+
+                toggle.setAttribute(
+                    'aria-label',
+                    visible ? 'Show password' : 'Hide password'
+                );
+
+                toggle.setAttribute(
+                    'title',
+                    visible ? 'Show password' : 'Hide password'
+                );
+
+                eye.innerHTML = visible
+                    ? `
+                        <path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/>
+                        <circle cx="12" cy="12" r="2.5"/>
+                    `
+                    : `
+                        <path d="M3 3l18 18"/>
+                        <path d="M10.6 6.2A10.8 10.8 0 0 1 12 6c6.1 0 9.5 6 9.5 6a17 17 0 0 1-3.1 3.6"/>
+                        <path d="M6.4 6.4C3.9 8.1 2.5 12 2.5 12s3.4 6 9.5 6a9.8 9.8 0 0 0 3.4-.6"/>
+                        <path d="M9.9 9.9a2.5 2.5 0 0 0 3.5 3.5"/>
+                    `;
+            });
+        })();
+    </script>
 </body>
 </html>

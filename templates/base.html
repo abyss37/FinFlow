@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="uk" data-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}FinFlow{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+
+    <meta name="color-scheme" content="dark light">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/finflow.css') }}?v=20260924-8">
+
+    {% block head %}{% endblock %}
+    {% block extra_head %}{% endblock %}
+
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('finflow-sidebar-collapsed') === '1') {
+                    document.documentElement.classList.add('ff-sidebar-precollapsed');
+                }
+            } catch (error) {
+                /* localStorage unavailable */
+            }
+        })();
+    </script>
+</head>
+
+<body class="ff-body">
+
+<div id="ff-app" class="ff-app">
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside id="ff-sidebar" class="ff-sidebar">
+
+        <div class="ff-sidebar-inner">
+
+            <!-- BRAND -->
+            <div class="ff-brand-row">
+
+                <a href="/" class="ff-brand" aria-label="FinFlow">
+
+                    <span class="ff-brand-mark">
+                        <i class="bi bi-bar-chart-line-fill"></i>
+                    </span>
+
+                    <span class="ff-brand-copy">
+                        <strong>FinFlow</strong>
+                        <small>Financial Control</small>
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- NAVIGATION -->
+            <nav class="ff-nav" aria-label="Main navigation">
+
+                <div class="ff-nav-section">
+
+                    <div class="ff-nav-label">
+                        WORKSPACE
+                    </div>
+
+                    <a
+                        href="/"
+                        class="ff-nav-item {% if request.endpoint == 'index' %}is-active{% endif %}"
+                        data-tooltip="Обзор">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-grid-1x2-fill"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Обзор</span>
+
+                    </a>
+
+
+                    <a
+                        href="/products"
+                        class="ff-nav-item {% if request.endpoint == 'products_page' %}is-active{% endif %}"
+                        data-tooltip="Продукты">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-box-seam"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Продукты</span>
+
+                    </a>
+
+
+                    <a
+                        href="/companies"
+                        class="ff-nav-item {% if request.endpoint == 'companies' %}is-active{% endif %}"
+                        data-tooltip="Компании">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-buildings"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Компании</span>
+
+                    </a>
+
+
+                    <a
+                        href="/budgets"
+                        class="ff-nav-item {% if request.endpoint == 'budgets' %}is-active{% endif %}"
+                        data-tooltip="Бюджеты">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-wallet2"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Бюджеты</span>
+
+                    </a>
+
+
+                    <a
+                        href="/invoices"
+                        class="ff-nav-item {% if request.endpoint == 'invoices' %}is-active{% endif %}"
+                        data-tooltip="Счета">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-receipt"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Счета</span>
+
+                    </a>
+
+                </div>
+
+
+                <div class="ff-nav-section ff-nav-section-spaced">
+
+                    <div class="ff-nav-label">
+                        INSIGHTS
+                    </div>
+
+
+                    <a
+                        href="/analytics"
+                        class="ff-nav-item {% if request.endpoint == 'analytics' %}is-active{% endif %}"
+                        data-tooltip="Аналитика">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Аналитика</span>
+
+                    </a>
+
+
+                    <a
+                        href="/audit-log"
+                        class="ff-nav-item {% if request.endpoint == 'audit_log' %}is-active{% endif %}"
+                        data-tooltip="Аудит">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Аудит</span>
+
+                    </a>
+
+
+                    <a
+                        href="/notifications"
+                        class="ff-nav-item {% if request.endpoint == 'notifications' %}is-active{% endif %}"
+                        data-tooltip="Оповещения">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-bell"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Оповещения</span>
+
+                        <span
+                            id="ff-notification-badge"
+                            class="ff-nav-badge hidden">
+                            0
+                        </span>
+
+                    </a>
+
+                </div>
+
+
+                {% if current_user is defined and current_user and current_user.role == 'admin' %}
+
+                <div class="ff-nav-section ff-nav-section-spaced">
+
+                    <div class="ff-nav-label">
+                        ADMINISTRATION
+                    </div>
+
+                    <a
+                        href="/users"
+                        class="ff-nav-item {% if request.endpoint == 'users' %}is-active{% endif %}"
+                        data-tooltip="Пользователи">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-people"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Пользователи</span>
+
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+                {% if current_user is defined and current_user %}
+
+                <div class="ff-nav-section ff-nav-section-spaced">
+
+                    <div class="ff-nav-label">
+                        ORGANIZATION
+                    </div>
+
+                    <a
+                        href="/our-company"
+                        class="ff-nav-item {% if request.endpoint == 'our_company' %}is-active{% endif %}"
+                        data-tooltip="Наша организация">
+
+                        <span class="ff-nav-icon">
+                            <i class="bi bi-building-check"></i>
+                        </span>
+
+                        <span class="ff-nav-text">Наша организация</span>
+
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+            </nav>
+
+
+            <!-- SIDEBAR BOTTOM -->
+            <div class="ff-sidebar-bottom">
+
+                <div class="ff-sidebar-language">
+
+                    <button
+                        id="ff-sidebar-toggle"
+                        class="ff-sidebar-toggle"
+                        type="button"
+                        aria-label="Collapse sidebar"
+                        title="Collapse sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <div class="ff-language">
+
+                    <button
+                        class="ff-language-button"
+                        data-lang="uk">
+                        UA
+                    </button>
+
+                    <span>/</span>
+
+                    <button
+                        class="ff-language-button"
+                        data-lang="en">
+                        EN
+                    </button>
+
+                </div>
+
+                </div>
+
+                <div class="ff-sidebar-user" id="ff-sidebar-user">
+
+                    <div class="ff-user-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+
+                    <div class="ff-sidebar-user-copy">
+
+                        <strong>
+                            {% if current_user is defined and current_user %}
+                                {{ current_user.username }}
+                            {% else %}
+                                admin
+                            {% endif %}
+                        </strong>
+
+                        <small>
+                            {% if current_user is defined and current_user %}
+                                {{ current_user.role|default('user')|capitalize }}
+                            {% else %}
+                                Administrator
+                            {% endif %}
+                        </small>
+
+                    </div>
+
+                    <button
+                        id="ff-user-menu-button"
+                        type="button"
+                        class="ff-user-menu-button"
+                        aria-label="User menu"
+                        title="User menu"
+                        aria-expanded="false"
+                        aria-haspopup="true">
+
+                        <i class="bi bi-three-dots"></i>
+
+                    </button>
+
+                    <div
+                        id="ff-user-menu"
+                        class="ff-user-menu"
+                        hidden>
+
+                        <div class="ff-user-menu-header">
+
+                            <span class="ff-user-menu-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </span>
+
+                            <div>
+                                <strong>
+                                    {% if current_user is defined and current_user %}
+                                        {{ current_user.username }}
+                                    {% else %}
+                                        admin
+                                    {% endif %}
+                                </strong>
+
+                                <small>
+                                    {% if current_user is defined and current_user %}
+                                        {{ current_user.role|default('user')|capitalize }}
+                                    {% else %}
+                                        Administrator
+                                    {% endif %}
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="ff-user-menu-divider"></div>
+
+                        <button
+                            type="button"
+                            class="ff-user-menu-item ff-user-menu-logout"
+                            id="ff-logout-button">
+
+                            <i class="bi bi-box-arrow-right"></i>
+
+                            <span data-i18n="Logout">Вийти</span>
+
+                        </button>
+
+                        <form
+                            id="ff-logout-form"
+                            method="POST"
+                            action="{{ url_for('logout') }}"
+                            hidden>
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}">
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <div id="ff-main" class="ff-main">
+
+        <header class="ff-header">
+
+            <div class="ff-header-left">
+
+                <button
+                    id="ff-mobile-menu"
+                    class="ff-mobile-menu"
+                    type="button"
+                    aria-label="Open menu"
+                    title="Open menu">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+
+                <div class="ff-page-heading">
+
+                    {% block page_icon %}
+
+                    <span class="ff-page-icon">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                    </span>
+
+                    {% endblock %}
+
+
+                    <div class="ff-page-heading-copy">
+
+                        <h1>
+                            {% block page_title %}Обзор{% endblock %}
+                        </h1>
+
+                        <p>
+                            {% block page_subtitle %}
+                            Финансовый контроль и состояние системы
+                            {% endblock %}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+</header>
+
+
+        <main class="ff-content">
+
+            {% block content %}{% endblock %}
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<!-- MOBILE OVERLAY -->
+<div
+    id="ff-sidebar-overlay"
+    class="ff-sidebar-overlay">
+</div>
+
+
+<script src="{{ url_for('static', filename='js/finflow-i18n.js') }}?v=20260924-1"></script>
+<script src="{{ url_for('static', filename='js/finflow-money.js') }}?v=20260923-1"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v=20260924-1"></script>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

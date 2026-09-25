@@ -379,9 +379,13 @@
             "Username is the stable identity used in the audit log.":
                 "Ім'я користувача — постійний ідентифікатор, що використовується в журналі аудиту.",
 
+            "Username is the stable identity used in the audit log. The latest login IP is recorded for account activity tracking.":
+                "Ім'я користувача використовується як стабільний ідентифікатор в аудит-лозі. IP-адреса останнього входу зберігається для відстеження активності облікового запису.",
+
             "User": "Користувач",
             "Created": "Створено",
             "Last login": "Останній вхід",
+            "IP": "IP",
             "Actions": "Дії",
 
             "You": "Ви",
@@ -983,7 +987,7 @@
 
         button.textContent =
             lang === "uk"
-                ? "UK"
+                ? "UA"
                 : "EN";
 
         button.setAttribute(
@@ -1000,129 +1004,72 @@
     }
 
     function addLanguageSwitcher() {
-
         /*
-         * The language switcher is intentionally available
-         * only on the main Dashboard.
+         * Dashboard language switcher is rendered statically
+         * inside the FinFlow sidebar.
          *
-         * All other pages use the same localStorage language
-         * preference but do not render their own switcher.
+         * Keep this function for API compatibility, but do not
+         * create another floating/button switcher here.
          */
-
-        const userMenu =
-            document.getElementById(
-                "ff-user-menu"
-            );
-
-        if (
-            !userMenu ||
-            !userMenu.parentElement
-        ) {
-            return;
-        }
-
-
-        if (
-            document.getElementById(
-                "finflow-lang-button"
-            )
-        ) {
-            updateSwitcher(getLang());
-            return;
-        }
-
-
-        const button =
-            document.createElement("button");
-
-
-        button.id =
-            "finflow-lang-button";
-
-
-        button.type =
-            "button";
-
-
-        button.className =
-            "inline-flex items-center justify-center min-w-[42px] h-[42px] px-2.5 rounded-xl border border-slate-700/70 bg-slate-900/60 text-slate-300 text-[11px] font-black transition hover:border-emerald-400/35 hover:bg-slate-900/90 hover:text-white";
-
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                setLang(
-                    getLang() === "uk"
-                        ? "en"
-                        : "uk"
-                );
-            }
-        );
-
-
-        userMenu.parentElement.insertBefore(
-            button,
-            userMenu
-        );
-
-
-        updateSwitcher(getLang());
+        return;
     }
-
 
     function updateLandingSwitcher(lang) {
 
-        const button =
+        const switcher =
             document.getElementById(
-                "ff-landing-lang-button"
+                "ff-landing-lang-switcher"
             );
 
-        if (!button) {
+        if (!switcher) {
             return;
         }
 
-        button.textContent =
-            lang === "uk"
-                ? "UK"
-                : "EN";
+        switcher
+            .querySelectorAll(".landing-language-button")
+            .forEach(function (button) {
+                const active =
+                    button.dataset.lang === lang;
 
-        button.setAttribute(
-            "aria-label",
-            lang === "uk"
-                ? "Switch language to English"
-                : "Переключити мову на українську"
-        );
+                button.classList.toggle(
+                    "is-active",
+                    active
+                );
 
-        button.title =
-            lang === "uk"
-                ? "Switch to English"
-                : "Переключити на українську";
+                button.setAttribute(
+                    "aria-pressed",
+                    active ? "true" : "false"
+                );
+            });
     }
 
 
     function addLandingLanguageSwitcher() {
 
-        const button =
+        const switcher =
             document.getElementById(
-                "ff-landing-lang-button"
+                "ff-landing-lang-switcher"
             );
 
-        if (!button) {
+        if (!switcher) {
             return;
         }
 
-        button.addEventListener(
-            "click",
-            function () {
+        switcher
+            .querySelectorAll(".landing-language-button")
+            .forEach(function (button) {
 
-                setLang(
-                    getLang() === "uk"
-                        ? "en"
-                        : "uk"
+                button.addEventListener(
+                    "click",
+                    function () {
+                        setLang(
+                            button.dataset.lang === "en"
+                                ? "en"
+                                : "uk"
+                        );
+                    }
                 );
-            }
-        );
+            });
 
         updateLandingSwitcher(
             getLang()
@@ -1305,7 +1252,6 @@
         "DOMContentLoaded",
         function () {
 
-            addLanguageSwitcher();
             addLandingLanguageSwitcher();
 
             applyLanguage(

@@ -1,0 +1,1681 @@
+/* =========================================================
+   FINFLOW — COMPANIES / CRM
+   ========================================================= */
+
+.ff-companies-page {
+    width: 100%;
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 28px 32px 48px;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.ff-companies-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 26px;
+}
+
+.ff-companies-page .ff-page-heading {
+    min-width: 0;
+}
+
+.ff-page-eyebrow,
+.ff-details-eyebrow,
+.ff-dialog-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: rgba(148, 163, 184, .72);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.ff-companies-page .ff-page-heading h1 {
+    margin: 7px 0 5px;
+    color: #f8fafc;
+    font-size: clamp(28px, 3vw, 38px);
+    line-height: 1.08;
+    font-weight: 750;
+    letter-spacing: -.035em;
+}
+
+.ff-companies-page .ff-page-heading p {
+    max-width: 650px;
+    margin: 0;
+    color: rgba(148, 163, 184, .82);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.ff-companies-page-actions {
+    width: 100%;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 0 0 18px;
+    padding: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.ff-btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+}
+
+.ff-btn:hover {
+    transform: translateY(-1px);
+}
+
+.ff-btn:active {
+    transform: translateY(0);
+}
+
+.ff-btn-primary {
+    color: #fff;
+    background: rgba(99, 102, 241, .9);
+    border-color: rgba(129, 140, 248, .55);
+    box-shadow: 0 10px 28px rgba(79, 70, 229, .18);
+}
+
+.ff-btn-primary:hover {
+    background: rgba(99, 102, 241, 1);
+    box-shadow: 0 12px 32px rgba(79, 70, 229, .25);
+}
+
+.ff-btn-secondary {
+    color: #cbd5e1;
+    background: rgba(15, 23, 42, .55);
+    border-color: rgba(148, 163, 184, .16);
+}
+
+.ff-btn-secondary:hover {
+    background: rgba(30, 41, 59, .7);
+    border-color: rgba(148, 163, 184, .26);
+}
+
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.ff-companies-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid rgba(148, 163, 184, .11);
+    border-radius: 18px;
+    background: rgba(15, 23, 42, .42);
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, .12),
+        inset 0 1px 0 rgba(255, 255, 255, .025);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.ff-company-search {
+    position: relative;
+    flex: 1 1 420px;
+    max-width: 620px;
+}
+
+.ff-company-search > i {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    z-index: 2;
+    color: rgba(148, 163, 184, .65);
+    font-size: 15px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.ff-company-search input {
+    width: 100%;
+    height: 42px;
+    padding: 0 42px 0 42px;
+    color: #e2e8f0;
+    background: rgba(2, 6, 23, .34);
+    border: 1px solid rgba(148, 163, 184, .13);
+    border-radius: 12px;
+    outline: none;
+    font-size: 13px;
+    transition:
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+}
+
+.ff-company-search input::placeholder {
+    color: rgba(148, 163, 184, .5);
+}
+
+.ff-company-search input:focus {
+    background: rgba(2, 6, 23, .48);
+    border-color: rgba(129, 140, 248, .42);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, .08);
+}
+
+.ff-search-clear {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: rgba(148, 163, 184, .72);
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.ff-search-clear:hover {
+    color: #e2e8f0;
+    background: rgba(148, 163, 184, .09);
+}
+
+.ff-companies-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.ff-view-switcher {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    background: rgba(2, 6, 23, .34);
+    border: 1px solid rgba(148, 163, 184, .11);
+    border-radius: 11px;
+}
+
+.ff-view-button {
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 11px;
+    color: rgba(148, 163, 184, .68);
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .18s ease;
+}
+
+.ff-view-button:hover {
+    color: #cbd5e1;
+}
+
+.ff-view-button.is-active {
+    color: #f8fafc;
+    background: rgba(99, 102, 241, .16);
+    box-shadow: inset 0 0 0 1px rgba(129, 140, 248, .14);
+}
+
+.ff-companies-count {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+    color: rgba(148, 163, 184, .58);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.ff-companies-count span:first-child {
+    color: #e2e8f0;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   COMPANY GRID
+   ========================================================= */
+
+.ff-companies-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.ff-company-card {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, .11);
+    border-radius: 20px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30, 41, 59, .52),
+            rgba(15, 23, 42, .43)
+        );
+    box-shadow:
+        0 16px 42px rgba(0, 0, 0, .13),
+        inset 0 1px 0 rgba(255, 255, 255, .025);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    transition:
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.ff-company-card:hover {
+    border-color: rgba(129, 140, 248, .22);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, .18),
+        inset 0 1px 0 rgba(255, 255, 255, .03);
+}
+
+.ff-company-card.is-expanded {
+    grid-column: span 1;
+    border-color: rgba(129, 140, 248, .3);
+    box-shadow:
+        0 22px 60px rgba(0, 0, 0, .22),
+        0 0 0 1px rgba(99, 102, 241, .05);
+}
+
+.ff-company-card-main {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 20px 18px 0;
+}
+
+.ff-company-card-open {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 0;
+    color: inherit;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.ff-company-identity {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ff-company-logo {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #e0e7ff;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(99, 102, 241, .26),
+            rgba(59, 130, 246, .13)
+        );
+    border: 1px solid rgba(129, 140, 248, .22);
+    border-radius: 13px;
+    font-size: 15px;
+    font-weight: 800;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+
+.ff-company-title {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ff-company-title strong {
+    overflow: hidden;
+    color: #f8fafc;
+    font-size: 15px;
+    line-height: 1.25;
+    font-weight: 750;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-company-title small {
+    color: rgba(148, 163, 184, .55);
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.ff-company-open-icon {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(148, 163, 184, .52);
+    border-radius: 8px;
+    transition:
+        transform .22s ease,
+        color .18s ease,
+        background .18s ease;
+}
+
+.ff-company-card-open:hover .ff-company-open-icon {
+    color: #cbd5e1;
+    background: rgba(148, 163, 184, .07);
+}
+
+.ff-company-card.is-expanded .ff-company-open-icon {
+    color: #a5b4fc;
+    transform: rotate(180deg);
+}
+
+.ff-company-menu-wrap {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.ff-icon-button {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: rgba(148, 163, 184, .65);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: .18s ease;
+}
+
+.ff-icon-button:hover {
+    color: #e2e8f0;
+    background: rgba(148, 163, 184, .08);
+    border-color: rgba(148, 163, 184, .1);
+}
+
+.ff-company-menu {
+    position: absolute;
+    top: 38px;
+    right: 0;
+    z-index: 50;
+    width: 170px;
+    padding: 5px;
+    border: 1px solid rgba(148, 163, 184, .15);
+    border-radius: 13px;
+    background: rgba(15, 23, 42, .94);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, .3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.ff-company-menu button {
+    width: 100%;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 10px;
+    color: #cbd5e1;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 650;
+    text-align: left;
+    cursor: pointer;
+}
+
+.ff-company-menu button:hover {
+    background: rgba(148, 163, 184, .08);
+    color: #f8fafc;
+}
+
+.ff-company-menu button.is-danger {
+    color: #fca5a5;
+}
+
+.ff-company-menu button.is-danger:hover {
+    color: #fecaca;
+    background: rgba(239, 68, 68, .08);
+}
+
+
+/* =========================================================
+   CARD META
+   ========================================================= */
+
+.ff-company-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    margin: 16px 18px 0;
+    padding-top: 14px;
+    border-top: 1px solid rgba(148, 163, 184, .075);
+}
+
+.ff-company-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(148, 163, 184, .62);
+    font-size: 10px;
+}
+
+.ff-company-meta-item i {
+    color: rgba(129, 140, 248, .68);
+}
+
+.ff-company-meta-item strong {
+    color: #cbd5e1;
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   FINANCIAL SNAPSHOT
+   ========================================================= */
+
+.ff-company-financial {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin: 16px 18px 0;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, .08);
+    border-radius: 13px;
+    background: rgba(148, 163, 184, .055);
+}
+
+.ff-financial-item {
+    min-width: 0;
+    padding: 12px 11px;
+    background: rgba(2, 6, 23, .17);
+}
+
+.ff-financial-label {
+    display: block;
+    margin-bottom: 5px;
+    color: rgba(148, 163, 184, .55);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.ff-financial-item strong {
+    display: block;
+    overflow: hidden;
+    color: #e2e8f0;
+    font-size: 12px;
+    font-weight: 750;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.ff-company-progress {
+    margin: 16px 18px 0;
+}
+
+.ff-company-progress-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 7px;
+}
+
+.ff-company-progress-head span {
+    color: rgba(148, 163, 184, .58);
+    font-size: 10px;
+}
+
+.ff-company-progress-head strong {
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.ff-progress-track {
+    height: 5px;
+    overflow: hidden;
+    background: rgba(148, 163, 184, .1);
+    border-radius: 999px;
+}
+
+.ff-progress-value {
+    display: block;
+    height: 100%;
+    min-width: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(99, 102, 241, .75),
+        rgba(56, 189, 248, .8)
+    );
+    border-radius: inherit;
+    transition: width .35s ease;
+}
+
+
+/* =========================================================
+   CONTRACT
+   ========================================================= */
+
+.ff-company-contract {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin: 17px 18px 18px;
+    padding: 11px 12px;
+    border: 1px solid rgba(148, 163, 184, .08);
+    border-radius: 12px;
+    background: rgba(2, 6, 23, .18);
+}
+
+.ff-contract-icon {
+    width: 31px;
+    height: 31px;
+    flex: 0 0 31px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(129, 140, 248, .82);
+    background: rgba(99, 102, 241, .09);
+    border-radius: 9px;
+}
+
+.ff-contract-content {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ff-contract-content span {
+    color: rgba(148, 163, 184, .52);
+    font-size: 9px;
+}
+
+.ff-contract-content strong {
+    overflow: hidden;
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: 750;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-contract-status {
+    flex: 0 0 auto;
+    color: rgba(148, 163, 184, .58);
+    font-size: 9px;
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   EXPANDED DETAILS
+   ========================================================= */
+
+.ff-company-details {
+    border-top: 1px solid rgba(129, 140, 248, .14);
+    background: rgba(2, 6, 23, .2);
+}
+
+.ff-company-details-inner {
+    padding: 20px 18px 18px;
+}
+
+.ff-company-details-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.ff-company-details-header h3 {
+    margin: 5px 0 0;
+    color: #f1f5f9;
+    font-size: 17px;
+    font-weight: 750;
+    letter-spacing: -.02em;
+}
+
+.ff-details-close {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(148, 163, 184, .65);
+    background: rgba(148, 163, 184, .06);
+    border: 1px solid rgba(148, 163, 184, .09);
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.ff-details-close:hover {
+    color: #e2e8f0;
+    background: rgba(148, 163, 184, .1);
+}
+
+
+/* =========================================================
+   INVOICE TOOLBAR
+   ========================================================= */
+
+.ff-company-invoice-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 17px;
+}
+
+.ff-invoice-filters {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    background: rgba(15, 23, 42, .55);
+    border: 1px solid rgba(148, 163, 184, .09);
+    border-radius: 10px;
+}
+
+.ff-invoice-filters button {
+    height: 29px;
+    padding: 0 9px;
+    color: rgba(148, 163, 184, .6);
+    background: transparent;
+    border: 0;
+    border-radius: 7px;
+    font-size: 9px;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.ff-invoice-filters button:hover {
+    color: #cbd5e1;
+}
+
+.ff-invoice-filters button.is-active {
+    color: #e0e7ff;
+    background: rgba(99, 102, 241, .16);
+}
+
+.ff-company-invoice-total {
+    color: rgba(148, 163, 184, .58);
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   INVOICE TOTALS
+   ========================================================= */
+
+.ff-invoice-totals {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.ff-invoice-currency-group {
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid rgba(148, 163, 184, .08);
+    border-radius: 11px;
+    background: rgba(15, 23, 42, .38);
+}
+
+.ff-invoice-currency-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.ff-invoice-currency-title strong {
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.ff-invoice-currency-title span {
+    color: rgba(148, 163, 184, .5);
+    font-size: 9px;
+}
+
+.ff-invoice-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: rgba(148, 163, 184, .55);
+    font-size: 9px;
+}
+
+.ff-invoice-total-row + .ff-invoice-total-row {
+    margin-top: 5px;
+}
+
+.ff-invoice-total-row strong {
+    color: #e2e8f0;
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   INVOICE LIST
+   ========================================================= */
+
+.ff-company-invoices {
+    margin-top: 12px;
+}
+
+.ff-invoices-loading,
+.ff-invoices-empty {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: rgba(148, 163, 184, .52);
+    font-size: 10px;
+}
+
+.ff-invoices-loading i {
+    animation: ff-spin 1s linear infinite;
+}
+
+@keyframes ff-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.ff-invoice-row {
+    display: grid;
+    grid-template-columns: minmax(130px, 1.25fr) 82px 105px 100px minmax(90px, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 10px;
+    border: 1px solid rgba(148, 163, 184, .07);
+    border-radius: 11px;
+    background: rgba(15, 23, 42, .27);
+}
+
+.ff-invoice-row + .ff-invoice-row {
+    margin-top: 6px;
+}
+
+.ff-invoice-row.is-cancelled {
+    opacity: .56;
+}
+
+.ff-invoice-main {
+    min-width: 0;
+}
+
+.ff-invoice-number {
+    display: block;
+    overflow: hidden;
+    color: #e2e8f0;
+    font-size: 10px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-invoice-date {
+    display: block;
+    margin-top: 3px;
+    color: rgba(148, 163, 184, .48);
+    font-size: 8px;
+}
+
+.ff-invoice-software {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 43px;
+    padding: 4px 6px;
+    color: #c7d2fe;
+    background: rgba(99, 102, 241, .1);
+    border: 1px solid rgba(129, 140, 248, .13);
+    border-radius: 6px;
+    font-size: 8px;
+    font-weight: 800;
+}
+
+.ff-invoice-amount {
+    color: #f1f5f9;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.ff-invoice-payment {
+    min-width: 0;
+}
+
+.ff-invoice-payment strong {
+    display: block;
+    color: #cbd5e1;
+    font-size: 9px;
+    font-weight: 750;
+}
+
+.ff-invoice-payment small {
+    display: block;
+    margin-top: 3px;
+    color: rgba(148, 163, 184, .48);
+    font-size: 8px;
+}
+
+.ff-payment-badge,
+.ff-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 4px 7px;
+    border-radius: 6px;
+    font-size: 8px;
+    font-weight: 800;
+}
+
+.ff-payment-paid {
+    color: #bbf7d0;
+    background: rgba(34, 197, 94, .09);
+    border: 1px solid rgba(34, 197, 94, .12);
+}
+
+.ff-payment-partial {
+    color: #fde68a;
+    background: rgba(234, 179, 8, .09);
+    border: 1px solid rgba(234, 179, 8, .12);
+}
+
+.ff-payment-unpaid {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, .09);
+    border: 1px solid rgba(239, 68, 68, .12);
+}
+
+.ff-status-overdue {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, .08);
+}
+
+.ff-status-cancelled {
+    color: #cbd5e1;
+    background: rgba(100, 116, 139, .12);
+}
+
+.ff-invoice-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+.ff-invoice-action {
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 8px;
+    color: rgba(148, 163, 184, .72);
+    background: rgba(148, 163, 184, .05);
+    border: 1px solid rgba(148, 163, 184, .08);
+    border-radius: 7px;
+    font-size: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.ff-invoice-action:hover {
+    color: #f8fafc;
+    background: rgba(148, 163, 184, .09);
+}
+
+.ff-invoice-action.is-danger {
+    color: #fca5a5;
+}
+
+.ff-invoice-action.is-danger:hover {
+    background: rgba(239, 68, 68, .08);
+}
+
+.ff-invoice-cancellation {
+    grid-column: 1 / -1;
+    margin-top: 2px;
+    padding: 8px 9px;
+    color: rgba(248, 113, 113, .72);
+    background: rgba(127, 29, 29, .08);
+    border: 1px solid rgba(248, 113, 113, .08);
+    border-radius: 8px;
+    font-size: 8px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   LIST VIEW
+   ========================================================= */
+
+.ff-companies-list {
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, .11);
+    border-radius: 18px;
+    background: rgba(15, 23, 42, .42);
+    box-shadow:
+        0 16px 42px rgba(0, 0, 0, .13),
+        inset 0 1px 0 rgba(255, 255, 255, .025);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.ff-list-head,
+.ff-company-list-row {
+    display: grid;
+    grid-template-columns:
+        minmax(220px, 1.6fr)
+        minmax(95px, .75fr)
+        minmax(105px, .85fr)
+        minmax(105px, .85fr)
+        minmax(105px, .85fr)
+        minmax(120px, 1fr)
+        70px
+        40px;
+    align-items: center;
+    gap: 12px;
+}
+
+.ff-list-head {
+    min-height: 42px;
+    padding: 0 15px;
+    color: rgba(148, 163, 184, .46);
+    background: rgba(2, 6, 23, .23);
+    border-bottom: 1px solid rgba(148, 163, 184, .08);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.ff-company-list-row {
+    min-height: 68px;
+    padding: 8px 15px;
+    color: rgba(203, 213, 225, .76);
+    font-size: 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, .055);
+    transition: background .18s ease;
+}
+
+.ff-company-list-row:last-child {
+    border-bottom: 0;
+}
+
+.ff-company-list-row:hover {
+    background: rgba(148, 163, 184, .035);
+}
+
+.ff-list-company {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    color: inherit;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.ff-list-company .ff-company-logo {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.ff-list-company > span:last-child {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ff-list-company strong {
+    overflow: hidden;
+    color: #e2e8f0;
+    font-size: 11px;
+    font-weight: 750;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-list-company small {
+    color: rgba(148, 163, 184, .45);
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+   ========================================================= */
+
+.ff-companies-empty {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    border: 1px dashed rgba(148, 163, 184, .13);
+    border-radius: 18px;
+    background: rgba(15, 23, 42, .25);
+}
+
+.ff-empty-icon {
+    width: 52px;
+    height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    color: rgba(129, 140, 248, .78);
+    background: rgba(99, 102, 241, .08);
+    border: 1px solid rgba(129, 140, 248, .1);
+    border-radius: 15px;
+    font-size: 19px;
+}
+
+.ff-companies-empty h3 {
+    margin: 0;
+    color: #e2e8f0;
+    font-size: 15px;
+    font-weight: 750;
+}
+
+.ff-companies-empty p {
+    margin: 7px 0 17px;
+    color: rgba(148, 163, 184, .58);
+    font-size: 11px;
+}
+
+.ff-companies-empty .ff-btn {
+    min-height: 38px;
+}
+
+
+/* =========================================================
+   CREATE / EDIT DIALOG
+   ========================================================= */
+
+.ff-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(2, 6, 23, .68);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+}
+
+.ff-dialog {
+    width: min(100%, 460px);
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, .15);
+    border-radius: 20px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30, 41, 59, .96),
+            rgba(15, 23, 42, .97)
+        );
+    box-shadow:
+        0 30px 90px rgba(0, 0, 0, .45),
+        inset 0 1px 0 rgba(255, 255, 255, .035);
+}
+
+.ff-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 21px 21px 18px;
+    border-bottom: 1px solid rgba(148, 163, 184, .08);
+}
+
+.ff-dialog-header h2 {
+    margin: 5px 0 0;
+    color: #f8fafc;
+    font-size: 19px;
+    font-weight: 750;
+    letter-spacing: -.02em;
+}
+
+.ff-dialog-close {
+    width: 31px;
+    height: 31px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(148, 163, 184, .65);
+    background: rgba(148, 163, 184, .05);
+    border: 1px solid rgba(148, 163, 184, .08);
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.ff-dialog-close:hover {
+    color: #f8fafc;
+    background: rgba(148, 163, 184, .1);
+}
+
+.ff-dialog form {
+    padding: 20px 21px 21px;
+}
+
+.ff-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.ff-form-field label {
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.ff-form-field input {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    color: #f1f5f9;
+    background: rgba(2, 6, 23, .38);
+    border: 1px solid rgba(148, 163, 184, .13);
+    border-radius: 10px;
+    outline: none;
+    font-size: 12px;
+}
+
+.ff-form-field input::placeholder {
+    color: rgba(148, 163, 184, .42);
+}
+
+.ff-form-field input:focus {
+    border-color: rgba(129, 140, 248, .4);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, .08);
+}
+
+.ff-form-error {
+    margin-top: 11px;
+    padding: 9px 10px;
+    color: #fca5a5;
+    background: rgba(239, 68, 68, .07);
+    border: 1px solid rgba(239, 68, 68, .11);
+    border-radius: 9px;
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+.ff-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1350px) {
+    .ff-companies-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ff-invoice-row {
+        grid-template-columns:
+            minmax(125px, 1.25fr)
+            70px
+            95px
+            90px
+            minmax(85px, 1fr)
+            auto;
+    }
+}
+
+@media (max-width: 1080px) {
+    .ff-companies-page {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .ff-companies-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ff-company-search {
+        max-width: none;
+    }
+
+    .ff-companies-toolbar-right {
+        justify-content: space-between;
+    }
+
+    .ff-list-head,
+    .ff-company-list-row {
+        grid-template-columns:
+            minmax(190px, 1.5fr)
+            minmax(85px, .7fr)
+            minmax(100px, .8fr)
+            minmax(100px, .8fr)
+            minmax(100px, .8fr)
+            minmax(110px, .9fr)
+            55px
+            35px;
+    }
+}
+
+@media (max-width: 820px) {
+    .ff-companies-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ff-page-actions {
+        width: 100%;
+    }
+
+    .ff-page-actions .ff-btn {
+        width: 100%;
+    }
+
+    .ff-companies-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ff-invoice-totals {
+        grid-template-columns: 1fr;
+    }
+
+    .ff-invoice-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .ff-invoice-main {
+        grid-column: 1 / -1;
+    }
+
+    .ff-invoice-actions {
+        justify-content: flex-start;
+    }
+
+    .ff-companies-list {
+        overflow-x: auto;
+    }
+
+    .ff-list-head,
+    .ff-company-list-row {
+        min-width: 900px;
+    }
+}
+
+@media (max-width: 560px) {
+    .ff-companies-page {
+        padding: 18px 14px 36px;
+    }
+
+    .ff-companies-page .ff-page-heading h1 {
+        font-size: 27px;
+    }
+
+    .ff-company-card-main {
+        padding: 16px 14px 0;
+    }
+
+    .ff-company-meta,
+    .ff-company-financial,
+    .ff-company-progress {
+        margin-left: 14px;
+        margin-right: 14px;
+    }
+
+    .ff-company-contract {
+        margin-left: 14px;
+        margin-right: 14px;
+        margin-bottom: 14px;
+    }
+
+    .ff-company-details-inner {
+        padding: 17px 14px;
+    }
+
+    .ff-company-invoice-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ff-invoice-filters {
+        width: 100%;
+    }
+
+    .ff-invoice-filters button {
+        flex: 1;
+    }
+
+    .ff-view-button span {
+        display: none;
+    }
+
+    .ff-companies-count {
+        margin-left: auto;
+    }
+
+    .ff-dialog-backdrop {
+        align-items: flex-end;
+        padding: 10px;
+    }
+
+    .ff-dialog {
+        width: 100%;
+        border-radius: 18px;
+    }
+}
+
+/* =========================================================
+   LIST VIEW — EXPANDABLE COMPANY DETAILS
+   ========================================================= */
+
+.ff-company-list-row {
+    position: relative;
+}
+
+.ff-company-list-row.is-expanded {
+    border-color: rgba(148, 163, 184, 0.18);
+}
+
+.ff-company-list-row > .ff-company-list-details {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    margin-top: 14px;
+    border-top: 1px solid rgba(148, 163, 184, 0.10);
+}
+
+.ff-company-list-details[hidden] {
+    display: none;
+}
+
+.ff-company-list-details .ff-company-details-inner {
+    width: 100%;
+    min-width: 0;
+    padding: 20px 0 4px;
+}
+
+.ff-company-list-details .ff-company-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.ff-company-list-details .ff-company-details-header h3 {
+    margin: 4px 0 0;
+}
+
+.ff-company-list-details .ff-company-invoice-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.ff-company-list-details .ff-invoice-totals {
+    margin-bottom: 14px;
+}
+
+.ff-company-list-details .ff-company-invoices {
+    width: 100%;
+    min-width: 0;
+}
+
+.ff-company-list-details .ff-invoice-row {
+    width: 100%;
+}
+
+.ff-company-list-row.is-expanded .ff-list-company {
+    color: rgba(248, 250, 252, 0.98);
+}
+
+.ff-company-list-row.is-expanded .ff-list-company .ff-company-logo {
+    transform: scale(1.04);
+}
+
+.ff-company-list-row .ff-company-menu-wrap {
+    position: relative;
+    z-index: 20;
+}
+
+.ff-company-list-row .ff-company-menu {
+    right: 0;
+    left: auto;
+    top: calc(100% + 8px);
+    z-index: 100;
+}
+
+@media (max-width: 1100px) {
+    .ff-company-list-details {
+        grid-column: 1 / -1;
+    }
+
+    .ff-company-list-details .ff-company-details-inner {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 760px) {
+    .ff-company-list-details .ff-company-invoice-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+
+
+@media (max-width: 760px) {
+    .ff-companies-page-actions {
+        justify-content: stretch;
+    }
+
+    .ff-companies-page-actions .ff-btn {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   COMPANY STAMP
+   ========================================================= */
+
+.ff-company-stamp-field {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.ff-company-stamp-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.ff-company-stamp-heading label {
+    display: block;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.ff-company-stamp-heading small,
+.ff-company-stamp-upload small {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.ff-company-stamp-status {
+    flex: 0 0 auto;
+    padding: 4px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+}
+
+.ff-company-stamp-status.is-ready {
+    border-color: rgba(52, 211, 153, 0.25);
+    color: rgba(110, 231, 183, 0.95);
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.ff-company-stamp-body {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.ff-company-stamp-preview {
+    width: 74px;
+    height: 74px;
+    flex: 0 0 74px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.16);
+    overflow: hidden;
+}
+
+.ff-company-stamp-preview img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.ff-company-stamp-upload {
+    min-width: 0;
+}
+
+.ff-company-stamp-upload .ff-btn {
+    min-height: 36px;
+}
+
+@media (max-width: 640px) {
+    .ff-company-stamp-heading {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .ff-company-stamp-body {
+        align-items: flex-start;
+    }
+}

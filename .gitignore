@@ -53,3 +53,40 @@ dist/
 
 # Timestamped backup files with extensions before .bak
 *.bak-*
+
+# ============================================================
+# FinFlow runtime / local production data
+# ============================================================
+accounting.db
+backups/
+static/uploads/
+
+# ============================================================
+# Temporary backups / rebuild snapshots
+# ============================================================
+.backup-*/
+_backup_*/
+frontend_backup_*/
+shell_backup_*/
+overview_v2_backup_*/
+bcp/
+
+*.backup-*
+*.before-*
+*.debug-*
+*.bak
+
+# Temporary generated/local files
+*.analytics-backup-*
+*.analytics-css-fix-*
+
+# Additional timestamped/local backup variants
+*_backup_*/
+*_backup-*
+*-backup-*
+*.backup-*
+*.before-*
+*.debug-*
+
+# Local rebuild snapshots
+*_rebuild_backup_*/

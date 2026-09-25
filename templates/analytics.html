@@ -1,1358 +1,444 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-    <title>FinFlow — Financial Analytics</title>
+{% block title %}Аналитика — FinFlow{% endblock %}
 
-    <link rel="icon"
-          type="image/png"
-          href="{{ url_for('static', filename='finflow-logo.png') }}?v=1">
+{% block page_icon %}
+<span class="ff-page-icon">
+    <i class="bi bi-graph-up-arrow"></i>
+</span>
+{% endblock %}
 
-    <link rel="stylesheet" href="/static/css/tailwind.css">
+{% block page_title %}Аналитика{% endblock %}
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{% block page_subtitle %}
+Финансовая аналитика и показатели FinFlow
+{% endblock %}
 
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
+{% block content %}
 
-        body {
-            background: #07111f;
-        }
+<section class="ff-analytics-page">
 
-        .glass {
-            background: rgba(15, 28, 45, .78);
-            border: 1px solid rgba(71, 94, 120, .35);
-            box-shadow: 0 18px 55px rgba(0,0,0,.22);
-            backdrop-filter: blur(14px);
-        }
+    <!-- =====================================================
+         KPI
+         ===================================================== -->
 
-        .analytics-card {
-            position: relative;
-            overflow: hidden;
-            transition:
-                transform .22s ease,
-                border-color .22s ease,
-                box-shadow .22s ease;
-        }
+    <div class="ff-analytics-kpis">
 
-        .analytics-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(71,94,120,.58);
-            box-shadow: 0 22px 60px rgba(0,0,0,.28);
-        }
+        <article class="ff-analytics-kpi">
 
-        .analytics-card::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            border-radius: inherit;
-            background: radial-gradient(
-                circle at 100% 0%,
-                rgba(52,211,153,.045),
-                transparent 42%
-            );
-            opacity: 0;
-            transition: opacity .22s ease;
-        }
+            <div class="ff-analytics-kpi-top">
+                <span class="ff-analytics-kpi-label">
+                    ОБЩИЙ ОБЪЁМ
+                </span>
 
-        .analytics-card:hover::after {
-            opacity: 1;
-        }
-
-        .ff-section-label {
-            font-size: 10px;
-            line-height: 1;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: .16em;
-            color: #34d399;
-        }
-
-        .ff-section-title {
-            margin-top: 6px;
-            font-size: 24px;
-            line-height: 1.15;
-            font-weight: 900;
-            letter-spacing: -.025em;
-            color: #f1f5f9;
-        }
-
-        .ff-section-description {
-            margin-top: 6px;
-            font-size: 12px;
-            line-height: 1.55;
-            color: #64748b;
-        }
-
-        .ff-btn {
-            min-height: 40px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 0 14px;
-            border-radius: 11px;
-            border: 1px solid rgba(71,94,120,.42);
-            background: rgba(15,23,42,.72);
-            color: #e2e8f0;
-            font-size: 12px;
-            font-weight: 800;
-            transition: .18s ease;
-        }
-
-        .ff-btn:hover {
-            transform: translateY(-1px);
-            border-color: rgba(52,211,153,.45);
-            background: rgba(15,23,42,.95);
-        }
-
-        .ff-btn-primary {
-            border-color: rgba(52,211,153,.30);
-            background: linear-gradient(
-                135deg,
-                rgba(52,211,153,.95),
-                rgba(16,185,129,.88)
-            );
-            color: #04130d;
-        }
-
-        .filter-field {
-            width: 100%;
-            height: 42px;
-            border-radius: 11px;
-            border: 1px solid rgba(71,94,120,.35);
-            background: rgba(2,6,23,.55);
-            color: #e2e8f0;
-            padding: 0 12px;
-            font-size: 12px;
-            outline: none;
-        }
-
-        .filter-field:focus {
-            border-color: rgba(52,211,153,.55);
-            box-shadow: 0 0 0 3px rgba(52,211,153,.06);
-        }
-
-        .filter-label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: .08em;
-            color: #64748b;
-        }
-
-        .kpi-card {
-            position: relative;
-            overflow: hidden;
-            padding: 18px;
-            border-radius: 17px;
-            border: 1px solid rgba(71,94,120,.30);
-            background: linear-gradient(
-                145deg,
-                rgba(17,34,54,.94),
-                rgba(9,21,37,.92)
-            );
-        }
-
-        .kpi-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: .09em;
-            font-weight: 800;
-            color: #64748b;
-        }
-
-        .kpi-value {
-            margin-top: 7px;
-            font-size: 25px;
-            line-height: 1;
-            font-weight: 950;
-            letter-spacing: -.035em;
-            color: #f1f5f9;
-        }
-
-        .bar-row {
-            margin-bottom: 18px;
-        }
-
-        .bar-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            font-size: 11px;
-        }
-
-        .bar-name {
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-weight: 800;
-            color: #cbd5e1;
-        }
-
-        .bar-value {
-            flex: 0 0 auto;
-            font-weight: 900;
-            color: #e2e8f0;
-        }
-
-        .bar-track {
-            height: 7px;
-            margin-top: 8px;
-            border-radius: 999px;
-            overflow: hidden;
-            background: rgba(15,23,42,.9);
-        }
-
-        .bar-fill {
-            height: 100%;
-            border-radius: inherit;
-        }
-
-        .monthly-grid {
-            display: grid;
-            grid-template-columns: repeat(12, minmax(0, 1fr));
-            align-items: end;
-            gap: 10px;
-            min-height: 190px;
-        }
-
-        .month-column {
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            height: 190px;
-        }
-
-        .month-value {
-            margin-bottom: 7px;
-            font-size: 9px;
-            font-weight: 800;
-            color: #94a3b8;
-            white-space: nowrap;
-        }
-
-        .month-track {
-            width: 100%;
-            max-width: 38px;
-            height: 130px;
-            display: flex;
-            align-items: flex-end;
-            border-radius: 8px 8px 4px 4px;
-            background: rgba(15,23,42,.65);
-            overflow: hidden;
-        }
-
-        .month-fill {
-            width: 100%;
-            min-height: 2px;
-            border-radius: 7px 7px 3px 3px;
-            background: linear-gradient(
-                to top,
-                rgba(52,211,153,.55),
-                rgba(52,211,153,.95)
-            );
-        }
-
-        .month-label {
-            margin-top: 8px;
-            font-size: 9px;
-            font-weight: 800;
-            color: #64748b;
-        }
-
-        @media (max-width: 767px) {
-            body {
-                overflow-x: hidden;
-            }
-
-            .monthly-grid {
-                grid-template-columns: repeat(6, minmax(0, 1fr));
-                row-gap: 18px;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .analytics-card {
-                transition: none;
-            }
-
-            .analytics-card:hover {
-                transform: none;
-            }
-        }
-    </style>
-</head>
-
-<body class="min-h-screen text-slate-100">
-
-<header class="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-        <div class="flex items-center justify-between gap-4">
-
-            <a href="{{ url_for('index') }}"
-               class="flex items-center gap-3 min-w-0">
-
-                <img src="{{ url_for('static', filename='finflow-logo.png') }}"
-                     alt="FinFlow"
-                     class="w-9 h-9 rounded-xl shrink-0">
-
-                <div class="min-w-0">
-                    <div class="flex items-center gap-2">
-                        <span class="font-black tracking-tight text-slate-100">
-                            FinFlow
-                        </span>
-
-                        <span class="text-[9px] font-black uppercase tracking-wider
-                                     px-2 py-1 rounded-full
-                                     bg-emerald-400/10 border border-emerald-400/20
-                                     text-emerald-300">
-                            Control
-                        </span>
-                    </div>
-
-                    <div class="text-[10px] text-slate-600 truncate">
-                        Financial control platform
-                    </div>
-                </div>
-            </a>
-
-            <div class="flex items-center gap-2 shrink-0">
-
-                <a href="{{ url_for('index') }}"
-                   class="ff-btn">
-                    <i class="bi bi-grid-1x2"></i>
-                    Dashboard
-                </a>
-
-                <div class="hidden sm:flex items-center gap-2
-                            px-3 py-2 rounded-xl
-                            border border-emerald-400/15
-                            bg-emerald-400/5
-                            text-[10px] font-bold text-emerald-300">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    {{ database_backend }}
-                </div>
-
+                <span class="ff-analytics-kpi-icon">
+                    <i class="bi bi-currency-euro"></i>
+                </span>
             </div>
-        </div>
+
+            <div
+                id="analyticsTotal"
+                class="ff-analytics-kpi-value">
+                EUR 0,00
+            </div>
+
+            <div class="ff-analytics-kpi-meta">
+                Активные счета
+            </div>
+
+        </article>
+
+
+        <article class="ff-analytics-kpi">
+
+            <div class="ff-analytics-kpi-top">
+                <span class="ff-analytics-kpi-label">
+                    КОМПАНИИ
+                </span>
+
+                <span class="ff-analytics-kpi-icon">
+                    <i class="bi bi-buildings"></i>
+                </span>
+            </div>
+
+            <div
+                id="analyticsCompanyCount"
+                class="ff-analytics-kpi-value">
+                0
+            </div>
+
+            <div class="ff-analytics-kpi-meta">
+                В финансовом анализе
+            </div>
+
+        </article>
+
+
+        <article class="ff-analytics-kpi">
+
+            <div class="ff-analytics-kpi-top">
+                <span class="ff-analytics-kpi-label">
+                    ПРОДУКТЫ
+                </span>
+
+                <span class="ff-analytics-kpi-icon">
+                    <i class="bi bi-box-seam"></i>
+                </span>
+            </div>
+
+            <div
+                id="analyticsProductCount"
+                class="ff-analytics-kpi-value">
+                0
+            </div>
+
+            <div class="ff-analytics-kpi-meta">
+                Активные направления
+            </div>
+
+        </article>
+
+
+        <article class="ff-analytics-kpi">
+
+            <div class="ff-analytics-kpi-top">
+                <span class="ff-analytics-kpi-label">
+                    СЧЕТА
+                </span>
+
+                <span class="ff-analytics-kpi-icon">
+                    <i class="bi bi-receipt"></i>
+                </span>
+            </div>
+
+            <div
+                id="analyticsInvoiceCount"
+                class="ff-analytics-kpi-value">
+                0
+            </div>
+
+            <div class="ff-analytics-kpi-meta">
+                Учтены в расчёте
+            </div>
+
+        </article>
+
     </div>
-</header>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 py-7 sm:py-9 space-y-5">
 
-    <!-- Page header -->
-    <section class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+    <!-- =====================================================
+         FILTERS
+         ===================================================== -->
 
-        <div>
-            <div class="ff-section-label" data-i18n="Financial Analytics">Financial Analytics</div>
+    <div class="ff-analytics-panel ff-analytics-filters">
 
-            <h1 class="ff-section-title">
-                <span data-i18n="Detailed financial analysis">Detailed financial analysis</span>
-            </h1>
-
-            <p class="ff-section-description">
-                <span data-i18n="Explore budget utilization, invoice exposure and spending trends.">Explore budget utilization, invoice exposure and spending trends.</span>
-            </p>
-        </div>
-
-        <div class="inline-flex items-center gap-2 self-start
-                    px-3 py-2 rounded-xl
-                    border border-violet-400/15
-                    bg-violet-400/5
-                    text-xs font-bold text-violet-300">
-            <i class="bi bi-bar-chart-line"></i>
-            Analytics
-        </div>
-
-    </section>
-
-    <!-- Filters -->
-    <section class="glass rounded-2xl p-4 sm:p-5">
-
-        <div class="flex items-center gap-2 mb-4">
-            <div class="w-8 h-8 rounded-lg bg-slate-800/70
-                        text-slate-300 flex items-center justify-center">
-                <i class="bi bi-funnel"></i>
-            </div>
+        <div class="ff-analytics-panel-heading">
 
             <div>
-                <div class="text-sm font-black" data-i18n="Filters">Filters</div>
-                <div class="text-[10px] text-slate-600">
-                    <span data-i18n="Filter the analytics view">Filter the analytics view</span>
+                <div class="ff-section-kicker">
+                    FILTERS
                 </div>
+
+                <h3>
+                    Параметры анализа
+                </h3>
             </div>
+
+            <div class="ff-analytics-filter-status">
+                <i class="bi bi-sliders2"></i>
+                <span>Настройка выборки</span>
+            </div>
+
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
 
-            <div>
-                <label class="filter-label" data-i18n="Date from">Date from</label>
-                <input id="filterDateFrom"
-                       type="date"
-                       class="filter-field">
+        <div class="ff-analytics-filter-grid">
+
+            <div class="ff-analytics-field">
+
+                <label for="filterCompany">
+                    <span>Компания</span>
+                    <small>Финансовый контур</small>
+                </label>
+
+                <div class="ff-analytics-select-wrap">
+
+                    <i class="bi bi-building"></i>
+
+                    <select id="filterCompany">
+                        <option
+                            value=""
+                            data-i18n-option="All companies">
+                            Все компании
+                        </option>
+
+                        {% for company in companies %}
+                        <option value="{{ company.id }}">
+                            {{ company.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <i class="bi bi-chevron-down ff-analytics-select-arrow"></i>
+
+                </div>
+
             </div>
 
-            <div>
-                <label class="filter-label" data-i18n="Date to">Date to</label>
-                <input id="filterDateTo"
-                       type="date"
-                       class="filter-field">
+
+            <div class="ff-analytics-field">
+
+                <label for="filterProduct">
+                    <span>Продукт</span>
+                    <small>Продуктовое направление</small>
+                </label>
+
+                <div class="ff-analytics-select-wrap">
+
+                    <i class="bi bi-box"></i>
+
+                    <select id="filterProduct">
+                        <option
+                            value=""
+                            data-i18n-option="All products">
+                            Все продукты
+                        </option>
+
+                        <option value="ALPHA">ALPHA</option>
+                        <option value="BETA">BETA</option>
+
+                    </select>
+
+                    <i class="bi bi-chevron-down ff-analytics-select-arrow"></i>
+
+                </div>
+
             </div>
 
-            <div>
-                <label class="filter-label" data-i18n="Company">Company</label>
-                <select id="filterCompany" class="filter-field">
-                    <option value="" data-i18n-option="All companies">All companies</option>
-                    {% for company in companies %}
-                    <option value="{{ company.id }}">
-                        {{ company.name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
 
-            <div>
-                <label class="filter-label" data-i18n="Product">Product</label>
-                <select id="filterProduct" class="filter-field">
-                    <option value="" data-i18n-option="All products">All products</option>
-                    <option value="ALPHA">ALPHA</option>
-                    <option value="BETA">BETA</option>
-                </select>
-            </div>
+            <div class="ff-analytics-filter-actions">
 
-            <div class="flex items-end gap-2">
-                <button id="applyFilters"
-                        type="button"
-                        class="ff-btn ff-btn-primary flex-1">
-                    <i class="bi bi-check2"></i>
-                    Apply
+                <button
+                    id="applyFilters"
+                    type="button"
+                    class="ff-analytics-btn ff-analytics-btn-primary">
+
+                    <i class="bi bi-funnel-fill"></i>
+                    <span>Применить</span>
+
                 </button>
 
-                <button id="resetFilters"
-                        type="button"
-                        class="ff-btn">
+                <button
+                    id="resetFilters"
+                    type="button"
+                    class="ff-analytics-btn ff-analytics-btn-secondary">
+
                     <i class="bi bi-arrow-counterclockwise"></i>
-                    Reset
+                    <span>Сбросить</span>
+
                 </button>
+
             </div>
 
         </div>
 
-    </section>
+    </div>
 
-    <!-- Main utilization -->
-    <section class="analytics-card glass rounded-2xl p-5 sm:p-6">
 
-        <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+    <!-- =====================================================
+         ANALYTICS GRID
+         ===================================================== -->
 
-            <div class="flex-1 min-w-0">
+    <div class="ff-analytics-grid">
 
-                <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 rounded-xl
-                                bg-violet-400/10
-                                border border-violet-400/15
-                                text-violet-300
-                                flex items-center justify-center">
-                        <i class="bi bi-speedometer2"></i>
-                    </div>
+
+        <!-- COMPANY ANALYSIS -->
+
+        <article class="ff-analytics-panel ff-analytics-chart-panel">
+
+            <div class="ff-analytics-panel-heading">
+
+                <div class="ff-analytics-heading-main">
+
+                    <span class="ff-analytics-heading-icon">
+                        <i class="bi bi-buildings-fill"></i>
+                    </span>
 
                     <div>
-                        <div class="text-xs font-black uppercase tracking-wider text-slate-500">
-                            Overall utilization
+                        <div class="ff-section-kicker">
+                            COMPANY ANALYSIS
                         </div>
 
-                        <div class="text-xs text-slate-600 mt-0.5">
-                            Выставленная сумма относительно общего бюджета
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-5 flex items-end gap-3">
-                    <div id="utilizationValue"
-                         class="text-4xl sm:text-5xl font-black tracking-tight text-violet-300">
-                        {{ "%.1f"|format(metrics.utilization) }}%
-                    </div>
-
-                    <div class="pb-1 text-xs text-slate-500">
-                        of total budget
-                    </div>
-                </div>
-
-                <div class="mt-4 h-2 rounded-full bg-slate-800/80 overflow-hidden">
-                    <div id="utilizationProgress"
-                         class="h-full rounded-full bg-violet-400"
-                         style="width: {{ [metrics.utilization, 100]|min }}%;">
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="shrink-0 w-full sm:w-52">
-
-                <div class="rounded-2xl border border-slate-800
-                            bg-slate-950/45 p-4">
-
-                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-600">
-                        Invoice exposure
-                    </div>
-
-                    <div id="exposureValue"
-                         class="mt-2 text-xl font-black text-slate-100">
-                        <span class="text-slate-500">—</span>
-                    </div>
-
-                    <div class="mt-1 text-xs text-slate-500"
-                         data-i18n="Outstanding unpaid amount">
-                        Outstanding unpaid amount
+                        <h3 data-i18n="Spend by company">
+                            Расходы по компаниям
+                        </h3>
                     </div>
 
                 </div>
 
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- KPI strip -->
-    <section class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-
-        <article class="kpi-card">
-            <div class="kpi-label" data-i18n="Budget">Budget</div>
-            <div id="budgetValue" class="kpi-value space-y-1">
-                <span class="text-slate-500">—</span>
-            </div>
-        </article>
-
-        <article class="kpi-card">
-            <div class="kpi-label" data-i18n="Invoiced">Invoiced</div>
-            <div id="invoicedValue" class="kpi-value space-y-1">
-                <span class="text-slate-500">—</span>
-            </div>
-        </article>
-
-        <article class="kpi-card">
-            <div class="kpi-label" data-i18n="Remaining">Remaining</div>
-            <div id="remainingValue" class="kpi-value space-y-1">
-                <span class="text-slate-500">—</span>
-            </div>
-        </article>
-
-    </section>
-
-    <!-- Analytical columns -->
-    <section class="grid lg:grid-cols-2 gap-4">
-
-        <article class="analytics-card glass rounded-2xl p-5">
-
-            <div class="flex items-start justify-between gap-3 mb-5">
-
-                <div>
-                    <div class="flex items-center gap-2">
-
-                        <div class="w-8 h-8 rounded-lg
-                                    bg-emerald-400/10
-                                    border border-emerald-400/15
-                                    text-emerald-300
-                                    flex items-center justify-center">
-                            <i class="bi bi-buildings"></i>
-                        </div>
-
-                        <h2 class="text-sm font-black">
-                            <span data-i18n="Spend by company">Spend by company</span>
-                        </h2>
-
-                    </div>
-
-                    <p class="text-xs text-slate-500 mt-2">
-                        Active invoiced amount by company.
-                    </p>
-                </div>
-
-                <span class="text-[10px] font-black uppercase tracking-wider text-emerald-300/70">
-                    Companies
+                <span class="ff-analytics-heading-badge">
+                    EUR
                 </span>
 
             </div>
 
-            <div id="companyBars"></div>
 
-        </article>
+            <div class="ff-analytics-chart-head">
 
-        <article class="analytics-card glass rounded-2xl p-5">
+                <span>
+                    Распределение объёма
+                </span>
 
-            <div class="flex items-start justify-between gap-3 mb-5">
-
-                <div>
-                    <div class="flex items-center gap-2">
-
-                        <div class="w-8 h-8 rounded-lg
-                                    bg-cyan-400/10
-                                    border border-cyan-400/15
-                                    text-cyan-300
-                                    flex items-center justify-center">
-                            <i class="bi bi-box-seam"></i>
-                        </div>
-
-                        <h2 class="text-sm font-black">
-                            <span data-i18n="Spend by product">Spend by product</span>
-                        </h2>
-
-                    </div>
-
-                    <p class="text-xs text-slate-500 mt-2">
-                        Active invoiced amount by product.
-                    </p>
-                </div>
-
-                <span class="text-[10px] font-black uppercase tracking-wider text-cyan-300/70">
-                    ALPHA · BETA
+                <span>
+                    Активные счета
                 </span>
 
             </div>
 
-            <div id="productBars"></div>
+
+            <div
+                id="companyBars"
+                class="ff-analytics-bars">
+
+                <div class="ff-analytics-empty">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Нет данных о расходах</span>
+                </div>
+
+            </div>
 
         </article>
 
-    </section>
 
-    <!-- Monthly -->
-    <section class="analytics-card glass rounded-2xl p-5 sm:p-6">
+        <!-- PRODUCT ANALYSIS -->
 
-        <div class="flex items-center justify-between gap-3 mb-5">
+        <article class="ff-analytics-panel ff-analytics-chart-panel">
 
-            <div>
-                <div class="flex items-center gap-2">
+            <div class="ff-analytics-panel-heading">
 
-                    <div class="w-8 h-8 rounded-lg
-                                bg-violet-400/10
-                                border border-violet-400/15
-                                text-violet-300
-                                flex items-center justify-center">
-                        <i class="bi bi-graph-up"></i>
+                <div class="ff-analytics-heading-main">
+
+                    <span class="ff-analytics-heading-icon">
+                        <i class="bi bi-boxes"></i>
+                    </span>
+
+                    <div>
+                        <div class="ff-section-kicker">
+                            PRODUCT ANALYSIS
+                        </div>
+
+                        <h3 data-i18n="Spend by product">
+                            Расходы по продуктам
+                        </h3>
                     </div>
-
-                    <h2 class="text-sm font-black">
-                        <span data-i18n="Monthly spending">Monthly spending</span>
-                    </h2>
 
                 </div>
 
-                <p class="text-xs text-slate-500 mt-2">
-                    Active invoiced amount grouped by invoice month.
-                </p>
+                <span class="ff-analytics-heading-badge">
+                    EUR
+                </span>
+
             </div>
 
-            <span class="text-[10px] font-black uppercase tracking-wider text-slate-600">
-                <span data-i18n="Timeline">Timeline</span>
+
+            <div class="ff-analytics-chart-head">
+
+                <span>
+                    Продуктовое распределение
+                </span>
+
+                <span>
+                    Объём
+                </span>
+
+            </div>
+
+
+            <div
+                id="productBars"
+                class="ff-analytics-bars">
+
+                <div class="ff-analytics-empty">
+                    <i class="bi bi-pie-chart"></i>
+                    <span>Нет данных о продуктах</span>
+                </div>
+
+            </div>
+
+        </article>
+
+    </div>
+
+
+    <!-- =====================================================
+         MONTHLY SPENDING
+         ===================================================== -->
+
+    <section class="ff-analytics-panel ff-analytics-monthly-panel">
+
+        <div class="ff-analytics-panel-heading">
+
+            <div class="ff-analytics-heading-main">
+
+                <span class="ff-analytics-heading-icon ff-analytics-heading-icon-violet">
+                    <i class="bi bi-graph-up"></i>
+                </span>
+
+                <div>
+                    <div class="ff-section-kicker">
+                        TIMELINE
+                    </div>
+
+                    <h3>
+                        Ежемесячные расходы
+                    </h3>
+                </div>
+
+            </div>
+
+            <span class="ff-analytics-heading-badge">
+                MONTHLY
             </span>
 
         </div>
 
-        <div id="monthlyChart" class="monthly-grid"></div>
+        <div class="ff-analytics-chart-head">
+            <span>Динамика активных счетов</span>
+            <span>По месяцам</span>
+        </div>
+
+        <div
+            id="monthlyChart"
+            class="ff-analytics-monthly-chart">
+
+            <div class="ff-analytics-empty">
+                <i class="bi bi-graph-up"></i>
+                <span>Нет данных по месяцам</span>
+            </div>
+
+        </div>
 
     </section>
 
-</main>
 
-<script>
-const currencySymbols = {
-    EUR: '€',
-    USD: '$',
-    UAH: '₴'
-};
+    <!-- =====================================================
+         DATA SOURCE
+         ===================================================== -->
 
-function currencySymbol(currency) {
-    return currencySymbols[
-        String(currency || 'EUR').trim().toUpperCase()
-    ] || '€';
-}
+    <script
+        id="finflowAnalyticsInvoiceData"
+        type="application/json">
+        {{ invoices | tojson }}
+    </script>
 
-function moneyDisplay(value, currency) {
-    const amount = Number(value || 0);
+</section>
 
-    return `${currencySymbol(currency)}${amount.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    })}`;
-}
+{% endblock %}
 
-function escapeHtml(value) {
-    return String(value ?? '').replace(
-        /[&<>'"]/g,
-        char => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            "'": '&#39;',
-            '"': '&quot;'
-        }[char])
-    );
-}
 
-const invoices = [
-{% for inv in invoices %}
-{
-    id: {{ inv.id }},
-    companyId: {{ inv.company_id }},
-    company: {{ (inv.company.name if inv.company else '')|tojson }},
-    product: {{ (inv.software or 'ALPHA')|tojson }},
-    amount: {{ inv.amount_eur or 0 }},
-    paidAmount: {{ inv.paid_amount_eur or 0 }},
-    currency: {{ (inv.currency or 'EUR')|tojson }},
-    date: {{ (inv.invoice_date.isoformat() if inv.invoice_date else '')|tojson }},
-    status: {{ (inv.status or 'ISSUED')|tojson }}
-}{% if not loop.last %},{% endif %}
-{% endfor %}
-];
+{% block scripts %}
 
-const companyBudgets = [
-{% for card in company_cards %}
-{
-    id: {{ card.id }},
-    name: {{ card.name|tojson }},
-    alpha: {{ card.alpha_budget or 0 }},
-    alphaCurrency: {{ (card.alpha_currency or 'EUR')|tojson }},
-    beta: {{ card.beta_budget or 0 }},
-    betaCurrency: {{ (card.beta_currency or 'EUR')|tojson }}
-}{% if not loop.last %},{% endif %}
-{% endfor %}
-];
+<script src="{{ url_for('static', filename='js/analytics.js') }}?v=20260923-2"></script>
 
-function getFilters() {
-    return {
-        from: document.getElementById('filterDateFrom').value,
-        to: document.getElementById('filterDateTo').value,
-        company: document.getElementById('filterCompany').value,
-        product: document.getElementById('filterProduct').value
-    };
-}
 
-/*
- * Return active invoices only.
- * Date filters affect invoiced amounts.
- * Company/Product filters affect both budget and invoices.
- */
-function activeInvoices() {
-    const filters = getFilters();
-
-    return invoices.filter(inv => {
-
-        if (String(inv.status || '').toUpperCase() === 'CANCELLED') {
-            return false;
-        }
-
-        if (
-            filters.from &&
-            (!inv.date || inv.date < filters.from)
-        ) {
-            return false;
-        }
-
-        if (
-            filters.to &&
-            (!inv.date || inv.date > filters.to)
-        ) {
-            return false;
-        }
-
-        if (
-            filters.company &&
-            String(inv.companyId) !== String(filters.company)
-        ) {
-            return false;
-        }
-
-        if (
-            filters.product &&
-            inv.product !== filters.product
-        ) {
-            return false;
-        }
-
-        return true;
-    });
-}
-
-/*
- * Build budget totals grouped by currency.
- * Currency is part of the financial dimension and must never
- * be mixed with another currency.
- */
-function filteredBudgetByCurrency() {
-    const filters = getFilters();
-    const totals = {};
-
-    companyBudgets.forEach(company => {
-
-        if (
-            filters.company &&
-            String(company.id) !== String(filters.company)
-        ) {
-            return;
-        }
-
-        if (
-            !filters.product ||
-            filters.product === 'ALPHA'
-        ) {
-            const currency =
-                String(company.alphaCurrency || 'EUR').toUpperCase();
-
-            const amount = Number(company.alpha || 0);
-
-            totals[currency] =
-                (totals[currency] || 0) + amount;
-        }
-
-        if (
-            !filters.product ||
-            filters.product === 'BETA'
-        ) {
-            const currency =
-                String(company.betaCurrency || 'EUR').toUpperCase();
-
-            const amount = Number(company.beta || 0);
-
-            totals[currency] =
-                (totals[currency] || 0) + amount;
-        }
-    });
-
-    return totals;
-}
-
-function groupInvoicesByCurrency(selected) {
-    const totals = {};
-
-    selected.forEach(inv => {
-        const currency =
-            String(inv.currency || 'EUR').toUpperCase();
-
-        if (!totals[currency]) {
-            totals[currency] = {
-                amount: 0,
-                exposure: 0
-            };
-        }
-
-        const amount = Number(inv.amount || 0);
-        const paid = Math.min(
-            Math.max(Number(inv.paidAmount || 0), 0),
-            Math.max(amount, 0)
-        );
-
-        totals[currency].amount += amount;
-        totals[currency].exposure += Math.max(amount - paid, 0);
-    });
-
-    return totals;
-}
-
-function sortedCurrencies(...groups) {
-    const currencies = new Set();
-
-    groups.forEach(group => {
-        Object.keys(group || {}).forEach(currency => {
-            currencies.add(currency);
-        });
-    });
-
-    return Array.from(currencies).sort();
-}
-
-function renderCurrencyValues(
-    targetId,
-    values,
-    options = {}
-) {
-    const target = document.getElementById(targetId);
-
-    if (!target) {
-        return;
-    }
-
-    const entries = Object.entries(values || {})
-        .filter(([, value]) => {
-            return options.includeZero || Math.abs(Number(value || 0)) > 0.000001;
-        })
-        .sort(([a], [b]) => a.localeCompare(b));
-
-    if (!entries.length) {
-        target.innerHTML =
-            '<span class="text-slate-500">—</span>';
-        return;
-    }
-
-    target.innerHTML = entries.map(
-        ([currency, value]) => `
-            <div class="text-xl sm:text-2xl leading-tight font-black">
-                ${moneyDisplay(value, currency)}
-            </div>
-        `
-    ).join('');
-}
-
-function renderUtilization(
-    budgetByCurrency,
-    spentByCurrency
-) {
-    const target = document.getElementById('utilizationValue');
-    const progress = document.getElementById('utilizationProgress');
-
-    const currencies = sortedCurrencies(
-        budgetByCurrency,
-        spentByCurrency
-    );
-
-    if (!currencies.length) {
-        target.innerHTML =
-            '<span class="text-slate-500">—</span>';
-
-        progress.style.width = '0%';
-        return;
-    }
-
-    const rows = currencies.map(currency => {
-        const budget = Number(
-            budgetByCurrency[currency] || 0
-        );
-
-        const spent = Number(
-            spentByCurrency[currency] || 0
-        );
-
-        const utilization = budget > 0
-            ? (spent / budget) * 100
-            : 0;
-
-        return {
-            currency,
-            utilization
-        };
-    });
-
-    target.innerHTML = rows.map(row => `
-        <div class="text-2xl sm:text-3xl leading-tight">
-            <span class="font-black">
-                ${row.utilization.toFixed(1)}%
-            </span>
-            <span class="ml-2 text-sm font-bold text-slate-500">
-                ${escapeHtml(row.currency)}
-            </span>
-        </div>
-    `).join('');
-
-    /*
-     * The progress bar is a visual summary only.
-     * When multiple currencies exist, use the highest utilization
-     * so it never implies that different currencies were summed.
-     */
-    const maxUtilization = Math.max(
-        ...rows.map(row => row.utilization),
-        0
-    );
-
-    progress.style.width =
-        Math.min(Math.max(maxUtilization, 0), 100).toFixed(1) + '%';
-}
-
-function renderAnalytics() {
-    const selected = activeInvoices();
-
-    const budgetByCurrency =
-        filteredBudgetByCurrency();
-
-    const invoiceByCurrency =
-        groupInvoicesByCurrency(selected);
-
-    const spentByCurrency = {};
-
-    Object.entries(invoiceByCurrency).forEach(
-        ([currency, data]) => {
-            spentByCurrency[currency] =
-                Number(data.amount || 0);
-        }
-    );
-
-    const remainingByCurrency = {};
-    const exposureByCurrency = {};
-
-    const currencies = sortedCurrencies(
-        budgetByCurrency,
-        spentByCurrency
-    );
-
-    currencies.forEach(currency => {
-        const budget =
-            Number(budgetByCurrency[currency] || 0);
-
-        const spent =
-            Number(spentByCurrency[currency] || 0);
-
-        remainingByCurrency[currency] =
-            budget - spent;
-
-        exposureByCurrency[currency] =
-            Number(
-                invoiceByCurrency[currency]?.exposure || 0
-            );
-    });
-
-    renderCurrencyValues(
-        'budgetValue',
-        budgetByCurrency,
-        { includeZero: true }
-    );
-
-    renderCurrencyValues(
-        'invoicedValue',
-        spentByCurrency
-    );
-
-    const remainingTarget =
-        document.getElementById('remainingValue');
-
-    if (!currencies.length) {
-        remainingTarget.innerHTML =
-            '<span class="text-slate-500">—</span>';
-    } else {
-        remainingTarget.innerHTML =
-            currencies.map(currency => {
-
-                const value =
-                    Number(
-                        remainingByCurrency[currency] || 0
-                    );
-
-                const tone =
-                    value < 0
-                        ? 'text-rose-300'
-                        : 'text-emerald-300';
-
-                return `
-                    <div class="text-xl sm:text-2xl leading-tight ${tone}">
-                        ${moneyDisplay(value, currency)}
-                    </div>
-                `;
-            }).join('');
-    }
-
-    renderCurrencyValues(
-        'exposureValue',
-        exposureByCurrency
-    );
-
-    renderUtilization(
-        budgetByCurrency,
-        spentByCurrency
-    );
-
-    renderCompanyBars(selected);
-    renderProductBars(selected);
-    renderMonthly(selected);
-}
-
-function renderCompanyBars(selected) {
-    const totals = {};
-
-    selected.forEach(inv => {
-        const key =
-            `${inv.company}|||${String(inv.currency || 'EUR').toUpperCase()}`;
-
-        totals[key] =
-            (totals[key] || 0) +
-            Number(inv.amount || 0);
-    });
-
-    const rows = Object.entries(totals)
-        .map(([key, value]) => {
-            const separator = key.lastIndexOf('|||');
-
-            return {
-                name: key.slice(0, separator),
-                currency: key.slice(separator + 3),
-                value
-            };
-        })
-        .sort((a, b) => b.value - a.value);
-
-    const maxByCurrency = {};
-
-    rows.forEach(row => {
-        maxByCurrency[row.currency] =
-            Math.max(
-                maxByCurrency[row.currency] || 0,
-                row.value
-            );
-    });
-
-    const target =
-        document.getElementById('companyBars');
-
-    if (!rows.length) {
-        target.innerHTML =
-            '<div class="text-xs text-slate-600 py-8 text-center">' +
-            'No active invoice spending for the selected filters.' +
-            '</div>';
-        return;
-    }
-
-    target.innerHTML = rows.map(row => {
-
-        const max =
-            maxByCurrency[row.currency] || 0;
-
-        return `
-            <div class="bar-row">
-                <div class="bar-header">
-                    <span class="bar-name">
-                        ${escapeHtml(row.name)}
-                    </span>
-
-                    <span class="bar-value">
-                        ${moneyDisplay(row.value, row.currency)}
-                    </span>
-                </div>
-
-                <div class="bar-track">
-                    <div class="bar-fill bg-emerald-400"
-                         style="width:${
-                            max
-                                ? (row.value / max * 100)
-                                : 0
-                         }%">
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function renderProductBars(selected) {
-    const totals = {};
-
-    selected.forEach(inv => {
-
-        if (
-            inv.product !== 'ALPHA' &&
-            inv.product !== 'BETA'
-        ) {
-            return;
-        }
-
-        const currency =
-            String(inv.currency || 'EUR').toUpperCase();
-
-        const key =
-            `${inv.product}|||${currency}`;
-
-        totals[key] =
-            (totals[key] || 0) +
-            Number(inv.amount || 0);
-    });
-
-    const rows = Object.entries(totals)
-        .map(([key, value]) => {
-            const separator = key.lastIndexOf('|||');
-
-            return {
-                name: key.slice(0, separator),
-                currency: key.slice(separator + 3),
-                value
-            };
-        })
-        .filter(row => row.value > 0)
-        .sort((a, b) => b.value - a.value);
-
-    const maxByCurrency = {};
-
-    rows.forEach(row => {
-        maxByCurrency[row.currency] =
-            Math.max(
-                maxByCurrency[row.currency] || 0,
-                row.value
-            );
-    });
-
-    const target =
-        document.getElementById('productBars');
-
-    if (!rows.length) {
-        target.innerHTML =
-            '<div class="text-xs text-slate-600 py-8 text-center">' +
-            'No active invoice spending for the selected filters.' +
-            '</div>';
-        return;
-    }
-
-    target.innerHTML = rows.map(row => {
-
-        const max =
-            maxByCurrency[row.currency] || 0;
-
-        return `
-            <div class="bar-row">
-                <div class="bar-header">
-                    <span class="bar-name">
-                        ${row.name}
-                    </span>
-
-                    <span class="bar-value">
-                        ${moneyDisplay(row.value, row.currency)}
-                    </span>
-                </div>
-
-                <div class="bar-track">
-                    <div class="bar-fill ${
-                        row.name === 'BETA'
-                            ? 'bg-cyan-400'
-                            : 'bg-emerald-400'
-                    }"
-                         style="width:${
-                            max
-                                ? (row.value / max * 100)
-                                : 0
-                         }%">
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function renderMonthly(selected) {
-    const totals = {};
-
-    selected.forEach(inv => {
-
-        if (!inv.date) {
-            return;
-        }
-
-        const month =
-            inv.date.slice(0, 7);
-
-        const currency =
-            String(inv.currency || 'EUR').toUpperCase();
-
-        const key =
-            `${month}|||${currency}`;
-
-        totals[key] =
-            (totals[key] || 0) +
-            Number(inv.amount || 0);
-    });
-
-    const rows = Object.entries(totals)
-        .map(([key, value]) => {
-            const separator = key.lastIndexOf('|||');
-
-            return {
-                month: key.slice(0, separator),
-                currency: key.slice(separator + 3),
-                value
-            };
-        })
-        .sort((a, b) => {
-            if (a.month !== b.month) {
-                return a.month.localeCompare(b.month);
-            }
-
-            return a.currency.localeCompare(b.currency);
-        });
-
-    const target =
-        document.getElementById('monthlyChart');
-
-    if (!rows.length) {
-        target.innerHTML =
-            '<div class="col-span-full text-xs text-slate-600 py-8 text-center">' +
-            'No monthly spending data for the selected filters.' +
-            '</div>';
-        return;
-    }
-
-    const maxByCurrency = {};
-
-    rows.forEach(row => {
-        maxByCurrency[row.currency] =
-            Math.max(
-                maxByCurrency[row.currency] || 0,
-                row.value
-            );
-    });
-
-    target.innerHTML = rows.map(row => {
-
-        const label =
-            new Date(row.month + '-01T00:00:00')
-                .toLocaleDateString('en-US', {
-                    month: 'short',
-                    year: '2-digit'
-                });
-
-        const max =
-            maxByCurrency[row.currency] || 0;
-
-        return `
-            <div class="month-column">
-                <div class="month-value">
-                    ${moneyDisplay(row.value, row.currency)}
-                </div>
-
-                <div class="month-track">
-                    <div class="month-fill"
-                         style="height:${
-                            max
-                                ? (row.value / max * 100)
-                                : 0
-                         }%">
-                    </div>
-                </div>
-
-                <div class="month-label">
-                    ${label}
-                    <span class="block text-[8px] text-slate-700">
-                        ${row.currency}
-                    </span>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-document.getElementById('applyFilters')
-    .addEventListener('click', renderAnalytics);
-
-document.getElementById('resetFilters')
-    .addEventListener('click', () => {
-
-        document.getElementById('filterDateFrom').value = '';
-        document.getElementById('filterDateTo').value = '';
-        document.getElementById('filterCompany').value = '';
-        document.getElementById('filterProduct').value = '';
-
-        renderAnalytics();
-    });
-
-renderAnalytics();
-</script>
-
-<script src="/static/js/finflow-i18n.js?v=20260911-4"></script>
-</body>
-</html>
+{% endblock %}

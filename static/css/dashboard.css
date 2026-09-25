@@ -1,0 +1,617 @@
+/* =========================================================
+   FinFlow — Overview
+   Glass Control Center
+   ========================================================= */
+
+.ff-dashboard {
+    width: 100%;
+    max-width: 1480px;
+    margin: 0 auto;
+    padding-bottom: 28px;
+}
+
+
+/* =========================================================
+   KPI CARDS
+   ========================================================= */
+
+.ff-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0 0 16px;
+}
+
+.ff-overview-card {
+    position: relative;
+    min-width: 0;
+    min-height: 118px;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 18px 19px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(125, 170, 207, .11);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(22, 43, 66, .72) 0%,
+            rgba(10, 25, 42, .64) 55%,
+            rgba(7, 19, 33, .70) 100%
+        );
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, .15),
+        inset 0 1px 0 rgba(255, 255, 255, .035);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.ff-overview-card::before {
+    content: "";
+    position: absolute;
+    left: -35px;
+    top: -55px;
+
+    width: 150px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background: rgba(70, 180, 220, .055);
+    filter: blur(35px);
+
+    pointer-events: none;
+}
+
+.ff-overview-card::after {
+    content: "";
+    position: absolute;
+    right: -60px;
+    bottom: -80px;
+
+    width: 150px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background: rgba(59, 130, 246, .045);
+    filter: blur(40px);
+
+    pointer-events: none;
+}
+
+.ff-overview-card:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(105, 190, 225, .20);
+
+    box-shadow:
+        0 24px 55px rgba(0, 0, 0, .20),
+        0 0 30px rgba(59, 130, 246, .035),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+
+
+/* =========================================================
+   KPI ICON
+   ========================================================= */
+
+.ff-overview-card-icon {
+    position: relative;
+    z-index: 1;
+
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(104, 191, 221, .14);
+    border-radius: 12px;
+
+    color: #76c8df;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(59, 130, 246, .085),
+            rgba(34, 211, 238, .035)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .035),
+        0 8px 20px rgba(0, 0, 0, .10);
+}
+
+.ff-overview-card-icon i {
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   KPI CONTENT
+   ========================================================= */
+
+.ff-overview-card-copy {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+}
+
+.ff-overview-card-label {
+    display: block;
+
+    color: #71879c;
+
+    font-size: 9px;
+    font-weight: 750;
+    line-height: 1.2;
+
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.ff-overview-card-value {
+    display: block;
+
+    margin-top: 7px;
+
+    overflow: hidden;
+
+    color: #d7e6f4;
+
+    font-size: 27px;
+    font-weight: 680;
+    line-height: 1;
+
+    letter-spacing: -.035em;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ff-overview-card-value-wide {
+    color: #d5e8f2;
+    font-size: 22px;
+    font-weight: 670;
+    letter-spacing: -.025em;
+}
+
+.ff-overview-card-meta {
+    display: block;
+
+    margin-top: 7px;
+
+    overflow: hidden;
+
+    color: #4f687f;
+
+    font-size: 9px;
+    font-weight: 550;
+    line-height: 1.25;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   FINANCIAL SUMMARY
+   ========================================================= */
+
+.ff-overview-summary {
+    position: relative;
+
+    margin-bottom: 16px;
+    padding: 21px 23px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(125, 170, 207, .105);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(19, 40, 62, .74),
+            rgba(7, 21, 36, .68)
+        );
+
+    box-shadow:
+        0 22px 55px rgba(0, 0, 0, .16),
+        inset 0 1px 0 rgba(255, 255, 255, .035);
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+}
+
+.ff-overview-summary::before {
+    content: "";
+
+    position: absolute;
+    top: -120px;
+    right: 12%;
+
+    width: 280px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    background: rgba(34, 211, 238, .035);
+    filter: blur(45px);
+
+    pointer-events: none;
+}
+
+.ff-overview-summary-head {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 18px;
+
+    margin-bottom: 18px;
+}
+
+.ff-overview-summary-eyebrow {
+    display: block;
+
+    color: #5f7a92;
+
+    font-size: 8px;
+    font-weight: 800;
+    line-height: 1;
+
+    letter-spacing: .19em;
+    text-transform: uppercase;
+}
+
+.ff-overview-summary-title {
+    margin: 6px 0 0;
+
+    color: #b9cddd;
+
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.2;
+
+    letter-spacing: -.01em;
+}
+
+.ff-overview-summary-icon {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(90, 190, 215, .13);
+    border-radius: 10px;
+
+    color: #62bdd4;
+
+    background: rgba(34, 211, 238, .028);
+}
+
+.ff-overview-summary-icon i {
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   SUMMARY METRICS
+   ========================================================= */
+
+.ff-overview-summary-grid {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    border-top: 1px solid rgba(148, 163, 184, .065);
+}
+
+.ff-overview-summary-item {
+    min-width: 0;
+
+    padding: 15px 20px 3px;
+
+    border-right: 1px solid rgba(148, 163, 184, .065);
+}
+
+.ff-overview-summary-item:first-child {
+    padding-left: 0;
+}
+
+.ff-overview-summary-item:last-child {
+    padding-right: 0;
+    border-right: 0;
+}
+
+.ff-overview-summary-label {
+    display: block;
+
+    color: #5d748a;
+
+    font-size: 8px;
+    font-weight: 650;
+    line-height: 1.2;
+
+    letter-spacing: .025em;
+}
+
+.ff-overview-summary-item strong {
+    display: block;
+
+    margin-top: 7px;
+
+    overflow: hidden;
+
+    color: #c9d9e8;
+
+    font-size: 18px;
+    font-weight: 650;
+    line-height: 1.15;
+
+    letter-spacing: -.02em;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   QUICK LINKS
+   ========================================================= */
+
+.ff-overview-links {
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.ff-overview-link {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    padding: 12px 13px;
+
+    border: 1px solid rgba(125, 170, 207, .075);
+    border-radius: 13px;
+
+    color: inherit;
+    text-decoration: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 34, 54, .48),
+            rgba(7, 20, 34, .40)
+        );
+
+    transition:
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease;
+}
+
+.ff-overview-link:hover {
+    transform: translateY(-1px);
+
+    border-color: rgba(105, 190, 225, .15);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(21, 43, 66, .60),
+            rgba(8, 23, 39, .52)
+        );
+}
+
+.ff-overview-link-icon {
+    width: 29px;
+    height: 29px;
+
+    flex: 0 0 29px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(96, 165, 250, .09);
+    border-radius: 9px;
+
+    color: #62b9d0;
+
+    background: rgba(59, 130, 246, .035);
+}
+
+.ff-overview-link-icon i {
+    font-size: 11px;
+}
+
+.ff-overview-link span:nth-child(2) {
+    min-width: 0;
+    flex: 1;
+}
+
+.ff-overview-link strong {
+    display: block;
+
+    color: #9db2c5;
+
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1.2;
+
+    letter-spacing: .025em;
+}
+
+.ff-overview-link small {
+    display: block;
+
+    margin-top: 3px;
+
+    overflow: hidden;
+
+    color: #4e667c;
+
+    font-size: 8px;
+    font-weight: 550;
+    line-height: 1.25;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ff-overview-link > i {
+    flex: 0 0 auto;
+
+    color: #425b72;
+
+    font-size: 9px;
+
+    transition:
+        transform .18s ease,
+        color .18s ease;
+}
+
+.ff-overview-link:hover > i {
+    color: #67bdd5;
+    transform: translateX(2px);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1180px) {
+    .ff-overview-grid,
+    .ff-overview-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ff-overview-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ff-overview-summary-item:nth-child(2) {
+        border-right: 0;
+    }
+
+    .ff-overview-summary-item:nth-child(-n + 2) {
+        border-bottom: 1px solid rgba(148, 163, 184, .065);
+        padding-bottom: 14px;
+    }
+
+    .ff-overview-summary-item:nth-child(n + 3) {
+        padding-top: 14px;
+    }
+}
+
+@media (max-width: 760px) {
+    .ff-dashboard {
+        padding-bottom: 16px;
+    }
+
+    .ff-overview-grid,
+    .ff-overview-links {
+        grid-template-columns: 1fr;
+    }
+
+    .ff-overview-card {
+        min-height: 94px;
+        padding: 16px;
+    }
+
+    .ff-overview-card-value {
+        font-size: 24px;
+    }
+
+    .ff-overview-summary {
+        padding: 18px;
+    }
+
+    .ff-overview-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ff-overview-summary-item,
+    .ff-overview-summary-item:first-child,
+    .ff-overview-summary-item:last-child {
+        padding: 12px 0;
+        border-right: 0;
+        border-bottom: 1px solid rgba(148, 163, 184, .065);
+    }
+
+    .ff-overview-summary-item:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ff-overview-card,
+    .ff-overview-link,
+    .ff-overview-link > i {
+        transition: none;
+    }
+
+    .ff-overview-card:hover,
+    .ff-overview-link:hover {
+        transform: none;
+    }
+}
+
+/* =========================================================
+   CURRENT OUR COMPANY
+   ========================================================= */
+
+
+/* =========================================================
+   DASHBOARD — OUR COMPANY CARD
+   Reuses the registry card design from finflow.css.
+   ========================================================= */
+
+.our-company-dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 0 0 20px;
+}
+
+.our-company-dashboard-card {
+    min-height: 235px;
+}
+
+@media (max-width: 1100px) {
+    .our-company-dashboard {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}?v=20260923-4">
+{% endblock %}
+
+{% block title %}Продукты — FinFlow{% endblock %}
+
+{% block page_icon %}
+<span class="ff-page-icon">
+    <i class="bi bi-box-seam"></i>
+</span>
+{% endblock %}
+
+{% block page_title %}Продукты{% endblock %}
+
+{% block page_subtitle %}
+Управление продуктами и продуктовыми направлениями FinFlow.
+{% endblock %}
+
+{% block content %}
+
+<div
+    id="productsPage"
+    class="ff-products-page"
+    data-can-manage="{{ 'true' if current_user and current_user.role in ['admin', 'manager'] else 'false' }}"
+>
+
+    <section class="ff-products-toolbar">
+
+        <div class="ff-products-toolbar-top">
+
+            <div class="ff-products-toolbar-top-right">
+
+                <div
+                    class="ff-product-filters"
+                    role="group"
+                    aria-label="Фильтр продуктов">
+
+                    <button
+                        type="button"
+                        class="ff-product-filter-button is-active"
+                        data-product-filter="all">
+                        Все
+                    </button>
+
+                    <button
+                        type="button"
+                        class="ff-product-filter-button"
+                        data-product-filter="active">
+                        Активные
+                    </button>
+
+                    <button
+                        type="button"
+                        class="ff-product-filter-button"
+                        data-product-filter="archived">
+                        Архив
+                    </button>
+
+                </div>
+
+                <button
+                    id="createProductButton"
+                    type="button"
+                    class="ff-btn ff-btn-primary ff-products-create-button">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Новый продукт</span>
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="ff-products-toolbar-bottom">
+
+            <div class="ff-product-search">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    id="productSearch"
+                    type="search"
+                    placeholder="Поиск продуктов..."
+                    autocomplete="off"
+                    aria-label="Поиск продуктов">
+
+                <button
+                    type="button"
+                    id="product-search-clear"
+                    class="ff-search-clear hidden"
+                    aria-label="Очистить поиск">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
+
+
+            <div class="ff-products-toolbar-bottom-right">
+
+                <div
+                    class="ff-view-switcher"
+                    role="group"
+                    aria-label="Вид продуктов">
+
+                    <button
+                        type="button"
+                        class="ff-view-button is-active"
+                        data-products-view="grid"
+                        title="Плитка">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        <span>Плитка</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="ff-view-button"
+                        data-products-view="list"
+                        title="Список">
+                        <i class="bi bi-list-ul"></i>
+                        <span>Список</span>
+                    </button>
+
+                </div>
+
+
+                <div class="ff-products-count">
+                    <span id="products-visible-count">{{ products|length }}</span>
+                    <span>из</span>
+                    <span>{{ products|length }}</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="ff-products-summary">
+
+        <div class="ff-products-summary-item">
+            <span class="ff-products-summary-icon">
+                <i class="bi bi-box-seam"></i>
+            </span>
+            <div>
+                <strong id="productsTotalCount">{{ products|length }}</strong>
+                <span>Всего продуктов</span>
+            </div>
+        </div>
+
+        <div class="ff-products-summary-item">
+            <span class="ff-products-summary-icon">
+                <i class="bi bi-check2-circle"></i>
+            </span>
+            <div>
+                <strong id="productsActiveCount">
+                    {{ products|selectattr('status', 'equalto', 'ACTIVE')|list|length }}
+                </strong>
+                <span>Активных</span>
+            </div>
+        </div>
+
+        <div class="ff-products-summary-item">
+            <span class="ff-products-summary-icon">
+                <i class="bi bi-archive"></i>
+            </span>
+            <div>
+                <strong id="productsArchivedCount">
+                    {{ products|selectattr('status', 'equalto', 'ARCHIVED')|list|length }}
+                </strong>
+                <span>В архиве</span>
+            </div>
+        </div>
+
+    </section>
+
+
+    <section
+        id="productsGrid"
+        class="ff-products-grid"
+        aria-live="polite"
+    >
+
+        {% for product in products %}
+
+        {% set usage = usage_counts.get(product.code, {'budgets': 0, 'invoices': 0}) %}
+
+        <article
+            class="ff-product-card"
+            data-product-id="{{ product.id }}"
+            data-product-code="{{ product.code }}"
+            data-product-name="{{ product.name }}"
+            data-product-status="{{ product.status }}"
+        >
+
+            <div class="ff-product-card-top">
+
+                <div class="ff-product-identity">
+
+                    <div class="ff-product-mark">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+
+                    <div class="ff-product-heading">
+                        <div class="ff-product-code">
+                            {{ product.code }}
+                        </div>
+
+                        <h3>
+                            {{ product.name }}
+                        </h3>
+                    </div>
+
+                </div>
+
+                <span
+                    class="ff-product-status ff-product-status-{{ product.status|lower }}"
+                >
+                    {% if product.status == 'ACTIVE' %}
+                        <i class="bi bi-check-circle-fill"></i>
+                        Активен
+                    {% else %}
+                        <i class="bi bi-archive-fill"></i>
+                        Архив
+                    {% endif %}
+                </span>
+
+            </div>
+
+
+            <div class="ff-product-description">
+                {% if product.description %}
+                    {{ product.description }}
+                {% else %}
+                    <span>Описание не задано.</span>
+                {% endif %}
+            </div>
+
+
+            <div class="ff-product-usage">
+
+                <div class="ff-product-usage-item">
+                    <i class="bi bi-wallet2"></i>
+                    <div>
+                        <strong>{{ usage.budgets }}</strong>
+                        <span>Бюджетов</span>
+                    </div>
+                </div>
+
+                <div class="ff-product-usage-divider"></div>
+
+                <div class="ff-product-usage-item">
+                    <i class="bi bi-receipt"></i>
+                    <div>
+                        <strong>{{ usage.invoices }}</strong>
+                        <span>Счетов</span>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="ff-product-card-footer">
+
+                <div class="ff-product-created">
+                    <span>Создан</span>
+                    <strong>
+                        {{ product.created_at.strftime('%d.%m.%Y') if product.created_at else '—' }}
+                    </strong>
+                </div>
+
+                {% if current_user and current_user.role in ['admin', 'manager'] %}
+
+                <div class="ff-product-actions">
+
+                    <button
+                        type="button"
+                        class="ff-product-action"
+                        data-product-action="edit"
+                        title="Редактировать"
+                        aria-label="Редактировать {{ product.name }}"
+                    >
+                        <i class="bi bi-pencil"></i>
+                    </button>
+
+                    {% if product.status == 'ACTIVE' %}
+                    <button
+                        type="button"
+                        class="ff-product-action"
+                        data-product-action="archive"
+                        title="Архивировать"
+                        aria-label="Архивировать {{ product.name }}"
+                    >
+                        <i class="bi bi-archive"></i>
+                    </button>
+                    {% endif %}
+
+                    <button
+                        type="button"
+                        class="ff-product-action ff-product-action-danger"
+                        data-product-action="delete"
+                        title="Удалить"
+                        aria-label="Удалить {{ product.name }}"
+                    >
+                        <i class="bi bi-trash3"></i>
+                    </button>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+        {% else %}
+
+        <div class="ff-products-empty">
+            <div class="ff-products-empty-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+            <h3>Продуктов пока нет</h3>
+            <p>
+                Создайте первый продукт, чтобы начать формировать каталог FinFlow.
+            </p>
+
+            {% if current_user and current_user.role in ['admin', 'manager'] %}
+            <button
+                type="button"
+                class="ff-btn ff-btn-primary"
+                id="createProductEmptyButton"
+            >
+                <i class="bi bi-plus-lg"></i>
+                <span>Создать продукт</span>
+            </button>
+            {% endif %}
+        </div>
+
+        {% endfor %}
+
+    </section>
+
+
+</div>
+
+
+{% if current_user and current_user.role in ['admin', 'manager'] %}
+
+<div
+    id="productModal"
+    class="ff-modal"
+    hidden
+    aria-hidden="true"
+>
+    <div
+        class="ff-modal-backdrop"
+        data-product-modal-close
+    ></div>
+
+    <div
+        class="ff-modal-dialog ff-product-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="productModalTitle"
+    >
+
+        <div class="ff-modal-header">
+            <div>
+                <div class="ff-section-kicker">PRODUCT</div>
+                <h2 id="productModalTitle">Новый продукт</h2>
+                <p id="productModalSubtitle">
+                    Добавьте продукт в каталог FinFlow.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="ff-modal-close"
+                data-product-modal-close
+                aria-label="Закрыть"
+            >
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+
+        <form id="productForm" novalidate>
+
+            <input
+                id="productId"
+                type="hidden"
+                value=""
+            >
+
+            <div class="ff-product-form-grid">
+
+                <div class="ff-form-field">
+                    <label for="productCode">
+                        Код продукта
+                    </label>
+
+                    <input
+                        id="productCode"
+                        name="code"
+                        type="text"
+                        maxlength="50"
+                        autocomplete="off"
+                        placeholder="Например, CRM"
+                        required
+                    >
+
+                    <small>
+                        Стабильный технический идентификатор продукта.
+                    </small>
+                </div>
+
+
+                <div class="ff-form-field">
+                    <label for="productName">
+                        Название
+                    </label>
+
+                    <input
+                        id="productName"
+                        name="name"
+                        type="text"
+                        maxlength="255"
+                        autocomplete="off"
+                        placeholder="Например, FinFlow CRM"
+                        required
+                    >
+                </div>
+
+
+                <div class="ff-form-field ff-product-form-full">
+                    <label for="productDescription">
+                        Описание
+                    </label>
+
+                    <textarea
+                        id="productDescription"
+                        name="description"
+                        rows="5"
+                        maxlength="10000"
+                        placeholder="Краткое описание продукта..."
+                    ></textarea>
+                </div>
+
+            </div>
+
+
+            <div
+                id="productFormError"
+                class="ff-form-error"
+                hidden
+                role="alert"
+            ></div>
+
+
+            <div class="ff-modal-footer">
+
+                <button
+                    type="button"
+                    class="ff-btn ff-btn-secondary"
+                    data-product-modal-close
+                >
+                    Отмена
+                </button>
+
+                <button
+                    type="submit"
+                    class="ff-btn ff-btn-primary"
+                    id="productSaveButton"
+                >
+                    <i class="bi bi-check-lg"></i>
+                    <span>Сохранить</span>
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endif %}
+
+
+<script id="productsData" type="application/json">
+[
+{% for product in products %}
+    {
+        "id": {{ product.id|tojson }},
+        "code": {{ product.code|tojson }},
+        "name": {{ product.name|tojson }},
+        "description": {{ (product.description or '')|tojson }},
+        "status": {{ product.status|tojson }},
+        "created_at": {{ product.created_at.isoformat()|tojson if product.created_at else 'null' }},
+        "updated_at": {{ product.updated_at.isoformat()|tojson if product.updated_at else 'null' }},
+        "usage": {
+            "budgets": {{ usage_counts.get(product.code, {}).get('budgets', 0) }},
+            "invoices": {{ usage_counts.get(product.code, {}).get('invoices', 0) }}
+        }
+    }{% if not loop.last %},{% endif %}
+{% endfor %}
+]
+</script>
+
+<script src="{{ url_for('static', filename='js/products.js') }}?v=20260923-5"></script>
+
+{% endblock %}

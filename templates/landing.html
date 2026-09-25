@@ -5,37 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>FinFlow — Financial Operations Platform</title>
-
-    <meta name="description"
-          content="Self-hosted financial management platform for budgets, invoices, payments, analytics and financial operations.">
+    <meta
+        name="description"
+        content="FinFlow is a modern self-hosted platform for managing budgets, invoices, payments, contracts, analytics, notifications and financial operations."
+    >
+    <meta name="theme-color" content="#06101f">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="FinFlow — Financial Operations Platform">
-    <meta property="og:description"
-          content="Self-hosted platform for budgets, invoices, payments, analytics and financial operations.">
+    <meta
+        property="og:description"
+        content="Financial control, invoices, budgets, analytics and audit in one controlled environment."
+    >
     <meta property="og:url" content="https://finflow.lexxkato.win/">
     <meta property="og:image" content="https://finflow.lexxkato.win/static/finflow-og.jpg">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:alt" content="FinFlow Dashboard">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="FinFlow — Financial Operations Platform">
-    <meta name="twitter:description"
-          content="Self-hosted platform for budgets, invoices, payments, analytics and financial operations.">
-    <meta name="twitter:image"
-          content="https://finflow.lexxkato.win/static/finflow-og.jpg">
+    <meta
+        name="twitter:description"
+        content="Financial control, invoices, budgets, analytics and audit in one controlled environment."
+    >
+    <meta name="twitter:image" content="https://finflow.lexxkato.win/static/finflow-og.jpg">
+
+    <link rel="icon" href="{{ url_for('static', filename='finflow-logo.png') }}?v=20260923-3">
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
 
     <style>
         :root {
-            color-scheme: dark;
-            --bg: #070b12;
-            --panel: rgba(18, 24, 36, 0.72);
-            --panel-strong: rgba(20, 27, 41, 0.9);
-            --border: rgba(255, 255, 255, 0.09);
-            --text: #f4f7fb;
-            --muted: #8d98aa;
-            --accent: #7c8cff;
-            --accent-hover: #8d9bff;
+            --ff-bg: #040b16;
+            --ff-bg-soft: #071323;
+            --ff-panel: rgba(10, 24, 42, .72);
+            --ff-panel-strong: rgba(10, 27, 47, .9);
+            --ff-border: rgba(148, 163, 184, .13);
+            --ff-border-bright: rgba(96, 165, 250, .25);
+            --ff-text: #edf6ff;
+            --ff-muted: #91a5ba;
+            --ff-soft: #b9c8d8;
+            --ff-blue: #60a5fa;
+            --ff-cyan: #22d3ee;
+            --ff-indigo: #818cf8;
+            --ff-green: #34d399;
+            --ff-radius: 24px;
         }
 
         * {
@@ -48,7 +62,13 @@
 
         body {
             margin: 0;
-            min-height: 100vh;
+            min-width: 320px;
+            color: var(--ff-text);
+            background:
+                radial-gradient(circle at 14% 8%, rgba(37, 99, 235, .16), transparent 28rem),
+                radial-gradient(circle at 84% 14%, rgba(34, 211, 238, .10), transparent 26rem),
+                radial-gradient(circle at 52% 78%, rgba(79, 70, 229, .08), transparent 34rem),
+                var(--ff-bg);
             font-family:
                 Inter,
                 ui-sans-serif,
@@ -57,28 +77,39 @@
                 BlinkMacSystemFont,
                 "Segoe UI",
                 sans-serif;
-            color: var(--text);
-            background:
-                radial-gradient(
-                    circle at 50% -10%,
-                    rgba(124, 140, 255, 0.18),
-                    transparent 38%
-                ),
-                radial-gradient(
-                    circle at 85% 30%,
-                    rgba(95, 110, 255, 0.08),
-                    transparent 28%
-                ),
-                var(--bg);
+            line-height: 1.55;
+            overflow-x: hidden;
         }
 
-        .page {
-            width: min(1120px, calc(100% - 36px));
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+            background-size: 72px 72px;
+            mask-image: linear-gradient(to bottom, black, transparent 75%);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .landing-shell {
+            width: min(1240px, calc(100% - 40px));
             margin: 0 auto;
         }
 
-        header {
-            padding: 34px 0 0;
+        .landing-nav {
+            height: 82px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -86,454 +117,1016 @@
         }
 
         .brand {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 13px;
-            text-decoration: none;
-            color: var(--text);
+            gap: 11px;
+            min-width: 0;
         }
 
-        .brand img {
-            width: 44px;
-            height: 44px;
+        .brand-mark {
+            width: 38px;
+            height: 38px;
             object-fit: contain;
+            filter: drop-shadow(0 0 18px rgba(34, 211, 238, .22));
+        }
+
+        .brand-copy {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.05;
         }
 
         .brand-name {
-            font-size: 20px;
+            font-size: 17px;
             font-weight: 750;
-            letter-spacing: -0.5px;
+            letter-spacing: -.025em;
         }
 
-        .landing-actions {
+        .brand-caption {
+            margin-top: 4px;
+            color: #71859b;
+            font-size: 9px;
+            font-weight: 650;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .nav-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 9px;
         }
 
-        .language-button {
-            display: inline-flex;
+        .landing-language {
+            display: flex;
             align-items: center;
-            justify-content: center;
-            min-width: 42px;
-            height: 42px;
-            padding: 0 10px;
-            border: 1px solid rgba(255, 255, 255, 0.09);
-            border-radius: 11px;
-            color: #cbd5e1;
-            background: rgba(18, 24, 36, 0.72);
-            font-size: 11px;
+            gap: 5px;
+            color: #4e6278;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .landing-language-button {
+            padding: 5px 3px;
+            border: 0;
+            color: #60758b;
+            background: transparent;
+            font-size: 10px;
             font-weight: 800;
             cursor: pointer;
-            transition:
-                background 0.15s ease,
-                border-color 0.15s ease,
-                color 0.15s ease,
-                transform 0.15s ease;
+            transition: color .18s ease;
         }
 
-        .language-button:hover {
-            background: rgba(20, 27, 41, 0.92);
-            border-color: rgba(124, 140, 255, 0.4);
-            color: white;
-            transform: translateY(-1px);
+        .landing-language-button.is-active {
+            color: #cde4fb;
         }
 
-        .login-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 42px;
-            padding: 0 18px;
-            border: 1px solid rgba(124, 140, 255, 0.3);
-            border-radius: 11px;
-            color: white;
-            background: rgba(124, 140, 255, 0.13);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 700;
-            transition:
-                background 0.15s ease,
-                border-color 0.15s ease,
-                transform 0.15s ease;
-        }
-
-        .login-link:hover {
-            background: rgba(124, 140, 255, 0.22);
-            border-color: rgba(124, 140, 255, 0.5);
-            transform: translateY(-1px);
+        .landing-language-button:hover {
+            color: #edf6ff;
         }
 
         .hero {
-            text-align: center;
-            padding: 82px 0 54px;
+            position: relative;
+            padding: 78px 0 72px;
         }
 
-        .hero-logo {
-            width: 112px;
-            height: 112px;
-            object-fit: contain;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 18px 45px rgba(124, 140, 255, 0.18));
+        .hero-layout {
+            display: grid;
+            grid-template-columns: minmax(0, .9fr) minmax(520px, 1.1fr);
+            align-items: center;
+            gap: 64px;
+        }
+
+        .hero-copy {
+            position: relative;
+            z-index: 2;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 11px;
+            border: 1px solid rgba(96,165,250,.18);
+            border-radius: 999px;
+            color: #9fc8ef;
+            background: rgba(59,130,246,.065);
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--ff-cyan);
+            box-shadow: 0 0 14px rgba(34,211,238,.7);
         }
 
         .hero h1 {
-            margin: 0;
-            font-size: clamp(42px, 7vw, 72px);
-            line-height: 0.98;
-            letter-spacing: -3px;
+            max-width: 720px;
+            margin: 22px 0 20px;
+            font-size: clamp(48px, 6vw, 78px);
+            line-height: .98;
+            letter-spacing: -.065em;
             font-weight: 800;
         }
 
         .hero h1 span {
-            color: var(--accent);
-        }
-
-        .hero-subtitle {
-            max-width: 700px;
-            margin: 22px auto 0;
-            color: #c1c8d4;
-            font-size: clamp(18px, 2.5vw, 23px);
-            line-height: 1.45;
-            letter-spacing: -0.3px;
+            display: block;
+            background: linear-gradient(110deg, #f4f9ff 10%, #8ec5ff 48%, #67e8f9 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .hero-description {
-            max-width: 670px;
-            margin: 15px auto 0;
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.65;
+            max-width: 610px;
+            margin: 0;
+            color: var(--ff-muted);
+            font-size: 16px;
+            line-height: 1.8;
         }
 
         .hero-actions {
             display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 28px;
             flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 30px;
         }
 
         .primary-button {
+            min-height: 48px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 46px;
-            padding: 0 22px;
-            border-radius: 12px;
-            color: white;
-            background: var(--accent);
-            text-decoration: none;
-            font-size: 14px;
+            gap: 9px;
+            padding: 0 20px;
+            border: 1px solid rgba(125,211,252,.25);
+            border-radius: 13px;
+            color: #f7fcff;
+            background:
+                linear-gradient(135deg, rgba(59,130,246,.92), rgba(14,165,233,.84));
+            box-shadow:
+                0 14px 35px rgba(37,99,235,.20),
+                inset 0 1px 0 rgba(255,255,255,.16);
+            font-size: 13px;
             font-weight: 750;
-            box-shadow: 0 12px 32px rgba(124, 140, 255, 0.18);
-            transition:
-                background 0.15s ease,
-                transform 0.15s ease;
+            transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
         }
 
         .primary-button:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            filter: brightness(1.08);
+            box-shadow:
+                0 18px 42px rgba(37,99,235,.28),
+                inset 0 1px 0 rgba(255,255,255,.18);
+        }
+
+        .hero-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #6f859b;
+            font-size: 11px;
+        }
+
+        .hero-note i {
+            color: var(--ff-green);
         }
 
         .preview-wrap {
-            margin: 18px auto 0;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.025);
-            box-shadow:
-                0 30px 90px rgba(0, 0, 0, 0.42),
-                inset 0 1px 0 rgba(255, 255, 255, 0.035);
-            backdrop-filter: blur(18px);
+            position: relative;
+            z-index: 1;
         }
 
-        .preview-wrap img {
+        .preview-glow {
+            position: absolute;
+            width: 70%;
+            height: 60%;
+            left: 15%;
+            top: 18%;
+            border-radius: 50%;
+            background: rgba(37,99,235,.25);
+            filter: blur(70px);
+            pointer-events: none;
+        }
+
+        .preview-frame {
+            position: relative;
+            padding: 10px;
+            border: 1px solid rgba(148,163,184,.15);
+            border-radius: 27px;
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025)),
+                rgba(7,18,31,.74);
+            box-shadow:
+                0 30px 90px rgba(0,0,0,.42),
+                0 0 0 1px rgba(96,165,250,.035),
+                inset 0 1px 0 rgba(255,255,255,.08);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        .preview-topbar {
+            height: 35px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 10px;
+        }
+
+        .window-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(148,163,184,.32);
+        }
+
+        .preview-label {
+            margin-left: 7px;
+            color: #60758a;
+            font-size: 9px;
+            font-weight: 650;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .preview-image {
             display: block;
             width: 100%;
             height: auto;
+            border-radius: 18px;
+            border: 1px solid rgba(148,163,184,.10);
+            background: #071323;
+        }
+
+        .preview-status {
+            position: absolute;
+            right: 18px;
+            bottom: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 13px;
+            border: 1px solid rgba(52,211,153,.16);
             border-radius: 13px;
+            color: #b9ebd7;
+            background: rgba(6,25,27,.84);
+            box-shadow: 0 15px 35px rgba(0,0,0,.3);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            font-size: 10px;
+            font-weight: 700;
         }
 
-        .features {
-            padding: 74px 0 80px;
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--ff-green);
+            box-shadow: 0 0 12px rgba(52,211,153,.55);
         }
 
-        .section-title {
+        .section {
+            padding: 82px 0;
+        }
+
+        .section-heading {
+            max-width: 690px;
+            margin-bottom: 32px;
+        }
+
+        .section-kicker {
+            color: #6daef0;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            margin: 9px 0 10px;
+            font-size: clamp(28px, 4vw, 42px);
+            line-height: 1.08;
+            letter-spacing: -.04em;
+        }
+
+        .section-heading p {
             margin: 0;
-            text-align: center;
-            font-size: 28px;
-            letter-spacing: -1px;
-        }
-
-        .section-description {
-            max-width: 650px;
-            margin: 11px auto 30px;
-            text-align: center;
-            color: var(--muted);
+            color: var(--ff-muted);
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.75;
         }
 
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 14px;
         }
 
-        .feature {
-            padding: 22px;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            background: var(--panel);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+        .feature-card {
+            min-height: 195px;
+            padding: 23px;
+            border: 1px solid var(--ff-border);
+            border-radius: var(--ff-radius);
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.012)),
+                var(--ff-panel);
+            box-shadow:
+                0 18px 45px rgba(0,0,0,.18),
+                inset 0 1px 0 rgba(255,255,255,.025);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition:
+                transform .22s ease,
+                border-color .22s ease,
+                background .22s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(96,165,250,.20);
+            background:
+                linear-gradient(145deg, rgba(96,165,250,.055), rgba(255,255,255,.012)),
+                var(--ff-panel);
         }
 
         .feature-icon {
-            font-size: 22px;
-            margin-bottom: 12px;
+            width: 41px;
+            height: 41px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(96,165,250,.15);
+            border-radius: 12px;
+            color: #8bc7ff;
+            background: rgba(59,130,246,.075);
+            font-size: 17px;
         }
 
-        .feature h3 {
-            margin: 0 0 8px;
+        .feature-card h3 {
+            margin: 18px 0 7px;
             font-size: 15px;
-            letter-spacing: -0.2px;
+            letter-spacing: -.015em;
         }
 
-        .feature p {
+        .feature-card p {
             margin: 0;
-            color: var(--muted);
-            font-size: 13px;
-            line-height: 1.55;
+            color: #7f94aa;
+            font-size: 12px;
+            line-height: 1.7;
         }
 
-        .security {
-            margin-bottom: 80px;
-            padding: 30px;
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            background: linear-gradient(
-                135deg,
-                rgba(124, 140, 255, 0.09),
-                rgba(18, 24, 36, 0.72)
-            );
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            border: 1px solid var(--ff-border);
+            border-radius: 27px;
+            background:
+                linear-gradient(145deg, rgba(15,35,59,.82), rgba(7,18,31,.84));
+            box-shadow:
+                0 25px 70px rgba(0,0,0,.25),
+                inset 0 1px 0 rgba(255,255,255,.035);
         }
 
-        .security h2 {
-            margin: 0 0 9px;
-            font-size: 22px;
-            letter-spacing: -0.6px;
+        .control-copy {
+            padding: 38px;
         }
 
-        .security p {
+        .control-copy h2 {
+            margin: 10px 0 14px;
+            max-width: 470px;
+            font-size: clamp(27px, 3.5vw, 39px);
+            line-height: 1.08;
+            letter-spacing: -.04em;
+        }
+
+        .control-copy p {
+            max-width: 500px;
             margin: 0;
-            color: var(--muted);
+            color: var(--ff-muted);
             font-size: 13px;
-            line-height: 1.65;
+            line-height: 1.8;
         }
 
         .security-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 26px;
         }
 
         .security-item {
-            padding: 7px 10px;
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            color: #cbd2de;
-            background: rgba(255, 255, 255, 0.035);
-            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-height: 40px;
+            padding: 0 11px;
+            border: 1px solid rgba(148,163,184,.09);
+            border-radius: 11px;
+            color: #aebfd0;
+            background: rgba(255,255,255,.018);
+            font-size: 11px;
+            font-weight: 650;
         }
 
-        footer {
-            padding: 0 0 35px;
-            text-align: center;
-            color: #687386;
-            font-size: 12px;
+        .security-item i {
+            color: #6dc9ff;
+            font-size: 14px;
         }
 
-        @media (max-width: 760px) {
-            header {
-                padding-top: 22px;
+        .control-visual {
+            position: relative;
+            min-height: 390px;
+            display: grid;
+            place-items: center;
+            padding: 30px;
+            border-left: 1px solid var(--ff-border);
+            background:
+                radial-gradient(circle at 50% 45%, rgba(37,99,235,.15), transparent 50%),
+                rgba(4,12,23,.28);
+        }
+
+        .system-card {
+            width: min(100%, 380px);
+            padding: 20px;
+            border: 1px solid rgba(148,163,184,.12);
+            border-radius: 20px;
+            background: rgba(9,24,41,.82);
+            box-shadow: 0 25px 55px rgba(0,0,0,.32);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+        }
+
+        .system-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 17px;
+            border-bottom: 1px solid rgba(148,163,184,.08);
+        }
+
+        .system-title {
+            font-size: 11px;
+            font-weight: 750;
+            color: #dce9f5;
+        }
+
+        .system-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #80d9b5;
+            font-size: 9px;
+            font-weight: 750;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .system-live::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--ff-green);
+        }
+
+        .system-metric {
+            padding: 18px 0 13px;
+        }
+
+        .metric-label {
+            color: #70859a;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+        }
+
+        .metric-value {
+            margin-top: 4px;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -.04em;
+        }
+
+        .metric-value span {
+            color: #7890a8;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .metric-bar {
+            height: 5px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(148,163,184,.10);
+        }
+
+        .metric-bar span {
+            display: block;
+            width: 79%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #3b82f6, #22d3ee);
+            box-shadow: 0 0 15px rgba(34,211,238,.22);
+        }
+
+        .system-rows {
+            display: grid;
+            gap: 7px;
+            margin-top: 17px;
+        }
+
+        .system-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 34px;
+            padding: 0 9px;
+            border-radius: 8px;
+            background: rgba(255,255,255,.018);
+            color: #879bae;
+            font-size: 9px;
+        }
+
+        .system-row strong {
+            color: #cbd9e7;
+            font-weight: 700;
+        }
+
+        .landing-footer {
+            margin-top: 20px;
+            padding: 27px 0 32px;
+            border-top: 1px solid rgba(148,163,184,.08);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            color: #5f7388;
+            font-size: 10px;
+        }
+
+        .footer-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #7e93a8;
+            font-weight: 700;
+        }
+
+        .footer-brand img {
+            width: 19px;
+            height: 19px;
+            object-fit: contain;
+            opacity: .78;
+        }
+
+        .footer-note {
+            text-align: right;
+        }
+
+        @media (max-width: 1050px) {
+            .hero-layout {
+                grid-template-columns: 1fr;
+                gap: 44px;
+            }
+
+            .hero-copy {
+                max-width: 760px;
+            }
+
+            .preview-wrap {
+                max-width: 850px;
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 820px) {
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .control-visual {
+                min-height: 330px;
+                border-left: 0;
+                border-top: 1px solid var(--ff-border);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .landing-shell {
+                width: min(100% - 28px, 1240px);
+            }
+
+            .landing-nav {
+                height: 70px;
+            }
+
+            .brand-caption {
+                display: none;
             }
 
             .hero {
-                padding-top: 58px;
+                padding: 55px 0 48px;
+            }
+
+            .hero h1 {
+                font-size: clamp(42px, 13vw, 58px);
+            }
+
+            .hero-description {
+                font-size: 14px;
+                line-height: 1.7;
+            }
+
+            .hero-actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .primary-button {
+                width: 100%;
+            }
+
+            .hero-note {
+                justify-content: center;
+            }
+
+            .section {
+                padding: 58px 0;
             }
 
             .feature-grid {
                 grid-template-columns: 1fr;
             }
 
-            .hero h1 {
-                letter-spacing: -2px;
+            .feature-card {
+                min-height: auto;
             }
 
-            .preview-wrap {
-                padding: 6px;
-                border-radius: 15px;
+            .control-copy {
+                padding: 25px;
             }
 
-            .security {
-                padding: 23px;
+            .control-visual {
+                padding: 20px;
+            }
+
+            .security-list {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-status {
+                right: 12px;
+                bottom: 20px;
+            }
+
+            .footer-inner {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .footer-note {
+                text-align: left;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="page">
+    <div class="landing-shell">
 
-        <header>
-            <a class="brand" href="/">
-                <img src="{{ url_for('static', filename='finflow-logo.png') }}" alt="FinFlow">
-                <span class="brand-name">FinFlow</span>
-            </a>
-
-            <div class="landing-actions">
-                <button
-                    id="ff-landing-lang-button"
-                    type="button"
-                    class="language-button"
-                    aria-label="Switch language"
-                    title="Switch language"
-                >UK</button>
-
-                <a class="login-link" href="{{ url_for('login') }}" data-i18n="Sign in">Sign in</a>
-            </div>
-        </header>
-
-        <main>
-            <section class="hero">
+        <nav class="landing-nav" aria-label="FinFlow navigation">
+            <a class="brand" href="/" aria-label="FinFlow">
                 <img
-                    class="hero-logo"
-                    src="{{ url_for('static', filename='finflow-logo.png') }}"
+                    class="brand-mark"
+                    src="{{ url_for('static', filename='finflow-logo.png') }}?v=20260923-3"
                     alt="FinFlow"
                 >
+                <span class="brand-copy">
+                    <span class="brand-name">FinFlow</span>
+                    <span class="brand-caption">Financial Operations</span>
+                </span>
+            </a>
 
-                <h1>Fin<span>Flow</span></h1>
-
-                <div class="hero-subtitle" data-i18n="Financial Operations Platform">
-                    Financial Operations Platform
-                </div>
-
-                <p class="hero-description" data-i18n="A modern self-hosted platform for managing budgets, invoices, payments, contracts, analytics, notifications and financial operations in one controlled environment.">
-                    A modern self-hosted platform for managing budgets, invoices,
-                    payments, contracts, analytics, notifications and financial operations
-                    in one controlled environment.
-                </p>
-
-                <div class="hero-actions">
-                    <a class="primary-button" href="{{ url_for('login') }}">
-                        Sign in to FinFlow
-                    </a>
-                </div>
-            </section>
-
-            <section class="preview-wrap">
-                <img
-                    src="{{ url_for('static', filename='finflow-preview.png') }}"
-                    alt="FinFlow Dashboard Preview"
+            <div class="nav-actions">
+                <div
+                    id="ff-landing-lang-switcher"
+                    class="landing-language"
+                    aria-label="Language"
                 >
+                    <button
+                        type="button"
+                        class="landing-language-button"
+                        data-lang="uk"
+                        aria-pressed="false"
+                    >UA</button>
+
+                    <span>/</span>
+
+                    <button
+                        type="button"
+                        class="landing-language-button"
+                        data-lang="en"
+                        aria-pressed="false"
+                    >EN</button>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+
+            <section class="hero">
+                <div class="hero-layout">
+
+                    <div class="hero-copy">
+                        <div class="eyebrow">
+                            <span class="eyebrow-dot"></span>
+                            <span>Self-hosted financial operations</span>
+                        </div>
+
+                        <h1>
+                            Financial control.
+                            <span>Without the black box.</span>
+                        </h1>
+
+                        <p
+                            class="hero-description"
+                            data-i18n="A modern self-hosted platform for managing budgets, invoices, payments, contracts, analytics, notifications and financial operations in one controlled environment."
+                        >
+                            A modern self-hosted platform for managing budgets, invoices,
+                            payments, contracts, analytics, notifications and financial
+                            operations in one controlled environment.
+                        </p>
+
+                        <div class="hero-actions">
+                            <a class="primary-button" href="{{ url_for('login') }}">
+                                <i class="bi bi-arrow-right"></i>
+                                <span data-i18n="Sign in to FinFlow">Sign in to FinFlow</span>
+                            </a>
+
+                            <span class="hero-note">
+                                <i class="bi bi-shield-check"></i>
+                                Controlled access &amp; audit trail
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="preview-wrap">
+                        <div class="preview-glow"></div>
+
+                        <div class="preview-frame">
+                            <div class="preview-topbar">
+                                <span class="window-dot"></span>
+                                <span class="window-dot"></span>
+                                <span class="window-dot"></span>
+                                <span class="preview-label">FinFlow workspace</span>
+                            </div>
+
+                            <img
+                                class="preview-image"
+                                src="{{ url_for('static', filename='finflow-preview.png') }}?v=20260923-3"
+                                alt="FinFlow dashboard preview"
+                            >
+                        </div>
+
+                        <div class="preview-status">
+                            <span class="status-dot"></span>
+                            System ready
+                        </div>
+                    </div>
+
+                </div>
             </section>
 
-            <section class="features">
-                <h2 class="section-title">Everything in one financial workspace</h2>
-
-                <p class="section-description">
-                    FinFlow combines financial control, operational workflows,
-                    analytics and governance without requiring an external SaaS platform.
-                </p>
+            <section class="section" id="features">
+                <div class="section-heading">
+                    <div class="section-kicker">Workspace</div>
+                    <h2>Everything in one financial workspace.</h2>
+                    <p>
+                        FinFlow brings operational finance into a single controlled
+                        interface — from company budgets and invoices to analytics,
+                        notifications and audit history.
+                    </p>
+                </div>
 
                 <div class="feature-grid">
-                    <article class="feature">
-                        <div class="feature-icon">💰</div>
+
+                    <article class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
                         <h3>Financial Management</h3>
                         <p>
-                            Budgets, spending, remaining funds, financial exposure
-                            and company-specific financial views.
+                            Company-level budgets, expenses, payments and contract
+                            control with clear financial status.
                         </p>
                     </article>
 
-                    <article class="feature">
-                        <div class="feature-icon">📄</div>
-                        <h3>Invoices & Documents</h3>
+                    <article class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-receipt"></i>
+                        </div>
+                        <h3>Invoices &amp; Documents</h3>
                         <p>
-                            Invoice lifecycle, payment tracking, cancellation,
-                            document generation and PDF / HTML output.
+                            Create, manage and track outgoing invoices with payment
+                            status and generated documents.
                         </p>
                     </article>
 
-                    <article class="feature">
-                        <div class="feature-icon">📊</div>
+                    <article class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
                         <h3>Analytics</h3>
                         <p>
-                            Clear management metrics for budgets, spending,
-                            payments, outstanding amounts and financial exposure.
+                            Financial indicators and visual analytics for understanding
+                            budgets, invoices and operational performance.
                         </p>
                     </article>
 
-                    <article class="feature">
-                        <div class="feature-icon">👥</div>
+                    <article class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-person-lock"></i>
+                        </div>
                         <h3>Role-Based Access</h3>
                         <p>
-                            Administrator, Manager and Viewer roles with
-                            server-side authorization.
+                            User accounts, roles and controlled access to FinFlow
+                            functionality.
                         </p>
                     </article>
 
-                    <article class="feature">
-                        <div class="feature-icon">📝</div>
+                    <article class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
                         <h3>Audit Log</h3>
                         <p>
-                            Important financial and administrative actions are
-                            recorded and attributed to authenticated users.
+                            A persistent history of important actions and financial
+                            changes across the system.
                         </p>
                     </article>
 
-                    <article class="feature">
-                        <div class="feature-icon">🔔</div>
+                    <article class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-bell"></i>
+                        </div>
                         <h3>Notifications</h3>
                         <p>
-                            Persistent read / unread notifications with protected
-                            API endpoints and convenient management.
+                            System events, contract deadlines and financial risks are
+                            surfaced directly inside the workspace.
                         </p>
                     </article>
+
                 </div>
             </section>
 
-            <section class="security">
-                <h2>Built with security and operational control in mind</h2>
+            <section class="section">
+                <div class="control-panel">
 
-                <p>
-                    FinFlow v1.0.0 establishes a strong production baseline with
-                    authentication, role-based access control, CSRF protection,
-                    secure session settings, audit logging, PostgreSQL persistence,
-                    migrations and automated backups.
-                </p>
+                    <div class="control-copy">
+                        <div class="section-kicker">Security &amp; Control</div>
 
-                <div class="security-list">
-                    <span class="security-item">Authentication</span>
-                    <span class="security-item">RBAC</span>
-                    <span class="security-item">CSRF Protection</span>
-                    <span class="security-item">Secure Sessions</span>
-                    <span class="security-item">Audit Log</span>
-                    <span class="security-item">PostgreSQL 17</span>
-                    <span class="security-item">Alembic</span>
-                    <span class="security-item">Automated Backups</span>
+                        <h2>Built around visibility, access control and traceability.</h2>
+
+                        <p>
+                            FinFlow keeps financial operations inside a controlled
+                            self-hosted environment, with authentication, role-based
+                            access, CSRF protection, secure sessions and persistent
+                            audit history.
+                        </p>
+
+                        <div class="security-list">
+                            <div class="security-item">
+                                <i class="bi bi-person-check"></i>
+                                Authentication
+                            </div>
+
+                            <div class="security-item">
+                                <i class="bi bi-people"></i>
+                                RBAC
+                            </div>
+
+                            <div class="security-item">
+                                <i class="bi bi-shield-lock"></i>
+                                CSRF Protection
+                            </div>
+
+                            <div class="security-item">
+                                <i class="bi bi-lock"></i>
+                                Secure Sessions
+                            </div>
+
+                            <div class="security-item">
+                                <i class="bi bi-journal-text"></i>
+                                Audit Log
+                            </div>
+
+                            <div class="security-item">
+                                <i class="bi bi-database"></i>
+                                PostgreSQL 17
+                            </div>
+
+                            <div class="security-item">
+                                <i class="bi bi-arrow-repeat"></i>
+                                Alembic Migrations
+                            </div>
+
+                            <div class="security-item">
+                                <i class="bi bi-cloud-arrow-down"></i>
+                                Automated Backups
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-visual">
+                        <div class="system-card">
+                            <div class="system-card-header">
+                                <span class="system-title">Financial Control</span>
+                                <span class="system-live">Operational</span>
+                            </div>
+
+                            <div class="system-metric">
+                                <div class="metric-label">Budget utilization</div>
+                                <div class="metric-value">
+                                    79.2 <span>%</span>
+                                </div>
+                                <div class="metric-bar">
+                                    <span></span>
+                                </div>
+                            </div>
+
+                            <div class="system-rows">
+                                <div class="system-row">
+                                    <span>Companies</span>
+                                    <strong>4</strong>
+                                </div>
+
+                                <div class="system-row">
+                                    <span>Active invoices</span>
+                                    <strong>2</strong>
+                                </div>
+
+                                <div class="system-row">
+                                    <span>Database</span>
+                                    <strong>PostgreSQL</strong>
+                                </div>
+
+                                <div class="system-row">
+                                    <span>Audit trail</span>
+                                    <strong>Enabled</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </section>
+
         </main>
 
-        <footer>
-            FinFlow v1.0.0 · Production Baseline
+        <footer class="landing-footer">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <img
+                        src="{{ url_for('static', filename='finflow-logo.png') }}?v=20260923-3"
+                        alt=""
+                    >
+                    <span>FinFlow v1.0.0 · Production Baseline</span>
+                </div>
+
+                <div class="footer-note">
+                    Self-hosted financial operations platform
+                </div>
+            </div>
         </footer>
 
     </div>
-    <script src="/static/js/finflow-i18n.js?v=20260911-4"></script>
+
+    <script src="{{ url_for('static', filename='js/finflow-i18n.js') }}?v=20260923-3"></script>
 </body>
 </html>

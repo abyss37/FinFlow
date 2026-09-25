@@ -1,0 +1,578 @@
+{% extends "base.html" %}
+
+{% block title %}Наша организация — FinFlow{% endblock %}
+
+{% block page_icon %}
+<span class="ff-page-icon">
+    <i class="bi bi-building-check"></i>
+</span>
+{% endblock %}
+
+{% block page_title %}Наша организация{% endblock %}
+
+{% block page_subtitle %}
+Юридические лица FinFlow, реквизиты, подписи и печати для оформления документов.
+{% endblock %}
+
+{% block content %}
+
+<section class="ff-page our-company-page">
+
+    <div class="ff-page-actions">
+
+        {% if current_user and current_user.role == 'admin' %}
+        <button
+            type="button"
+            class="ff-btn ff-btn-primary"
+            id="our-company-create-button"
+        >
+            <i class="bi bi-building-add"></i>
+            <span>Создать организацию</span>
+        </button>
+        {% endif %}
+
+    </div>
+
+
+    {% if our_companies %}
+
+    <section class="ff-panel our-company-panel">
+
+        <div class="ff-panel-header">
+
+            <div>
+                <h2 class="ff-panel-title">
+                    Юридические лица
+                </h2>
+
+                <p class="ff-panel-description">
+                    Компании, от имени которых FinFlow формирует документы и операции.
+                </p>
+            </div>
+
+            <div class="our-company-count">
+                <span>{{ our_companies|length }}</span>
+                <small>
+                    {% if our_companies|length == 1 %}
+                        компания
+                    {% elif our_companies|length < 5 %}
+                        компании
+                    {% else %}
+                        компаний
+                    {% endif %}
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="our-company-grid">
+
+            {% for company in our_companies %}
+
+            <a
+                href="{{ url_for('our_company_detail_page', our_company_id=company.id) }}"
+                class="our-company-card"
+            >
+
+                <div class="our-company-card-header">
+
+                    <div class="our-company-card-identity">
+
+                        <div class="our-company-logo">
+
+                            {% if company.logo_filename %}
+
+                            <img
+                                src="{{ url_for(
+                                    'static',
+                                    filename='uploads/our-company/logos/' ~ company.logo_filename
+                                ) }}"
+                                alt="{{ company.name }}"
+                            >
+
+                            {% else %}
+
+                            <i class="bi bi-building"></i>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="our-company-card-title">
+
+                            <div class="our-company-name">
+                                {{ company.name }}
+                            </div>
+
+                            <div class="our-company-status">
+
+                                {% if company.status == 'ACTIVE' %}
+
+                                <span class="ff-status-dot is-success"></span>
+                                <span>Активна</span>
+
+                                {% else %}
+
+                                <span class="ff-status-dot"></span>
+                                <span>Неактивна</span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <span class="our-company-card-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </span>
+
+                </div>
+
+
+                <div class="our-company-card-body">
+
+                    <div class="our-company-card-primary">
+
+                        {% if company.director_name %}
+
+                        <div class="our-company-card-field">
+
+                            <span>Руководитель</span>
+
+                            <strong>
+                                {{ company.director_name }}
+                            </strong>
+
+                            {% if company.director_position %}
+                            <small>
+                                {{ company.director_position }}
+                            </small>
+                            {% endif %}
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if company.phone or company.email %}
+
+                        <div class="our-company-card-field">
+
+                            <span>Контакты</span>
+
+                            {% if company.phone %}
+                            <strong>
+                                {{ company.phone }}
+                            </strong>
+                            {% endif %}
+
+                            {% if company.email %}
+                            <small>
+                                {{ company.email }}
+                            </small>
+                            {% endif %}
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="our-company-card-summary">
+
+                        <div class="our-company-summary-item">
+
+                            <i class="bi bi-card-list"></i>
+
+                            <div>
+                                <strong>{{ company.details|length }}</strong>
+                                <span>
+                                    {% if company.details|length == 1 %}
+                                        набор реквизитов
+                                    {% elif company.details|length < 5 %}
+                                        набора реквизитов
+                                    {% else %}
+                                        наборов реквизитов
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="our-company-summary-assets">
+
+                            {% if company.logo_filename %}
+                            <span title="Логотип">
+                                <i class="bi bi-image"></i>
+                            </span>
+                            {% endif %}
+
+                            {% if company.signature_filename %}
+                            <span title="Подпись">
+                                <i class="bi bi-pen"></i>
+                            </span>
+                            {% endif %}
+
+                            {% if company.stamp_filename %}
+                            <span title="Печать">
+                                <i class="bi bi-patch-check"></i>
+                            </span>
+                            {% endif %}
+
+                            {% if company.ecp_reference %}
+                            <span title="ЭЦП">
+                                <i class="bi bi-key"></i>
+                            </span>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="our-company-card-footer">
+
+                    <span>
+                        Открыть данные компании
+                    </span>
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </div>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    {% else %}
+
+    <section class="our-company-empty-state">
+
+        <div class="our-company-empty-badge">
+
+            <div class="our-company-empty-icon">
+                <i class="bi bi-building"></i>
+            </div>
+
+            <div class="our-company-empty-copy">
+
+                <strong>
+                    Компания ещё не создана
+                </strong>
+
+                <span>
+                    Добавьте юридическое лицо, от имени которого FinFlow будет
+                    оформлять документы.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- CREATE OUR COMPANY MODAL -->
+
+    <div
+        id="create-our-company-modal"
+        class="ff-modal"
+        hidden
+    >
+
+        <div
+            class="ff-modal-backdrop"
+            data-modal-close="create-our-company-modal"
+        ></div>
+
+
+        <div
+            class="ff-modal-dialog ff-our-company-modal-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="create-our-company-title"
+        >
+
+            <div class="ff-modal-header">
+
+                <div class="ff-modal-heading">
+
+                    <div class="ff-modal-icon is-primary">
+                        <i class="bi bi-building-add"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 id="create-our-company-title">
+                            Создать организацию
+                        </h2>
+
+                        <p>
+                            Основные данные юридического лица.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="ff-modal-close"
+                    data-modal-close="create-our-company-modal"
+                    aria-label="Закрыть"
+                >
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
+
+
+            <form
+                method="post"
+                action="{{ url_for('create_our_company') }}"
+                id="create-our-company-form"
+                class="ff-modal-body"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+
+                <div class="ff-form-section">
+
+                    <div class="ff-form-section-heading">
+
+                        <div class="ff-form-section-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+
+                        <div>
+                            <strong>Основная информация</strong>
+                            <span>Данные юридического лица</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="ff-form-grid">
+
+                        <div class="ff-form-field ff-form-field-wide">
+
+                            <label for="our-company-name">
+                                Название компании
+                            </label>
+
+                            <input
+                                id="our-company-name"
+                                type="text"
+                                name="name"
+                                maxlength="255"
+                                autocomplete="organization"
+                                placeholder="Например, ООО «Кайзерин»"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="ff-form-field">
+
+                            <label for="our-company-director-name">
+                                Директор
+                            </label>
+
+                            <input
+                                id="our-company-director-name"
+                                type="text"
+                                name="director_name"
+                                maxlength="255"
+                                autocomplete="name"
+                                placeholder="ФИО директора"
+                            >
+
+                        </div>
+
+
+                        <div class="ff-form-field">
+
+                            <label for="our-company-director-position">
+                                Должность
+                            </label>
+
+                            <input
+                                id="our-company-director-position"
+                                type="text"
+                                name="director_position"
+                                maxlength="255"
+                                placeholder="Генеральный директор"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ff-form-section">
+
+                    <div class="ff-form-section-heading">
+
+                        <div class="ff-form-section-icon">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </div>
+
+                        <div>
+                            <strong>Контакты</strong>
+                            <span>Контактные данные юридического лица</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="ff-form-grid">
+
+                        <div class="ff-form-field">
+
+                            <label for="our-company-phone">
+                                Телефон
+                            </label>
+
+                            <input
+                                id="our-company-phone"
+                                type="tel"
+                                name="phone"
+                                maxlength="100"
+                                autocomplete="tel"
+                                placeholder="+380 ..."
+                            >
+
+                        </div>
+
+
+                        <div class="ff-form-field">
+
+                            <label for="our-company-email">
+                                Email
+                            </label>
+
+                            <input
+                                id="our-company-email"
+                                type="email"
+                                name="email"
+                                maxlength="255"
+                                autocomplete="email"
+                                placeholder="office@example.com"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ff-form-section">
+
+                    <div class="ff-form-section-heading">
+
+                        <div class="ff-form-section-icon">
+                            <i class="bi bi-toggle-on"></i>
+                        </div>
+
+                        <div>
+                            <strong>Доступность для новых документов</strong>
+                            <span>Организация будет доступна для выбора при создании новых документов.</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="our-company-availability">
+
+                        <input
+                            type="hidden"
+                            id="our-company-status-value"
+                            name="status"
+                            value="ACTIVE"
+                        >
+
+                        <label class="our-company-checkbox">
+
+                            <input
+                                type="checkbox"
+                                id="our-company-status"
+                                checked
+                            >
+
+                            <span class="our-company-checkbox-box">
+                                <i class="bi bi-check"></i>
+                            </span>
+
+                            <span class="our-company-checkbox-copy">
+                                <strong>Доступна</strong>
+                                <small>Можно использовать в новых документах</small>
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ff-modal-footer">
+
+                    <button
+                        type="button"
+                        class="ff-btn ff-btn-secondary"
+                        data-modal-close="create-our-company-modal"
+                    >
+                        Отмена
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="ff-btn ff-btn-primary"
+                    >
+                        <i class="bi bi-building-add"></i>
+                        <span>Создать организацию</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="/static/js/our_company.js?v=20260924-4"></script>
+{% endblock %}
