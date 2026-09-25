@@ -2,6 +2,72 @@
 
 All notable changes to FinFlow are documented in this file.
 
+## [1.1.0] — 2026-09-25
+
+Feature release expanding FinFlow from the original production baseline into a broader financial-control platform.
+
+### Added
+
+- Multi-currency support for budgets and invoices.
+- Currency-aware financial calculations and document data.
+- Product-level financial control.
+- Product management and product-linked financial metrics.
+- Our Company configuration for issuer information.
+- Company signature and stamp assets for generated documents.
+- Improved invoice document generation.
+- Production PDF generation using configured company data.
+- Dedicated generator preview improvements.
+- Improved company-level dashboard financial controls.
+- Expanded Dashboard and Analytics financial presentation.
+- Improved responsive FinFlow UI and Tailwind-based styling.
+- Additional database migrations for the expanded financial model.
+- Improved production configuration and deployment consistency.
+- Expanded project documentation and roadmap.
+
+### Financial Platform
+
+- Budget and invoice records now support explicit currencies.
+- Financial totals preserve currency information.
+- Product-level financial data is integrated into company-level controls.
+- Existing outgoing-finance workflows were extended without removing the original model.
+
+### Document Generation
+
+- Invoice PDF generation now supports the configured Our Company profile.
+- Signature and stamp assets can be included in generated documents.
+- Document composition was refined for production use.
+- Generated documents preserve invoice financial information and company data.
+
+### UI & Dashboard
+
+- Refined Dashboard cards and financial metrics.
+- Improved company and product financial views.
+- Improved responsive layouts and visual consistency.
+- Continued local Tailwind CSS production build usage.
+
+### Database
+
+- Added Alembic migrations for the expanded financial model.
+- Added currency fields to budgets and invoices.
+- Added product-related database structures.
+- Added Our Company configuration.
+- Added company stamp asset support.
+- Added additional production user/security metadata.
+
+### Infrastructure
+
+- Continued PostgreSQL-first production deployment.
+- Maintained Gunicorn/systemd production workflow.
+- Maintained automated backup strategy.
+- Improved repository hygiene and production asset handling.
+
+### Documentation
+
+- Changelog updated for the v1.1.0 release.
+- Release history remains anchored to the original v1.0.0 production baseline.
+
+---
+
 ## [1.0.0] — 2026-09-10
 
 First production-ready baseline of FinFlow.
